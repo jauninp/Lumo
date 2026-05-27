@@ -173,6 +173,36 @@ select:focus-visible {
   background: #fbfbfa;
 }
 
+.todo-autocomplete {
+  position: fixed;
+  z-index: 10001;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.13);
+  padding: 5px;
+}
+
+.todo-autocomplete-item {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 5px 8px;
+  text-align: left;
+  font: 13px "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.todo-autocomplete-item:hover,
+.todo-autocomplete-item.active {
+  border-color: #9dbcb4;
+  background: var(--green-soft);
+  color: var(--green);
+}
+
 .search-kind {
   color: var(--muted);
   font-size: 11px;
@@ -1468,6 +1498,7 @@ select:focus-visible {
         <input id="importFileInput" class="hidden" type="file" accept="application/json,.json">
       </header>
       <div id="searchPanel" class="search-panel hidden"></div>
+      <div id="todoAutocompletePanel" class="todo-autocomplete hidden"></div>
       <div id="snapshotPanel" class="snapshot-panel hidden">
         <div class="snapshot-head">
           <div>
@@ -2754,6 +2785,7 @@ async function createApp() {
     closeSnapshotsButton: byId("closeSnapshotsButton"),
     searchInput: byId("searchInput"),
     searchPanel: byId("searchPanel"),
+    todoAutocompletePanel: byId("todoAutocompletePanel"),
     toggleNavButton: byId("toggleNavButton"),
     toggleContextButton: byId("toggleContextButton"),
     resizeNavHandle: byId("resizeNavHandle"),
@@ -2826,6 +2858,14 @@ async function createApp() {
     calendarDays: byId("calendarDays"),
     calendarSelectedLabel: byId("calendarSelectedLabel"),
     calendarDayDetails: byId("calendarDayDetails"),
+  };
+  const todoAutocomplete = {
+    input: null,
+    kind: null,
+    tokenStart: 0,
+    tokenEnd: 0,
+    items: [],
+    activeIndex: 0,
   };
 
   function persist() {
@@ -3330,6 +3370,132 @@ async function createApp() {
     done.addEventListener("click", () => toggleTodo(todo.id));
     actions.append(done);
     return actions;
+  }
+
+  function todoAutocompleteValues(kind, prefix) {
+    const normalizedPrefix = prefix.toLowerCase();
+    const values = kind === "project"
+      ? unique([...state.projects.map((project) => project.title), ...parsedTodos().flatMap((todo) => todo.parsed.projects)])
+      : unique(parsedTodos().flatMap((todo) => todo.parsed.contexts));
+    return values
+      .filter((value) => value.toLowerCase().startsWith(normalizedPrefix))
+      .sort((a, b) => a.localeCompare(b, "fr"))
+      .slice(0, 8);
+  }
+
+  function currentTodoAutocompleteToken(input) {
+    const cursor = input.selectionStart ?? input.value.length;
+    const beforeCursor = input.value.slice(0, cursor);
+    const tokenStart = Math.max(beforeCursor.lastIndexOf(" "), beforeCursor.lastIndexOf("\n"), beforeCursor.lastIndexOf("\t")) + 1;
+    const token = beforeCursor.slice(tokenStart);
+    if (!/^[+@][^\s]*$/.test(token)) return null;
+    return {
+      kind: token[0] === "+" ? "project" : "context",
+      prefix: token.slice(1),
+      tokenStart,
+      tokenEnd: cursor,
+      marker: token[0],
+    };
+  }
+
+  function hideTodoAutocomplete() {
+    elements.todoAutocompletePanel.classList.add("hidden");
+    elements.todoAutocompletePanel.innerHTML = "";
+    todoAutocomplete.input = null;
+    todoAutocomplete.items = [];
+  }
+
+  function positionTodoAutocomplete(input) {
+    const rect = input.getBoundingClientRect();
+    elements.todoAutocompletePanel.style.left = `${rect.left}px`;
+    elements.todoAutocompletePanel.style.top = `${rect.bottom + 4}px`;
+    elements.todoAutocompletePanel.style.minWidth = `${Math.min(360, Math.max(220, rect.width))}px`;
+  }
+
+  function renderTodoAutocomplete(input) {
+    const token = currentTodoAutocompleteToken(input);
+    if (!token) {
+      hideTodoAutocomplete();
+      return;
+    }
+
+    const items = todoAutocompleteValues(token.kind, token.prefix);
+    if (!items.length) {
+      hideTodoAutocomplete();
+      return;
+    }
+
+    todoAutocomplete.input = input;
+    todoAutocomplete.kind = token.kind;
+    todoAutocomplete.tokenStart = token.tokenStart;
+    todoAutocomplete.tokenEnd = token.tokenEnd;
+    todoAutocomplete.items = items;
+    todoAutocomplete.activeIndex = Math.min(todoAutocomplete.activeIndex, items.length - 1);
+
+    elements.todoAutocompletePanel.innerHTML = "";
+    items.forEach((item, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `todo-autocomplete-item${index === todoAutocomplete.activeIndex ? " active" : ""}`;
+      button.textContent = `${token.marker}${item}`;
+      button.addEventListener("mousedown", (event) => event.preventDefault());
+      button.addEventListener("click", () => applyTodoAutocomplete(index));
+      elements.todoAutocompletePanel.append(button);
+    });
+    positionTodoAutocomplete(input);
+    elements.todoAutocompletePanel.classList.remove("hidden");
+  }
+
+  function applyTodoAutocomplete(index = todoAutocomplete.activeIndex) {
+    const input = todoAutocomplete.input;
+    const value = todoAutocomplete.items[index];
+    if (!input || !value) return false;
+
+    const marker = todoAutocomplete.kind === "project" ? "+" : "@";
+    const before = input.value.slice(0, todoAutocomplete.tokenStart);
+    const after = input.value.slice(todoAutocomplete.tokenEnd);
+    const insert = `${marker}${value} `;
+    input.value = `${before}${insert}${after}`;
+    const cursor = before.length + insert.length;
+    input.selectionStart = cursor;
+    input.selectionEnd = cursor;
+    input.focus();
+    hideTodoAutocomplete();
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    return true;
+  }
+
+  function setupTodoAutocomplete(input) {
+    input.addEventListener("input", () => renderTodoAutocomplete(input));
+    input.addEventListener("click", () => renderTodoAutocomplete(input));
+    input.addEventListener("keyup", (event) => {
+      if (["ArrowDown", "ArrowUp", "Enter", "Tab", "Escape"].includes(event.key)) return;
+      renderTodoAutocomplete(input);
+    });
+    input.addEventListener("keydown", (event) => {
+      if (elements.todoAutocompletePanel.classList.contains("hidden") || todoAutocomplete.input !== input) return;
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        todoAutocomplete.activeIndex = (todoAutocomplete.activeIndex + 1) % todoAutocomplete.items.length;
+        renderTodoAutocomplete(input);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        todoAutocomplete.activeIndex = (todoAutocomplete.activeIndex - 1 + todoAutocomplete.items.length) % todoAutocomplete.items.length;
+        renderTodoAutocomplete(input);
+      } else if (event.key === "Enter" || event.key === "Tab") {
+        event.preventDefault();
+        event.stopPropagation();
+        applyTodoAutocomplete();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        hideTodoAutocomplete();
+      }
+    });
+    input.addEventListener("blur", () => {
+      setTimeout(() => {
+        if (todoAutocomplete.input === input) hideTodoAutocomplete();
+      }, 120);
+    });
   }
 
   function todoDateValue(todo) {
@@ -4138,6 +4304,7 @@ async function createApp() {
     text.replaceWith(input);
     input.focus();
     input.select();
+    setupTodoAutocomplete(input);
 
     input.addEventListener("pointerdown", (event) => {
       event.stopPropagation();
@@ -4504,6 +4671,7 @@ async function createApp() {
       });
     });
     elements.addTodoButton.addEventListener("click", addTodo);
+    setupTodoAutocomplete(elements.captureInput);
     elements.captureInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") addTodo();
     });
