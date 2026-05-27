@@ -147,7 +147,7 @@ select:focus-visible {
   position: fixed;
   top: 46px;
   left: 226px;
-  z-index: 50;
+  z-index: 10000;
   width: min(720px, calc(100vw - 320px));
   max-height: 430px;
   overflow: auto;
@@ -415,6 +415,66 @@ select:focus-visible {
   margin-bottom: 18px;
 }
 
+.today-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.today-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(310px, 0.9fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.today-column {
+  min-width: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.today-panel {
+  min-width: 0;
+}
+
+.brief-list,
+.today-note-list {
+  padding: 10px 12px 14px;
+}
+
+.brief-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 8px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 8px 0;
+  line-height: 1.35;
+}
+
+.brief-row:last-child {
+  border-bottom: 0;
+}
+
+.brief-row span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 720;
+  text-transform: uppercase;
+}
+
+.brief-row strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.today-editor-panel .document {
+  max-height: 520px;
+  overflow: auto;
+}
+
 .workspace-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -431,13 +491,19 @@ select:focus-visible {
 
 .todo-toolbar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 190px 190px;
+  grid-template-columns: minmax(0, 1fr) 190px 190px auto;
   gap: 10px;
   margin-bottom: 12px;
 }
 
+.todo-search-wrap {
+  position: relative;
+  min-width: 0;
+}
+
 .todo-search {
   width: 100%;
+  padding-right: 38px;
 }
 
 .todo-large-list {
@@ -455,16 +521,29 @@ select:focus-visible {
 
 .project-focus-grid {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr) 240px;
-  gap: 14px;
+  grid-template-columns: var(--project-list-width, 230px) 5px minmax(0, 1fr) 5px var(--project-side-width, 240px);
+  gap: 8px;
   align-items: start;
 }
 
 .journal-grid {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr) 220px;
-  gap: 14px;
+  grid-template-columns: var(--journal-list-width, 240px) 5px minmax(0, 1fr) 5px var(--journal-side-width, 220px);
+  gap: 8px;
   align-items: start;
+}
+
+.split-resize-handle {
+  min-width: 5px;
+  min-height: 140px;
+  border-radius: 999px;
+  background: var(--line);
+  cursor: col-resize;
+}
+
+.split-resize-handle:hover,
+.split-resize-handle.is-dragging {
+  background: #b9c8c4;
 }
 
 .project-focus-list,
@@ -847,12 +926,26 @@ select:focus-visible {
 
 .journal-row,
 .inbox-row,
-.project-line {
+.project-line,
+.timeline-row {
   display: block;
   width: 100%;
   border-bottom: 1px solid var(--line-soft);
   padding: 9px 0;
   text-align: left;
+}
+
+.timeline-kind {
+  display: inline-flex;
+  min-height: 18px;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  padding: 0 7px;
+  font-size: 11px;
+  font-weight: 760;
+  text-transform: uppercase;
 }
 
 .row-meta {
@@ -1059,6 +1152,12 @@ select:focus-visible {
   cursor: pointer;
 }
 
+.todo-link {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .todo-text.editable {
   border-radius: 5px;
   margin: -3px -5px;
@@ -1084,17 +1183,6 @@ select:focus-visible {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.35;
-}
-
-.todo-overdue {
-  display: inline-block;
-  margin-top: 5px;
-  border-radius: 999px;
-  background: var(--red-soft);
-  color: var(--red);
-  padding: 3px 7px;
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .tok-project,
@@ -1171,6 +1259,39 @@ select:focus-visible {
   gap: 5px;
 }
 
+.todo-sort-buttons {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.icon-button {
+  width: 33px;
+  height: 33px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--line);
+  border-radius: 7px;
+  background: var(--paper);
+  color: var(--muted);
+  font-weight: 760;
+}
+
+.icon-button:hover,
+.icon-button.active {
+  border-color: #9dbcb4;
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.todo-search-wrap .icon-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-color: transparent;
+  background: transparent;
+}
+
 .empty-state {
   border: 1px dashed var(--line);
   border-radius: 8px;
@@ -1194,6 +1315,32 @@ select:focus-visible {
   color: var(--red);
 }
 
+.todo-quick-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 0 0 7px;
+}
+
+.quick-action {
+  min-width: 34px;
+  height: 24px;
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--muted);
+  padding: 0 7px;
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.quick-action:hover,
+.quick-action.primary {
+  border-color: #9dbcb4;
+  background: var(--green-soft);
+  color: var(--green);
+}
+
 
 /* src/styles/markdown.css */
 .document {
@@ -1201,10 +1348,12 @@ select:focus-visible {
 }
 
 .title-input {
+  display: block;
   width: 100%;
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
+  margin: 0 0 14px;
   padding: 0 0 12px;
   color: var(--ink);
   font-size: 24px;
@@ -1251,43 +1400,21 @@ select:focus-visible {
 }
 
 .editor-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 12px;
+  display: block;
 }
 
-.editor-grid.editor-mode-write,
-.editor-grid.editor-mode-preview {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.editor-grid.editor-mode-write .preview,
-.editor-grid.editor-mode-preview .markdown {
-  display: none;
-}
-
-.markdown,
-.preview {
+.markdown {
   min-height: 430px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
-}
-
-.markdown {
   width: 100%;
   resize: none;
   padding: 16px;
   font: 13px/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
-.preview {
-  padding: 16px 18px;
-  line-height: 1.55;
-}
-
-.project-focus .markdown,
-.project-focus .preview {
+.project-focus .markdown {
   min-height: clamp(520px, calc(100vh - 230px), 900px);
 }
 
@@ -1300,6 +1427,11 @@ select:focus-visible {
   overflow: hidden;
 }
 
+.overtype-host.markdown {
+  padding: 0;
+  resize: none;
+}
+
 .overtype-host > * {
   height: 100%;
   min-height: inherit;
@@ -1308,40 +1440,6 @@ select:focus-visible {
 .overtype-host textarea {
   min-height: inherit !important;
   font: 14px/1.6 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-}
-
-.preview h1 {
-  margin: 20px 0 8px;
-  font-size: 20px;
-}
-
-.preview h2,
-.preview h3 {
-  margin: 18px 0 8px;
-  font-size: 17px;
-}
-
-.preview h1:first-child,
-.preview h2:first-child,
-.preview h3:first-child {
-  margin-top: 0;
-}
-
-.preview code {
-  border-radius: 4px;
-  background: #eef0ec;
-  padding: 1px 5px;
-  font: 12px "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-}
-
-.preview pre {
-  overflow: auto;
-  border: 1px solid #d9ddd7;
-  border-radius: 7px;
-  background: #1f2428;
-  color: #d9e2ec;
-  padding: 12px;
-  font: 12px/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 .tok-keyword {
@@ -1392,23 +1490,11 @@ select:focus-visible {
         <aside class="nav">
           <button id="toggleNavButton" class="pane-toggle" title="Réduire navigation">‹</button>
           <div class="nav-title">Travail</div>
-          <button class="nav-item active" data-view-button="home"><span>Accueil</span><span id="openProjectsCount" class="count"></span></button>
+          <button class="nav-item active" data-view-button="home"><span>Aujourd'hui</span><span id="todayNavCount" class="count"></span></button>
           <button class="nav-item" data-view-button="project"><span>Projets</span><span id="projectCount" class="count"></span></button>
-          <button class="nav-item" data-view-button="todos"><span>Todos</span><span id="todoCount" class="count"></span></button>
           <button class="nav-item" data-view-button="journal"><span>Journal</span><span id="journalCount" class="count"></span></button>
+          <button class="nav-item" data-view-button="todos"><span>Todos</span><span id="todoCount" class="count"></span></button>
           <button class="nav-item" data-view-button="calendar"><span>Calendrier</span></button>
-
-          <div class="nav-title">Actions</div>
-          <button class="nav-item"><span>Inbox</span><span id="inboxNavCount" class="count"></span></button>
-          <button class="nav-item"><span>Relances</span><span id="followupNavCount" class="count"></span></button>
-          <button class="nav-item"><span>Aujourd'hui</span><span id="todayNavCount" class="count"></span></button>
-          <button class="nav-item"><span>Priorités A</span><span id="priorityNavCount" class="count"></span></button>
-
-          <div class="nav-title">État projets</div>
-          <button class="nav-item"><span>Active</span><span class="count">2</span></button>
-          <button class="nav-item"><span>Waiting</span><span class="count">1</span></button>
-          <button class="nav-item"><span>Blocked</span><span class="count">0</span></button>
-          <button class="nav-item"><span>Dormant</span><span class="count">1</span></button>
         </aside>
         <div id="resizeNavHandle" class="resize-handle resize-handle-left" title="Redimensionner navigation"></div>
 
@@ -1447,59 +1533,110 @@ select:focus-visible {
           <div class="main-inner">
             <div class="page-head">
               <div>
-                <h1>Bureau de suivi</h1>
-                <div class="subtitle">Capturer vite, suivre les actions, retrouver le contexte projet.</div>
+                <h1>Aujourd'hui</h1>
+                <div class="subtitle">Relances, echeances, seances et projets a garder en tete.</div>
               </div>
               <div class="toolbar">
-                <div class="segmented">
-                  <button class="active">Focus</button>
-                  <button>Board</button>
-                  <button>Journal</button>
-                </div>
-                <button class="button">Nouveau journal</button>
+                <button id="todayNewJournalButton" class="button">Nouvelle note</button>
               </div>
             </div>
 
-            <section class="health-row">
+            <section class="today-summary">
               <div class="metric">
-                <div class="metric-label">Projets ouverts</div>
-                <div id="metricProjects" class="metric-value"></div>
-                <div class="metric-note">incidents inclus</div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Todos ouverts</div>
-                <div id="metricTodos" class="metric-value"></div>
-                <div id="metricInbox" class="metric-note"></div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Relances</div>
+                <div class="metric-label">A relancer</div>
                 <div id="metricFollowups" class="metric-value"></div>
-                <div class="metric-note">via followup:</div>
+                <div class="metric-note">followup arrive</div>
               </div>
               <div class="metric">
-                <div class="metric-label">Sans mouvement</div>
-                <div id="metricDormant" class="metric-value"></div>
-                <div class="metric-note">plus de 14 jours</div>
+                <div class="metric-label">En retard</div>
+                <div id="metricOverdue" class="metric-value"></div>
+                <div class="metric-note">due depasse</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">En attente</div>
+                <div id="metricWaiting" class="metric-value"></div>
+                <div class="metric-note">waiting ou status</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Bloques</div>
+                <div id="metricBlocked" class="metric-value"></div>
+                <div class="metric-note">blocked ou status</div>
               </div>
             </section>
 
-            <section class="workspace-grid">
-              <section class="panel">
-                <div class="panel-head">
-                  <h2>Projets à surveiller</h2>
-                  <button class="button">Voir tout</button>
-                </div>
-                <div id="projectList" class="project-list"></div>
+            <section class="today-grid">
+              <section class="today-column">
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>Point chef</h2>
+                    <button id="todayOpenProjectsButton" class="button">Projets</button>
+                  </div>
+                  <div id="todayBossBrief" class="brief-list"></div>
+                </section>
+
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>A relancer</h2>
+                    <span id="todayFollowupCount" class="count"></span>
+                  </div>
+                  <div id="todayFollowups" class="linked-todos"></div>
+                </section>
+
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>En retard</h2>
+                    <span id="todayOverdueCount" class="count"></span>
+                  </div>
+                  <div id="todayOverdue" class="linked-todos"></div>
+                </section>
+
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>Solitaires</h2>
+                    <span id="todaySoloCount" class="count"></span>
+                  </div>
+                  <div id="todaySolo" class="linked-todos"></div>
+                </section>
               </section>
 
-              <section class="panel">
+              <section class="today-column">
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>En attente</h2>
+                    <span id="todayWaitingCount" class="count"></span>
+                  </div>
+                  <div id="todayWaiting" class="linked-todos"></div>
+                </section>
+
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>Bloques</h2>
+                    <span id="todayBlockedCount" class="count"></span>
+                  </div>
+                  <div id="todayBlocked" class="linked-todos"></div>
+                </section>
+
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>Seances</h2>
+                    <span id="todayMeetingsCount" class="count"></span>
+                  </div>
+                  <div id="todayMeetings" class="today-note-list"></div>
+                </section>
+              </section>
+
+              <section class="today-column">
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>Projets suivis</h2>
+                    <span id="todayProjectsCount" class="count"></span>
+                  </div>
+                  <div id="todayProjects" class="project-list"></div>
+                </section>
+
+                <section class="panel today-panel today-editor-panel">
                 <div class="panel-head">
                   <h2>Projet ouvert</h2>
-                  <div class="segmented" data-editor-mode-tabs="projectHome">
-                    <button data-editor-mode-button="projectHome:write">Markdown</button>
-                    <button class="active" data-editor-mode-button="projectHome:split">Split</button>
-                    <button data-editor-mode-button="projectHome:preview">Preview</button>
-                  </div>
                 </div>
                 <div class="document">
                   <input id="projectTitle" class="title-input">
@@ -1520,10 +1657,11 @@ select:focus-visible {
                     </div>
                   </div>
                   <div id="projectEditorGrid" class="editor-grid">
-                    <textarea id="projectBody" class="markdown"></textarea>
-                    <article id="projectPreview" class="preview"></article>
+                    <div id="projectEditorHost" class="markdown overtype-host"></div>
+                    <textarea id="projectBody" class="markdown hidden"></textarea>
                   </div>
                 </div>
+              </section>
               </section>
             </section>
           </div>
@@ -1547,18 +1685,21 @@ select:focus-visible {
 
               <section class="todo-workspace">
                 <div class="todo-toolbar">
-                  <input id="todoViewSearch" class="field todo-search" placeholder="Filtrer dans les todos...">
+                  <div class="todo-search-wrap">
+                    <input id="todoViewSearch" class="field todo-search" placeholder="Filtrer dans les todos...">
+                    <button id="todoClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
+                  </div>
                   <select id="todoViewProjectFilter" class="field">
                     <option value="">Tous les projets</option>
                   </select>
                   <select id="todoViewContextFilter" class="field">
                     <option value="">Tous les contextes</option>
                   </select>
-                  <select id="todoSortSelect" class="field">
-                    <option value="file">Ordre du fichier</option>
-                    <option value="due">Par échéance</option>
-                    <option value="priority">Par priorité</option>
-                  </select>
+                  <div class="todo-sort-buttons" aria-label="Tri des todos">
+                    <button class="icon-button" data-todo-sort="file" title="Ordre du fichier" aria-label="Ordre du fichier">#</button>
+                    <button class="icon-button" data-todo-sort="due" title="Par échéance" aria-label="Par échéance">!</button>
+                    <button class="icon-button" data-todo-sort="priority" title="Par priorité" aria-label="Par priorité">A</button>
+                  </div>
                 </div>
                 <div class="todo-display-options">
                   <label><input id="todoShowId" type="checkbox"> id</label>
@@ -1595,28 +1736,25 @@ select:focus-visible {
                   </div>
                   <div id="projectFocusList" class="project-list"></div>
                 </aside>
+                <div id="resizeProjectListHandle" class="split-resize-handle" title="Redimensionner liste projets"></div>
 
                 <section class="panel">
                   <div class="panel-head">
                     <h2>Document projet</h2>
-                    <div class="segmented" data-editor-mode-tabs="project">
-                      <button data-editor-mode-button="project:write">Markdown</button>
-                      <button class="active" data-editor-mode-button="project:split">Split</button>
-                      <button data-editor-mode-button="project:preview">Preview</button>
-                    </div>
                   </div>
                   <div class="document">
                     <input id="projectFocusTitle" class="title-input">
                     <div id="projectFocusEditorGrid" class="editor-grid focus-editor-grid">
-                      <textarea id="projectFocusBody" class="markdown"></textarea>
-                      <article id="projectFocusPreview" class="preview"></article>
+                      <div id="projectFocusEditorHost" class="markdown overtype-host"></div>
+                      <textarea id="projectFocusBody" class="markdown hidden"></textarea>
                     </div>
                   </div>
                 </section>
+                <div id="resizeProjectSideHandle" class="split-resize-handle" title="Redimensionner actions liées"></div>
 
                 <aside class="panel project-side-panel">
                   <div class="panel-head">
-                    <h2>Actions liées</h2>
+                    <h2>Timeline</h2>
                     <button id="projectNewJournalButton" class="button">Note</button>
                   </div>
                   <div id="projectLinkedTodos" class="linked-todos"></div>
@@ -1652,6 +1790,7 @@ select:focus-visible {
                   </div>
                   <div id="journalList" class="journal-list"></div>
                 </aside>
+                <div id="resizeJournalListHandle" class="split-resize-handle" title="Redimensionner liste journal"></div>
 
                 <section class="panel">
                   <div class="panel-head">
@@ -1659,16 +1798,11 @@ select:focus-visible {
                   </div>
                   <div class="document">
                     <input id="journalTitle" class="title-input">
-                    <div class="insert-bar">
-                      <button id="insertJournalDateButton" class="button">Insérer date</button>
-                      <button id="journalTodoFromSelectionButton" class="button">Todo depuis sélection</button>
-                      <button id="journalExtractTasksButton" class="button">Extraire cases</button>
-                      <button id="journalAppendProjectButton" class="button">Ajouter au projet</button>
-                    </div>
                     <div id="journalEditorHost" class="overtype-host"></div>
                     <textarea id="journalBody" class="hidden"># Notes</textarea>
                   </div>
                 </section>
+                <div id="resizeJournalSideHandle" class="split-resize-handle" title="Redimensionner liens journal"></div>
 
                 <aside class="panel project-side-panel">
                   <div class="panel-head">
@@ -1801,6 +1935,10 @@ const defaultConfig = {
     navWidth: 208,
     actionsWidth: 308,
     contextWidth: 324,
+    projectListWidth: 230,
+    projectSideWidth: 240,
+    journalListWidth: 240,
+    journalSideWidth: 220,
   },
 };
 function mergeConfig(savedConfig = {}) {
@@ -1905,6 +2043,10 @@ function validateImportPayload(payload) {
     return { ok: false, errors, state: null };
   }
 
+  if (Array.isArray(payload.todos) || Array.isArray(payload.projects) || Array.isArray(payload.journal)) {
+    return validateStateObject(payload, errors);
+  }
+
   if (payload.app !== "worklog") {
     errors.push("Le fichier n'est pas un export Worklog.");
   }
@@ -1919,7 +2061,10 @@ function validateImportPayload(payload) {
     return { ok: false, errors, state: null };
   }
 
-  const sourceState = payload.state;
+  return validateStateObject(payload.state, errors);
+}
+
+function validateStateObject(sourceState, errors = []) {
   if (!Array.isArray(sourceState.todos)) errors.push("`state.todos` doit etre une liste.");
   if (!Array.isArray(sourceState.projects)) errors.push("`state.projects` doit etre une liste.");
   if (!Array.isArray(sourceState.journal)) errors.push("`state.journal` doit etre une liste.");
@@ -2055,87 +2200,6 @@ function parseYamlValue(value) {
     return inner.split(",").map((item) => item.trim());
   }
   return value;
-}
-
-// src/markdown/markdown.js
-function escapeMarkdownHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function highlightCode(code) {
-  return escapeMarkdownHtml(code)
-    .replace(/\b(const|let|var|function|if|return|for|of|import|export|from)\b/g, '<span class="tok-keyword">$1</span>')
-    .replace(/(&quot;.*?&quot;|'.*?')/g, '<span class="tok-string">$1</span>')
-    .replace(/\b([a-zA-Z_$][\w$]*)(?=\()/g, '<span class="tok-fn">$1</span>');
-}
-function markdownToHtml(markdown) {
-  const lines = markdown.replace(/\r\n/g, "\n").split("\n");
-  const html = [];
-  let inList = false;
-  let inCode = false;
-  let codeLines = [];
-
-  function closeList() {
-    if (inList) {
-      html.push("</ul>");
-      inList = false;
-    }
-  }
-
-  for (const line of lines) {
-    if (line.startsWith("```")) {
-      if (inCode) {
-        html.push(`<pre><code>${highlightCode(codeLines.join("\n"))}</code></pre>`);
-        codeLines = [];
-        inCode = false;
-      } else {
-        closeList();
-        inCode = true;
-      }
-      continue;
-    }
-
-    if (inCode) {
-      codeLines.push(line);
-      continue;
-    }
-
-    if (!line.trim()) {
-      closeList();
-      continue;
-    }
-
-    if (line.startsWith("# ")) {
-      closeList();
-      html.push(`<h1>${escapeMarkdownHtml(line.slice(2))}</h1>`);
-    } else if (line.startsWith("## ")) {
-      closeList();
-      html.push(`<h2>${escapeMarkdownHtml(line.slice(3))}</h2>`);
-    } else if (line.startsWith("### ")) {
-      closeList();
-      html.push(`<h3>${escapeMarkdownHtml(line.slice(4))}</h3>`);
-    } else if (line.startsWith("- ")) {
-      if (!inList) {
-        html.push("<ul>");
-        inList = true;
-      }
-      html.push(`<li>${escapeMarkdownHtml(line.slice(2))}</li>`);
-    } else if (line === "---") {
-      closeList();
-      html.push('<hr class="frontmatter-rule">');
-    } else {
-      closeList();
-      html.push(`<p>${escapeMarkdownHtml(line)}</p>`);
-    }
-  }
-
-  closeList();
-  return html.join("");
 }
 
 // src/storage/local-store.js
@@ -2503,7 +2567,7 @@ function parseTodo(raw) {
     createdDate,
     dueDate: values.due || null,
     followupDate: values.followup || null,
-    status: values.status || (values.waiting ? "waiting" : null),
+    status: values.status || (values.waiting ? "waiting" : values.blocked ? "blocked" : null),
     id: values.id || null,
   };
 }
@@ -2536,12 +2600,13 @@ function tokenMeta(token) {
   if (/^@/.test(token)) return "tok-context";
   if (/^id:/.test(token)) return "tok-id";
   if (/^due:/.test(token)) return "tok-due";
-  if (/^status:/.test(token) || /^waiting:/.test(token)) return "tok-status";
+  if (/^status:/.test(token) || /^waiting:/.test(token) || /^blocked:/.test(token)) return "tok-status";
   if (/^[A-Za-z][A-Za-z0-9_-]*:[^\s]+$/.test(token)) return "tok-key";
   return "";
 }
 
 function tokenType(token) {
+  if (/^https?:\/\/[^\s]+$/i.test(token)) return "link";
   if (/^\d{4}-\d{2}-\d{2}$/.test(token)) return "created";
   if (/^\+/.test(token)) return "project";
   if (/^@/.test(token)) return "context";
@@ -2549,6 +2614,7 @@ function tokenType(token) {
   if (/^due:/.test(token)) return "due";
   if (/^status:/.test(token)) return "status";
   if (/^waiting:/.test(token)) return "waiting";
+  if (/^blocked:/.test(token)) return "blocked";
   if (/^[A-Za-z][A-Za-z0-9_-]*:[^\s]+$/.test(token)) return "key";
   return "";
 }
@@ -2570,6 +2636,7 @@ function renderTodoTokens(raw, options = {}) {
       const klass = tokenMeta(token);
       const escaped = escapeTodoHtml(token);
       const type = tokenType(token);
+      if (type === "link") return `<a class="todo-link" href="${escaped}" target="_blank" rel="noopener noreferrer">${escaped}</a>`;
       const value = type === "created" ? token : token.includes(":") ? token.slice(token.indexOf(":") + 1) : token.slice(1);
       if (type === "created") return `<span class="${klass}">${escaped}</span>`;
       return klass ? `<span class="${klass}" data-token-type="${type}" data-token-value="${escapeTodoHtml(value)}">${escaped}</span>` : escaped;
@@ -2595,13 +2662,6 @@ function createTodoRow(todo, options = {}) {
   text.className = "todo-text editable";
   text.innerHTML = renderTodoTokens(todo.raw, options);
   text.title = "Cliquer pour éditer";
-
-  if (todo.isOverdue) {
-    const overdue = document.createElement("span");
-    overdue.className = "todo-overdue";
-    overdue.textContent = `En retard ${todo.parsed.dueDate}`;
-    main.append(overdue);
-  }
 
   const deleteButton = document.createElement("span");
   deleteButton.className = "todo-delete";
@@ -2674,9 +2734,10 @@ async function createApp() {
   let journalOverTypeEditor = null;
   let journalOverTypeNoteId = null;
   let journalOverTypeLoading = false;
-  const editorModes = {
-    projectHome: "split",
-    project: "split",
+  let journalOverTypePending = false;
+  const projectOverTypeEditors = {
+    home: { editor: null, projectId: null, loading: false },
+    focus: { editor: null, projectId: null, loading: false },
   };
 
   const elements = {
@@ -2697,24 +2758,37 @@ async function createApp() {
     toggleContextButton: byId("toggleContextButton"),
     resizeNavHandle: byId("resizeNavHandle"),
     resizeContextHandle: byId("resizeContextHandle"),
+    resizeProjectListHandle: byId("resizeProjectListHandle"),
+    resizeProjectSideHandle: byId("resizeProjectSideHandle"),
+    resizeJournalListHandle: byId("resizeJournalListHandle"),
+    resizeJournalSideHandle: byId("resizeJournalSideHandle"),
     filterChips: byId("filterChips"),
     inboxTodos: byId("inboxTodos"),
     followupTodos: byId("followupTodos"),
     priorityTodos: byId("priorityTodos"),
-    projectList: byId("projectList"),
+    projectList: byId("todayProjects"),
+    todayBossBrief: byId("todayBossBrief"),
+    todayFollowups: byId("todayFollowups"),
+    todayOverdue: byId("todayOverdue"),
+    todayWaiting: byId("todayWaiting"),
+    todayBlocked: byId("todayBlocked"),
+    todaySolo: byId("todaySolo"),
+    todayMeetings: byId("todayMeetings"),
+    todayNewJournalButton: byId("todayNewJournalButton"),
+    todayOpenProjectsButton: byId("todayOpenProjectsButton"),
     projectTitle: byId("projectTitle"),
+    projectEditorHost: byId("projectEditorHost"),
     projectBody: byId("projectBody"),
     projectEditorGrid: byId("projectEditorGrid"),
-    projectPreview: byId("projectPreview"),
     triageList: byId("triageList"),
     autoIdToggle: byId("autoIdToggle"),
     dateFormatSelect: byId("dateFormatSelect"),
     staleDaysInput: byId("staleDaysInput"),
     configPreview: byId("configPreview"),
     todoViewSearch: byId("todoViewSearch"),
+    todoClearSearchButton: byId("todoClearSearchButton"),
     todoViewProjectFilter: byId("todoViewProjectFilter"),
     todoViewContextFilter: byId("todoViewContextFilter"),
-    todoSortSelect: byId("todoSortSelect"),
     todoShowId: byId("todoShowId"),
     todoShowCreated: byId("todoShowCreated"),
     todoShowDue: byId("todoShowDue"),
@@ -2725,9 +2799,9 @@ async function createApp() {
     projectFocusCount: byId("projectFocusCount"),
     projectFocusList: byId("projectFocusList"),
     projectFocusTitle: byId("projectFocusTitle"),
+    projectFocusEditorHost: byId("projectFocusEditorHost"),
     projectFocusBody: byId("projectFocusBody"),
     projectFocusEditorGrid: byId("projectFocusEditorGrid"),
-    projectFocusPreview: byId("projectFocusPreview"),
     projectLinkedTodos: byId("projectLinkedTodos"),
     projectNewJournalButton: byId("projectNewJournalButton"),
     newProjectButton: byId("newProjectButton"),
@@ -2927,9 +3001,87 @@ async function createApp() {
     persist();
   }
 
+  function projectEditorParts(scope) {
+    return {
+      home: {
+        host: elements.projectEditorHost,
+        textarea: elements.projectBody,
+        title: elements.projectTitle,
+        activeViewName: "home",
+      },
+      focus: {
+        host: elements.projectFocusEditorHost,
+        textarea: elements.projectFocusBody,
+        title: elements.projectFocusTitle,
+        activeViewName: "project",
+      },
+    }[scope];
+  }
+
+  function projectMarkdownFromEditor(scope) {
+    const slot = projectOverTypeEditors[scope];
+    const parts = projectEditorParts(scope);
+    return slot.editor?.getMarkdown() || parts.textarea.value;
+  }
+
+  function saveProjectMarkdown(project, markdown, scope) {
+    project.body = markdown;
+    project.updatedAt = new Date().toISOString();
+    syncProjectFromMarkdown(project);
+
+    for (const targetScope of Object.keys(projectOverTypeEditors)) {
+      const parts = projectEditorParts(targetScope);
+      if (parts) parts.textarea.value = markdown;
+    }
+
+    persist();
+    renderProjects();
+  }
+
+  async function mountProjectOverTypeEditor(scope) {
+    const parts = projectEditorParts(scope);
+    const slot = projectOverTypeEditors[scope];
+    const project = selectedProject();
+    if (!parts || !project || slot.loading || activeView !== parts.activeViewName) return;
+
+    if (slot.editor) {
+      if (slot.projectId !== project.id || slot.editor.getMarkdown() !== project.body) {
+        slot.editor.setMarkdown(project.body);
+        slot.projectId = project.id;
+      }
+      return;
+    }
+
+    slot.loading = true;
+    try {
+      slot.editor = await createOverTypeEditor({
+        host: parts.host,
+        markdown: project.body,
+        onChange: (markdown) => {
+          const current = selectedProject();
+          if (!current || current.id !== slot.projectId) return;
+          parts.textarea.value = markdown;
+          saveProjectMarkdown(current, markdown, scope);
+        },
+      });
+      slot.projectId = project.id;
+    } catch (error) {
+      console.error("OverType indisponible", error);
+      parts.host.textContent = "";
+      parts.textarea.classList.remove("hidden");
+      alert(`OverType indisponible.\n\n${error.message || error}`);
+    } finally {
+      slot.loading = false;
+    }
+  }
+
   async function mountJournalOverTypeEditor() {
     const note = selectedJournal();
-    if (!note || journalOverTypeLoading) return;
+    if (!note) return;
+    if (journalOverTypeLoading) {
+      journalOverTypePending = true;
+      return;
+    }
 
     if (journalOverTypeEditor) {
       if (journalOverTypeNoteId !== note.id) {
@@ -2959,6 +3111,10 @@ async function createApp() {
       alert(`OverType indisponible.\n\n${error.message || error}`);
     } finally {
       journalOverTypeLoading = false;
+      if (journalOverTypePending) {
+        journalOverTypePending = false;
+        mountJournalOverTypeEditor();
+      }
     }
   }
 
@@ -2977,7 +3133,7 @@ async function createApp() {
     if (q.length < 2) return [];
     const results = [];
 
-    for (const todo of parsedTodos()) {
+    for (const todo of parsedTodos().filter((item) => !item.parsed.completed)) {
       if (todo.raw.toLowerCase().includes(q)) {
         results.push({
           type: "todo",
@@ -3044,7 +3200,10 @@ async function createApp() {
     const todos = parsedTodos();
     const openTodos = todos.filter((todo) => !todo.parsed.completed);
     const inbox = openTodos.filter((todo) => !todo.parsed.projects.length);
-    const followups = openTodos.filter((todo) => todo.parsed.followupDate);
+    const today = todayISO();
+    const followups = openTodos.filter((todo) => todo.parsed.followupDate && todo.parsed.followupDate <= today);
+    const waiting = openTodos.filter((todo) => todo.parsed.values.waiting || todo.parsed.status === "waiting");
+    const blocked = openTodos.filter((todo) => todo.parsed.values.blocked || todo.parsed.status === "blocked");
     const priorities = openTodos.filter((todo) => todo.parsed.priority === "A");
     const projects = visibleProjects();
     const dormant = projects.filter((project) => daysBetween(project.updatedAt) > state.config.staleAfterDays);
@@ -3052,7 +3211,7 @@ async function createApp() {
     setText("todoCount", openTodos.length);
     setText("inboxNavCount", inbox.length);
     setText("followupNavCount", followups.length);
-    setText("todayNavCount", openTodos.filter((todo) => [todo.parsed.dueDate, todo.parsed.followupDate].includes(todayISO())).length);
+    setText("todayNavCount", followups.length + openTodos.filter((todo) => todo.isOverdue).length);
     setText("priorityNavCount", priorities.length);
     setText("projectCount", projects.length);
     setText("journalCount", state.journal.length);
@@ -3061,6 +3220,9 @@ async function createApp() {
     setText("metricTodos", openTodos.length);
     setText("metricInbox", `${inbox.length} dans inbox`);
     setText("metricFollowups", followups.length);
+    setText("metricOverdue", openTodos.filter((todo) => todo.isOverdue).length);
+    setText("metricWaiting", waiting.length);
+    setText("metricBlocked", blocked.length);
     setText("metricDormant", dormant.length);
     setText("inboxCount", inbox.length);
     setText("followupCount", followups.length);
@@ -3069,9 +3231,9 @@ async function createApp() {
   }
 
   function renderTodoGroup(container, todos, emptyLabel, options = {}) {
-    container.innerHTML = "";
+    if (!options.append) container.innerHTML = "";
     if (!todos.length) {
-      renderEmpty(container, emptyLabel);
+      if (!options.append) renderEmpty(container, emptyLabel);
       return;
     }
 
@@ -3080,6 +3242,9 @@ async function createApp() {
       row.addEventListener("click", (event) => {
         if (event.target.closest(".todo-delete")) {
           deleteTodo(todo.id);
+          return;
+        }
+        if (event.target.closest(".todo-link")) {
           return;
         }
         const token = event.target.closest("[data-token-type]");
@@ -3109,6 +3274,148 @@ async function createApp() {
         reorderTodo(event.dataTransfer.getData("text/plain"), todo.id);
       });
       container.append(row);
+      if (options.quickActions) {
+        container.append(createTodoQuickActions(todo));
+      }
+    }
+  }
+
+  function isoDatePlusDays(days) {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return todayISO(date);
+  }
+
+  function setTodoKey(raw, key, value) {
+    const source = raw.trim().replace(/\s+/g, " ");
+    const token = `${key}:${value}`;
+    const pattern = new RegExp(`(^|\\s)${key}:[^\\s]+(?=\\s|$)`);
+    if (pattern.test(source)) {
+      return source.replace(pattern, (match, prefix) => `${prefix}${token}`).trim();
+    }
+    return `${source} ${token}`.trim();
+  }
+
+  function deferTodoFollowup(todoId, days) {
+    const todo = state.todos.find((item) => item.id === todoId);
+    if (!todo) return;
+    todo.raw = setTodoKey(todo.raw, "followup", isoDatePlusDays(days));
+    todo.updatedAt = new Date().toISOString();
+    persist();
+    render();
+  }
+
+  function createTodoQuickActions(todo) {
+    const actions = document.createElement("div");
+    actions.className = "todo-quick-actions";
+    [
+      ["+1j", 1],
+      ["+3j", 3],
+      ["+1w", 7],
+    ].forEach(([label, days]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quick-action";
+      button.textContent = label;
+      button.title = `Reporter followup de ${days} jour(s)`;
+      button.addEventListener("click", () => deferTodoFollowup(todo.id, days));
+      actions.append(button);
+    });
+
+    const done = document.createElement("button");
+    done.type = "button";
+    done.className = "quick-action primary";
+    done.textContent = "done";
+    done.title = "Marquer termine";
+    done.addEventListener("click", () => toggleTodo(todo.id));
+    actions.append(done);
+    return actions;
+  }
+
+  function todoDateValue(todo) {
+    return todo.parsed.followupDate || todo.parsed.dueDate || "9999-12-31";
+  }
+
+  function sourceValues(todos, key) {
+    return unique(todos.map((todo) => todo.parsed.values[key])).slice(0, 5);
+  }
+
+  function renderBriefLine(label, value) {
+    const row = document.createElement("div");
+    row.className = "brief-row";
+    row.innerHTML = `<span>${label}</span><strong>${escapeAppHtml(value || "-")}</strong>`;
+    return row;
+  }
+
+  function createJournalShortcut(note) {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = "journal-row";
+    row.innerHTML = `
+      <span class="row-title">${escapeAppHtml(note.title)}</span>
+      <span class="row-meta">${escapeAppHtml(note.date || "")} · ${escapeAppHtml(note.kind || "note")}</span>
+    `;
+    row.addEventListener("click", () => {
+      selectedJournalId = note.id;
+      activeView = "journal";
+      render();
+    });
+    return row;
+  }
+
+  function renderTodayView() {
+    const today = todayISO();
+    const openTodos = parsedTodos().filter((todo) => !todo.parsed.completed);
+    const followups = openTodos
+      .filter((todo) => todo.parsed.followupDate && todo.parsed.followupDate <= today)
+      .sort((a, b) => todoDateValue(a).localeCompare(todoDateValue(b)) || priorityRank(a.parsed.priority) - priorityRank(b.parsed.priority));
+    const overdue = openTodos
+      .filter((todo) => todo.isOverdue)
+      .sort((a, b) => (a.parsed.dueDate || "").localeCompare(b.parsed.dueDate || ""));
+    const waiting = openTodos
+      .filter((todo) => todo.parsed.values.waiting || todo.parsed.status === "waiting")
+      .sort((a, b) => todoDateValue(a).localeCompare(todoDateValue(b)));
+    const blocked = openTodos
+      .filter((todo) => todo.parsed.values.blocked || todo.parsed.status === "blocked")
+      .sort((a, b) => todoDateValue(a).localeCompare(todoDateValue(b)));
+    const solo = openTodos
+      .filter((todo) => !todo.parsed.projects.length)
+      .sort((a, b) => priorityRank(a.parsed.priority) - priorityRank(b.parsed.priority) || todoDateValue(a).localeCompare(todoDateValue(b)));
+    const meetings = state.journal
+      .filter((note) => note.date && note.date >= today)
+      .sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title))
+      .slice(0, 8);
+    const visibleProjectList = visibleProjects();
+    const activeProjects = visibleProjectList.slice(0, 6);
+
+    setText("todayFollowupCount", followups.length);
+    setText("todayOverdueCount", overdue.length);
+    setText("todayWaitingCount", waiting.length);
+    setText("todayBlockedCount", blocked.length);
+    setText("todaySoloCount", solo.length);
+    setText("todayMeetingsCount", meetings.length);
+    setText("todayProjectsCount", visibleProjectList.length);
+
+    elements.todayBossBrief.innerHTML = "";
+    elements.todayBossBrief.append(
+      renderBriefLine("Actif", activeProjects.map((project) => project.title).join(", ")),
+      renderBriefLine("A relancer", sourceValues(followups, "waiting").join(", ") || `${followups.length} action(s)`),
+      renderBriefLine("Bloque", sourceValues(blocked, "blocked").join(", ") || `${blocked.length} action(s)`),
+      renderBriefLine("Urgent", `${overdue.length} en retard, ${followups.length} relance(s)`),
+    );
+
+    const displayOptions = { visibleTokens: todoVisibleTokens(), dragHandle: false };
+    renderTodoGroup(elements.todayFollowups, followups.slice(0, 8), "Aucune relance arrivee.", { ...displayOptions, quickActions: true });
+    renderTodoGroup(elements.todayOverdue, overdue.slice(0, 8), "Aucune echeance depassee.", { ...displayOptions, quickActions: true });
+    renderTodoGroup(elements.todayWaiting, waiting.slice(0, 8), "Aucune attente suivie.", { ...displayOptions, quickActions: true });
+    renderTodoGroup(elements.todayBlocked, blocked.slice(0, 8), "Aucun blocage suivi.", { ...displayOptions, quickActions: true });
+    renderTodoGroup(elements.todaySolo, solo.slice(0, 8), "Aucune todo solitaire ouverte.", displayOptions);
+
+    elements.todayMeetings.innerHTML = "";
+    if (!meetings.length) {
+      renderEmpty(elements.todayMeetings, "Aucune seance planifiee.");
+    } else {
+      for (const note of meetings) elements.todayMeetings.append(createJournalShortcut(note));
     }
   }
 
@@ -3189,7 +3496,7 @@ async function createApp() {
     if (!project) return;
     elements.projectTitle.value = project.title;
     elements.projectBody.value = project.body;
-    elements.projectPreview.innerHTML = markdownToHtml(project.body);
+    mountProjectOverTypeEditor("home");
     setText("selectedProjectName", `Projet ${project.title}`);
     setText("selectedProjectTodos", `${projectTodos(project.title).length} ouverts`);
     setText("selectedProjectActivity", `${daysBetween(project.updatedAt)} jour(s)`);
@@ -3216,30 +3523,6 @@ async function createApp() {
     elements.dateFormatSelect.value = state.config.dateInsert;
     elements.staleDaysInput.value = state.config.staleAfterDays;
     elements.configPreview.textContent = JSON.stringify(state.config, null, 2);
-  }
-
-  function editorGridFor(scope) {
-    return {
-      projectHome: elements.projectEditorGrid,
-      project: elements.projectFocusEditorGrid,
-    }[scope];
-  }
-
-  function setEditorMode(scope, mode) {
-    editorModes[scope] = mode;
-    const grid = editorGridFor(scope);
-    if (!grid) return;
-    grid.classList.toggle("editor-mode-write", mode === "write");
-    grid.classList.toggle("editor-mode-preview", mode === "preview");
-    document.querySelectorAll(`[data-editor-mode-button^="${scope}:"]`).forEach((button) => {
-      button.classList.toggle("active", button.dataset.editorModeButton === `${scope}:${mode}`);
-    });
-  }
-
-  function renderEditorModes() {
-    for (const [scope, mode] of Object.entries(editorModes)) {
-      setEditorMode(scope, mode);
-    }
   }
 
   function renderSnapshots() {
@@ -3308,6 +3591,10 @@ async function createApp() {
     const contextAutoHidden = true;
     document.body.style.setProperty("--nav-width", `${state.config.layout.navCollapsed ? 42 : state.config.layout.navWidth}px`);
     document.body.style.setProperty("--context-width", `${contextAutoHidden ? 0 : state.config.layout.contextCollapsed ? 42 : state.config.layout.contextWidth}px`);
+    document.body.style.setProperty("--project-list-width", `${state.config.layout.projectListWidth}px`);
+    document.body.style.setProperty("--project-side-width", `${state.config.layout.projectSideWidth}px`);
+    document.body.style.setProperty("--journal-list-width", `${state.config.layout.journalListWidth}px`);
+    document.body.style.setProperty("--journal-side-width", `${state.config.layout.journalSideWidth}px`);
     document.body.classList.toggle("is-nav-collapsed", state.config.layout.navCollapsed);
     document.body.classList.toggle("is-context-collapsed", state.config.layout.contextCollapsed);
     document.body.classList.toggle("is-context-auto-hidden", contextAutoHidden);
@@ -3345,7 +3632,9 @@ async function createApp() {
   }
 
   function renderTodoDisplayOptions() {
-    elements.todoSortSelect.value = state.config.todo.sortMode || "file";
+    document.querySelectorAll("[data-todo-sort]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.todoSort === (state.config.todo.sortMode || "file"));
+    });
     const visibleTokens = todoVisibleTokens();
     elements.todoShowId.checked = visibleTokens.id !== false;
     elements.todoShowCreated.checked = visibleTokens.created !== false;
@@ -3381,6 +3670,7 @@ async function createApp() {
     renderTodoSelectFilters();
     renderTodoDisplayOptions();
     const query = elements.todoViewSearch.value.trim().toLowerCase();
+    elements.todoClearSearchButton.classList.toggle("hidden", !elements.todoViewSearch.value);
     const project = elements.todoViewProjectFilter.value;
     const context = elements.todoViewContextFilter.value;
     let todos = parsedTodos().filter((todo) => {
@@ -3437,28 +3727,62 @@ async function createApp() {
 
     elements.projectFocusTitle.value = project.title;
     elements.projectFocusBody.value = project.body;
-    elements.projectFocusPreview.innerHTML = markdownToHtml(project.body);
-    renderTodoGroup(
-      elements.projectLinkedTodos,
-      projectTodos(project.title).filter((todo) => !todo.parsed.completed),
-      "Aucune action liée à ce projet.",
-      { dragHandle: true, visibleTokens: todoVisibleTokens() },
-    );
-    const notes = projectNotes(project.title);
-    if (notes.length) {
-      for (const note of notes.slice(0, 4)) {
-        const row = document.createElement("button");
-        row.type = "button";
-        row.className = "journal-row";
-        row.innerHTML = `<span class="row-title">${note.title}</span><span class="row-meta">${note.kind}</span>`;
-        row.addEventListener("click", () => {
-          selectedJournalId = note.id;
-          activeView = "journal";
-          render();
-        });
-        elements.projectLinkedTodos.append(row);
-      }
+    mountProjectOverTypeEditor("focus");
+    renderProjectTimeline(project);
+  }
+
+  function renderProjectTimeline(project) {
+    const todos = projectTodos(project.title)
+      .filter((todo) => !todo.parsed.completed)
+      .map((todo) => ({
+        type: "todo",
+        date: todo.parsed.followupDate || todo.parsed.dueDate || todo.parsed.createdDate || todo.updatedAt || "",
+        todo,
+      }));
+    const notes = projectNotes(project.title).map((note) => ({
+      type: "note",
+      date: note.date || note.updatedAt || "",
+      note,
+    }));
+    const items = [...todos, ...notes]
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+      .slice(0, 12);
+
+    elements.projectLinkedTodos.innerHTML = "";
+    if (!items.length) {
+      renderEmpty(elements.projectLinkedTodos, "Aucun élément lié à ce projet.");
+      return;
     }
+
+    for (const item of items) {
+      if (item.type === "todo") {
+        renderTodoGroup(elements.projectLinkedTodos, [item.todo], "Aucune action liée à ce projet.", {
+          dragHandle: true,
+          visibleTokens: todoVisibleTokens(),
+          append: true,
+        });
+        continue;
+      }
+
+      elements.projectLinkedTodos.append(createTimelineNoteRow(item.note));
+    }
+  }
+
+  function createTimelineNoteRow(note) {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = "timeline-row";
+    row.innerHTML = `
+      <span class="timeline-kind">note</span>
+      <span class="row-title">${escapeAppHtml(note.title)}</span>
+      <span class="row-meta">${escapeAppHtml(note.date || "")} · ${escapeAppHtml(note.kind || "note")}</span>
+    `;
+    row.addEventListener("click", () => {
+      selectedJournalId = note.id;
+      activeView = "journal";
+      render();
+    });
+    return row;
   }
 
   function renderJournalView() {
@@ -3583,6 +3907,9 @@ async function createApp() {
           deleteTodo(todo.id);
           return;
         }
+        if (event.target.closest(".todo-link")) {
+          return;
+        }
         if (event.target.closest(".todo-text")) {
           startInlineEdit(row, todo.id);
           return;
@@ -3659,6 +3986,7 @@ async function createApp() {
     updateCounts();
     renderFilters();
     renderTodos();
+    renderTodayView();
     renderProjects();
     renderProjectEditor();
     renderTodoView();
@@ -3667,7 +3995,6 @@ async function createApp() {
     renderCalendarView();
     renderTriage();
     renderConfig();
-    renderEditorModes();
     if (!elements.snapshotPanel.classList.contains("hidden")) renderSnapshots();
   }
 
@@ -3782,7 +4109,7 @@ async function createApp() {
       elements.todoViewProjectFilter.value = "";
       elements.todoViewSearch.value = "";
       activeFilter = `@${value}`;
-    } else if (["id", "created", "due", "status", "waiting"].includes(type)) {
+    } else if (["id", "created", "due", "status", "waiting", "blocked"].includes(type)) {
       elements.todoViewSearch.value = `${type}:${value}`;
       activeFilter = type === "id" ? "id:" : activeFilter;
     } else {
@@ -3830,7 +4157,7 @@ async function createApp() {
     const project = selectedProject();
     if (!project) return;
     project.title = elements.projectTitle.value.trim() || project.title;
-    project.body = elements.projectBody.value;
+    project.body = projectMarkdownFromEditor("home");
     project.updatedAt = new Date().toISOString();
     syncProjectFromMarkdown(project);
     persist();
@@ -3841,36 +4168,40 @@ async function createApp() {
   function saveProjectBodyOnly() {
     const project = selectedProject();
     if (!project) return;
-    project.body = elements.projectBody.value;
-    project.updatedAt = new Date().toISOString();
-    syncProjectFromMarkdown(project);
-    elements.projectPreview.innerHTML = markdownToHtml(project.body);
-    persist();
-    renderProjects();
+    saveProjectMarkdown(project, projectMarkdownFromEditor("home"), "home");
   }
 
   function saveFocusedProjectBodyOnly() {
     const project = selectedProject();
     if (!project) return;
-    project.body = elements.projectFocusBody.value;
-    project.updatedAt = new Date().toISOString();
-    syncProjectFromMarkdown(project);
-    elements.projectFocusPreview.innerHTML = markdownToHtml(project.body);
-    persist();
-    renderProjects();
+    saveProjectMarkdown(project, projectMarkdownFromEditor("focus"), "focus");
   }
 
   function saveFocusedProject() {
     const project = selectedProject();
     if (!project) return;
     project.title = elements.projectFocusTitle.value.trim() || project.title;
-    project.body = elements.projectFocusBody.value;
+    project.body = projectMarkdownFromEditor("focus");
     project.updatedAt = new Date().toISOString();
     syncProjectFromMarkdown(project);
-    elements.projectFocusPreview.innerHTML = markdownToHtml(project.body);
     persist();
     renderProjects();
     renderProjectEditor();
+  }
+
+  function insertProjectMarkdown(scope, text) {
+    const slot = projectOverTypeEditors[scope];
+    const parts = projectEditorParts(scope);
+    if (slot.editor) {
+      slot.editor.insertBlock(text);
+    } else {
+      insertAtCursor(parts.textarea, text);
+      if (scope === "focus") {
+        saveFocusedProjectBodyOnly();
+      } else {
+        saveProjectBodyOnly();
+      }
+    }
   }
 
   function createProject() {
@@ -3962,6 +4293,7 @@ async function createApp() {
     activeView = "journal";
     persist();
     render();
+    requestAnimationFrame(() => mountJournalOverTypeEditor());
   }
 
   function createJournalNoteFromProject() {
@@ -4041,13 +4373,18 @@ async function createApp() {
     const note = selectedJournal();
     if (!note) return;
     const projects = noteProjects(note);
-    const project = state.projects.find((item) => item.title === projects[0]);
-    if (!project) return;
+    const linkedProjects = projects
+      .map((title) => state.projects.find((item) => item.title === title))
+      .filter(Boolean);
+    if (!linkedProjects.length) return;
     const frontmatter = parseFrontmatter(note.body);
     const entry = `\n# Avancement\n\n## ${formatDate(new Date(note.date || new Date()), state.config.dateInsert)} - ${note.title}\n\n${frontmatter.body.trim()}\n`;
-    project.body = `${project.body.trim()}\n${entry}`;
-    project.updatedAt = new Date().toISOString();
-    selectedProjectId = project.id;
+    const updatedAt = new Date().toISOString();
+    for (const project of linkedProjects) {
+      project.body = `${project.body.trim()}\n${entry}`;
+      project.updatedAt = updatedAt;
+    }
+    selectedProjectId = linkedProjects[0].id;
     activeView = "project";
     persist();
     render();
@@ -4088,6 +4425,34 @@ async function createApp() {
     });
   }
 
+  function setupSplitResize(handle, options) {
+    if (!handle) return;
+    let startX = 0;
+    let startWidth = 0;
+
+    handle.addEventListener("pointerdown", (event) => {
+      startX = event.clientX;
+      startWidth = state.config.layout[options.widthKey];
+      handle.classList.add("is-dragging");
+      handle.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+
+    handle.addEventListener("pointermove", (event) => {
+      if (!handle.classList.contains("is-dragging")) return;
+      const delta = (event.clientX - startX) * options.direction;
+      state.config.layout[options.widthKey] = Math.min(options.max, Math.max(options.min, startWidth + delta));
+      renderLayoutState();
+    });
+
+    handle.addEventListener("pointerup", (event) => {
+      if (!handle.classList.contains("is-dragging")) return;
+      handle.classList.remove("is-dragging");
+      handle.releasePointerCapture(event.pointerId);
+      persist();
+    });
+  }
+
   function setupEvents() {
     elements.toggleNavButton.addEventListener("click", () => {
       state.config.layout.navCollapsed = !state.config.layout.navCollapsed;
@@ -4119,6 +4484,10 @@ async function createApp() {
         state.config.layout.contextCollapsed = !state.config.layout.contextCollapsed;
       },
     });
+    setupSplitResize(elements.resizeProjectListHandle, { widthKey: "projectListWidth", min: 180, max: 420, direction: 1 });
+    setupSplitResize(elements.resizeProjectSideHandle, { widthKey: "projectSideWidth", min: 180, max: 420, direction: -1 });
+    setupSplitResize(elements.resizeJournalListHandle, { widthKey: "journalListWidth", min: 180, max: 460, direction: 1 });
+    setupSplitResize(elements.resizeJournalSideHandle, { widthKey: "journalSideWidth", min: 160, max: 420, direction: -1 });
     document.querySelectorAll("[data-view-button]").forEach((button) => {
       button.addEventListener("click", () => {
         activeView = button.dataset.viewButton;
@@ -4134,12 +4503,6 @@ async function createApp() {
         renderTodoView();
       });
     });
-    document.querySelectorAll("[data-editor-mode-button]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const [scope, mode] = button.dataset.editorModeButton.split(":");
-        setEditorMode(scope, mode);
-      });
-    });
     elements.addTodoButton.addEventListener("click", addTodo);
     elements.captureInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") addTodo();
@@ -4149,22 +4512,26 @@ async function createApp() {
       elements.captureInput.focus();
     });
     elements.insertProjectDateButton.addEventListener("click", () => {
-      insertAtCursor(elements.projectBody, `\n## ${formatDate(new Date(), state.config.dateInsert)}\n\n- `);
-      saveSelectedProject();
+      insertProjectMarkdown("home", `\n## ${formatDate(new Date(), state.config.dateInsert)}\n\n- `);
     });
     elements.projectBody.addEventListener("input", saveProjectBodyOnly);
     elements.projectTitle.addEventListener("change", saveSelectedProject);
     elements.projectFocusBody.addEventListener("input", saveFocusedProjectBodyOnly);
     elements.projectFocusTitle.addEventListener("change", saveFocusedProject);
     elements.newProjectButton.addEventListener("click", createProject);
+    elements.todayNewJournalButton.addEventListener("click", () => createJournalNote({ kind: "meeting", title: `${todayISO()} - Point` }));
+    elements.todayOpenProjectsButton.addEventListener("click", () => {
+      activeView = "project";
+      render();
+    });
     elements.projectNewJournalButton.addEventListener("click", createJournalNoteFromProject);
     elements.archiveProjectButton.addEventListener("click", archiveSelectedProject);
     elements.deleteProjectButton.addEventListener("click", deleteSelectedProject);
-    elements.newJournalButton.addEventListener("click", createJournalNote);
+    elements.newJournalButton.addEventListener("click", () => createJournalNote());
     elements.deleteJournalButton.addEventListener("click", deleteSelectedJournalNote);
     elements.journalKindFilter.addEventListener("change", renderJournalView);
     elements.journalTitle.addEventListener("change", saveJournalNote);
-    elements.insertJournalDateButton.addEventListener("click", () => {
+    elements.insertJournalDateButton?.addEventListener("click", () => {
       const text = `\n## ${formatDate(new Date(), state.config.dateInsert)}\n\n- `;
       if (journalOverTypeEditor) {
         journalOverTypeEditor.insertBlock(text);
@@ -4173,16 +4540,23 @@ async function createApp() {
       }
       saveJournalNote();
     });
-    elements.journalTodoFromSelectionButton.addEventListener("click", createTodoFromJournalSelection);
-    elements.journalExtractTasksButton.addEventListener("click", extractJournalTasks);
-    elements.journalAppendProjectButton.addEventListener("click", appendJournalToProject);
+    elements.journalTodoFromSelectionButton?.addEventListener("click", createTodoFromJournalSelection);
+    elements.journalExtractTasksButton?.addEventListener("click", extractJournalTasks);
+    elements.journalAppendProjectButton?.addEventListener("click", appendJournalToProject);
     elements.todoViewSearch.addEventListener("input", renderTodoView);
+    elements.todoClearSearchButton.addEventListener("click", () => {
+      elements.todoViewSearch.value = "";
+      elements.todoViewSearch.focus();
+      renderTodoView();
+    });
     elements.todoViewProjectFilter.addEventListener("change", renderTodoView);
     elements.todoViewContextFilter.addEventListener("change", renderTodoView);
-    elements.todoSortSelect.addEventListener("change", () => {
-      state.config.todo.sortMode = elements.todoSortSelect.value;
-      persist();
-      renderTodoView();
+    document.querySelectorAll("[data-todo-sort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.config.todo.sortMode = button.dataset.todoSort;
+        persist();
+        renderTodoView();
+      });
     });
     [
       [elements.todoShowId, "id"],
@@ -4230,14 +4604,12 @@ async function createApp() {
           question: "\n- Question : ",
           code: "\n```js\n\n```\n",
         }[template];
-        insertAtCursor(elements.projectBody, text);
-        saveSelectedProject();
+        insertProjectMarkdown(activeView === "project" ? "focus" : "home", text);
       });
     });
     document.querySelectorAll(".icon-choice").forEach((button) => {
       button.addEventListener("click", () => {
-        insertAtCursor(elements.projectBody, button.dataset.icon);
-        saveSelectedProject();
+        insertProjectMarkdown(activeView === "project" ? "focus" : "home", button.dataset.icon);
       });
     });
     elements.importButton.addEventListener("click", () => elements.importFileInput.click());
@@ -4287,8 +4659,7 @@ async function createApp() {
       }
       if (event.ctrlKey && event.key.toLowerCase() === "d") {
         event.preventDefault();
-        insertAtCursor(elements.projectBody, formatDate(new Date(), state.config.dateInsert));
-        saveSelectedProject();
+        insertProjectMarkdown(activeView === "project" ? "focus" : "home", formatDate(new Date(), state.config.dateInsert));
       }
       if (event.ctrlKey && event.key.toLowerCase() === "k") {
         event.preventDefault();
