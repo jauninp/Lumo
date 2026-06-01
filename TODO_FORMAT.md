@@ -156,6 +156,42 @@ is:priority
 
 - `is:alert` = `due:` ou `followup:` aujourd'hui ou en retard.
 
+## Kanban
+
+La vue Kanban lit et modifie directement les lignes todo.txt.
+La configuration de base est dans le JSON `config.kanban`.
+
+Exemple :
+
+```json
+{
+  "field": "status",
+  "columns": [
+    { "id": "none", "title": "Sans statut", "value": "" },
+    { "id": "next", "title": "Next", "value": "next" },
+    { "id": "waiting", "title": "Waiting", "value": "waiting" },
+    { "id": "blocked", "title": "Blocked", "value": "blocked" },
+    { "id": "done", "title": "Done", "value": "done" }
+  ]
+}
+```
+
+Champs Kanban supportes au depart :
+
+```txt
+status
+project
+context
+priority
+```
+
+Regles :
+
+- `field: "status"` lit/ecrit `status:...`.
+- `value: "done"` marque la todo terminee.
+- `value: ""` represente l'absence de valeur pour le champ.
+- le drag-drop garde todo.txt comme source de verite.
+
 ## Echeances et relances
 
 ### due

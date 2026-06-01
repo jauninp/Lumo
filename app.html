@@ -71,6 +71,7 @@ select:focus-visible {
 }
 
 .button {
+  position: relative;
   height: 35px;
   display: inline-flex;
   align-items: center;
@@ -81,6 +82,18 @@ select:focus-visible {
   background: var(--paper);
   padding: 0 12px;
   font-weight: 650;
+}
+
+.button.has-export-dirty::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--paper);
+  border-radius: 999px;
+  background: var(--red);
 }
 
 .button.primary {
@@ -201,6 +214,41 @@ select:focus-visible {
   border-color: #9dbcb4;
   background: var(--green-soft);
   color: var(--green);
+}
+
+.undo-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10020;
+  display: inline-flex;
+  min-width: 260px;
+  max-width: min(420px, calc(100vw - 36px));
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  padding: 11px 12px;
+  color: var(--ink);
+}
+
+.undo-toast span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 650;
+}
+
+.undo-toast button {
+  min-height: 28px;
+  border-color: #9dbcb4;
+  background: var(--green-soft);
+  color: var(--green);
+  padding: 0 10px;
+  font-weight: 760;
 }
 
 .search-kind {
@@ -880,11 +928,24 @@ select:focus-visible {
 
 .calendar-day.today {
   border-color: var(--green);
+  background: #eef8f3;
+  box-shadow: inset 0 0 0 2px #8fb7aa;
 }
 
 .calendar-day-number {
   display: block;
   font-weight: 760;
+}
+
+.calendar-day.today .calendar-day-number {
+  display: inline-flex;
+  min-width: 28px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--green);
+  color: #fff;
 }
 
 .calendar-badges {
@@ -1161,10 +1222,31 @@ select:focus-visible {
 }
 
 .project-row-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  font-weight: 720;
+}
+
+.project-row-name {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: 720;
+}
+
+.project-row-badges {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 4px;
+}
+
+.project-row-badges .chip {
+  min-height: 17px;
+  padding: 0 6px;
+  font-size: 10px;
 }
 
 .project-row-meta {
@@ -1417,6 +1499,7 @@ select:focus-visible {
 }
 
 .todo-row {
+  position: relative;
   width: 100%;
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr) 28px;
@@ -1481,6 +1564,10 @@ select:focus-visible {
 .todo-main {
   min-width: 0;
   overflow: hidden;
+}
+
+.todo-row.has-actions .todo-main {
+  padding-right: 260px;
 }
 
 .todo-text {
@@ -1650,6 +1737,7 @@ select:focus-visible {
   align-self: center;
   border-color: transparent;
   color: var(--quiet);
+  cursor: pointer;
   font-size: 16px;
   line-height: 1;
 }
@@ -1660,22 +1748,25 @@ select:focus-visible {
 }
 
 .todo-quick-actions {
-  display: flex;
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  height: 0;
-  overflow: hidden;
+  transform: translateY(-50%);
   opacity: 0;
-  padding: 0;
-  transition: height 0.12s ease, opacity 0.12s ease, padding 0.12s ease;
+  padding-right: 10px;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
 }
 
-.todo-row:hover + .todo-quick-actions,
+.todo-row:hover .todo-quick-actions,
 .todo-quick-actions:hover {
-  height: 31px;
-  border-bottom: 1px solid var(--line-soft);
   opacity: 1;
-  padding: 0 0 7px;
+  pointer-events: auto;
 }
 
 .quick-action {
@@ -1827,6 +1918,7 @@ select:focus-visible {
       </header>
       <div id="searchPanel" class="search-panel hidden"></div>
       <div id="todoAutocompletePanel" class="todo-autocomplete hidden"></div>
+      <div id="undoToast" class="undo-toast hidden" role="status" aria-live="polite"></div>
       <div id="snapshotPanel" class="snapshot-panel hidden">
         <div class="snapshot-head">
           <div>
@@ -2097,6 +2189,7 @@ select:focus-visible {
                 </div>
                 <div class="toolbar">
                   <button id="newProjectButton" class="button primary">Nouveau projet</button>
+                  <button id="exportProjectMarkdownButton" class="button">Export .md</button>
                   <button id="archiveProjectButton" class="button">Archiver</button>
                   <button id="deleteProjectButton" class="button danger">Supprimer</button>
                 </div>
@@ -2156,6 +2249,7 @@ select:focus-visible {
                 </div>
                 <div class="toolbar">
                   <button id="newJournalButton" class="button primary">Nouvelle note</button>
+                  <button id="exportJournalMarkdownButton" class="button">Export .md</button>
                   <button id="deleteJournalButton" class="button danger">Supprimer</button>
                 </div>
               </div>
@@ -2259,6 +2353,8 @@ select:focus-visible {
                 </div>
                 <div class="toolbar">
                   <span id="scratchpadSavedAt" class="count"></span>
+                  <button id="scratchpadEmailButton" class="button">Email</button>
+                  <button id="exportScratchpadMarkdownButton" class="button">Export .md</button>
                 </div>
               </div>
 
@@ -2359,6 +2455,7 @@ const defaultConfig = {
       context: true,
     },
   },
+  exportDirty: false,
   kanban: {
     field: "status",
     columns: [
@@ -2616,7 +2713,7 @@ async function createOverTypeEditor({ host, markdown, onChange, toolbarButtons }
     toolbar: true,
     ...(customToolbarButtons ? { toolbarButtons: customToolbarButtons } : {}),
     spellcheck: false,
-    showStats: false,
+    showStats: true,
     autoResize: false,
     height: "640px",
     onChange: (value) => onChange(value || ""),
@@ -3178,7 +3275,7 @@ function createTodoRow(todo, options = {}) {
   const text = document.createElement("span");
   text.className = "todo-text editable";
   text.innerHTML = renderTodoTokens(todo.raw, options);
-  text.title = "Cliquer pour éditer";
+  text.title = todo.raw;
 
   const deleteButton = document.createElement("span");
   deleteButton.className = "todo-delete";
@@ -3222,6 +3319,28 @@ function insertAtCursor(textarea, text) {
   textarea.focus();
 }
 
+function slugFilename(value, fallback = "document") {
+  const slug = String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^A-Za-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+  return slug || fallback;
+}
+
+function downloadTextFile(filename, text, type = "text/markdown;charset=utf-8") {
+  const blob = new Blob([text || ""], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 function defaultTodoVisibleTokens() {
   return {
     id: true,
@@ -3256,6 +3375,8 @@ async function createApp() {
   const collapsedProjectGroups = new Set();
   let scratchpadOverTypeEditor = null;
   let scratchpadOverTypeLoading = false;
+  let undoToastTimer = null;
+  let pendingUndo = null;
   const projectOverTypeEditors = {
     home: { editor: null, projectId: null, loading: false },
     focus: { editor: null, projectId: null, loading: false },
@@ -3276,6 +3397,7 @@ async function createApp() {
     searchPanel: byId("searchPanel"),
     softAlertButton: byId("softAlertButton"),
     softAlertLabel: byId("softAlertLabel"),
+    undoToast: byId("undoToast"),
     todoAutocompletePanel: byId("todoAutocompletePanel"),
     toggleNavButton: byId("toggleNavButton"),
     toggleContextButton: byId("toggleContextButton"),
@@ -3302,6 +3424,8 @@ async function createApp() {
     scratchpadBody: byId("scratchpadBody"),
     scratchpadEditorHost: byId("scratchpadEditorHost"),
     scratchpadSavedAt: byId("scratchpadSavedAt"),
+    scratchpadEmailButton: byId("scratchpadEmailButton"),
+    exportScratchpadMarkdownButton: byId("exportScratchpadMarkdownButton"),
     projectTemplateEditor: byId("projectTemplateEditor"),
     journalTemplateEditor: byId("journalTemplateEditor"),
     resetTemplatesButton: byId("resetTemplatesButton"),
@@ -3338,9 +3462,11 @@ async function createApp() {
     projectLinkedTodos: byId("projectLinkedTodos"),
     projectNewJournalButton: byId("projectNewJournalButton"),
     newProjectButton: byId("newProjectButton"),
+    exportProjectMarkdownButton: byId("exportProjectMarkdownButton"),
     archiveProjectButton: byId("archiveProjectButton"),
     deleteProjectButton: byId("deleteProjectButton"),
     newJournalButton: byId("newJournalButton"),
+    exportJournalMarkdownButton: byId("exportJournalMarkdownButton"),
     deleteJournalButton: byId("deleteJournalButton"),
     journalSearchInput: byId("journalSearchInput"),
     journalKindFilter: byId("journalKindFilter"),
@@ -3371,8 +3497,18 @@ async function createApp() {
     activeIndex: 0,
   };
 
-  function persist() {
+  function renderExportDirtyState() {
+    const dirty = Boolean(state.config.exportDirty);
+    elements.exportButton.classList.toggle("has-export-dirty", dirty);
+    elements.exportButton.title = dirty ? "Des changements locaux ne sont pas encore exportes en JSON" : "Exporter les donnees JSON";
+  }
+
+  function persist(options = {}) {
+    if (options.markExportDirty !== false) {
+      state.config.exportDirty = true;
+    }
     state = stampSchema(state);
+    renderExportDirtyState();
     return saveAppState(state);
   }
 
@@ -3872,7 +4008,14 @@ async function createApp() {
 
     for (const todo of todos) {
       const row = createTodoRow(todo, options);
+      if (options.quickActions) {
+        row.classList.add("has-actions");
+        row.append(createTodoQuickActions(todo, row));
+      }
       row.addEventListener("click", (event) => {
+        if (event.target.closest(".todo-quick-actions")) {
+          return;
+        }
         if (event.target.closest(".todo-delete")) {
           deleteTodo(todo.id);
           return;
@@ -3907,9 +4050,6 @@ async function createApp() {
         reorderTodo(event.dataTransfer.getData("text/plain"), todo.id);
       });
       container.append(row);
-      if (options.quickActions) {
-        container.append(createTodoQuickActions(todo));
-      }
     }
   }
 
@@ -3934,6 +4074,15 @@ async function createApp() {
       .replace(new RegExp(`(^|\\s)${key}:[^\\s]+(?=\\s|$)`, "g"), " ")
       .trim()
       .replace(/\s+/g, " ");
+  }
+
+  function ensureWaitingToken(raw) {
+    let source = removeTodoKey(raw, "status");
+    source = source.trim().replace(/\s+/g, " ");
+    if (!/(^|\s)waiting:[^\s]*(?=\s|$)/.test(source)) {
+      source = `${source} waiting:`.trim();
+    }
+    return source;
   }
 
   function addTodoToken(raw, token) {
@@ -3995,13 +4144,42 @@ async function createApp() {
   function deferTodoFollowup(todoId, days) {
     const todo = state.todos.find((item) => item.id === todoId);
     if (!todo) return;
+    const before = clone(todo);
     todo.raw = setTodoKey(todo.raw, "followup", isoDatePlusDays(days));
     todo.updatedAt = new Date().toISOString();
     persist();
     render();
+    showTodoChangeUndo("Followup modifie", before);
   }
 
-  function createTodoQuickActions(todo) {
+  function startWaitingEdit(todo, row) {
+    const stored = state.todos.find((item) => item.id === todo.id);
+    if (!stored) return;
+    const before = clone(stored);
+    stored.raw = ensureWaitingToken(stored.raw);
+    stored.updatedAt = new Date().toISOString();
+    persist();
+    startInlineEdit(row, stored.id, { cursorAfter: "waiting:" });
+    showTodoChangeUndo("Todo mise en attente", before);
+  }
+
+  function markTodoNext(todoId) {
+    const todo = state.todos.find((item) => item.id === todoId);
+    if (!todo) return;
+    const before = clone(todo);
+    let raw = reopenTodoRaw(todo.raw);
+    raw = removeTodoKey(raw, "waiting");
+    raw = removeTodoKey(raw, "blocked");
+    raw = setTodoKey(removeTodoKey(raw, "status"), "status", "next");
+    todo.raw = state.config.todo.autoId ? ensureTodoId(ensureTodoCreatedDate(raw), state.config) : ensureTodoCreatedDate(raw);
+    todo.id = parseTodo(todo.raw).id || todo.id;
+    todo.updatedAt = new Date().toISOString();
+    persist();
+    render();
+    showTodoChangeUndo("Todo mise en next", before);
+  }
+
+  function createTodoQuickActions(todo, row) {
     const actions = document.createElement("div");
     actions.className = "todo-quick-actions";
     [
@@ -4018,13 +4196,22 @@ async function createApp() {
       actions.append(button);
     });
 
-    const done = document.createElement("button");
-    done.type = "button";
-    done.className = "quick-action primary";
-    done.textContent = "done";
-    done.title = "Marquer termine";
-    done.addEventListener("click", () => toggleTodo(todo.id));
-    actions.append(done);
+    const next = document.createElement("button");
+    next.type = "button";
+    next.className = "quick-action";
+    next.textContent = "next";
+    next.title = "Mettre en prochaine action";
+    next.addEventListener("click", () => markTodoNext(todo.id));
+    actions.append(next);
+
+    const waiting = document.createElement("button");
+    waiting.type = "button";
+    waiting.className = "quick-action";
+    waiting.textContent = "wait";
+    waiting.title = "Ajouter waiting: et editer";
+    waiting.addEventListener("click", () => startWaitingEdit(todo, row));
+    actions.append(waiting);
+
     return actions;
   }
 
@@ -4252,6 +4439,13 @@ async function createApp() {
     mountScratchpadOverTypeEditor();
   }
 
+  function todosRawSortedForEditor() {
+    return [...state.todos]
+      .sort((a, b) => Number(parseTodo(a.raw).completed) - Number(parseTodo(b.raw).completed))
+      .map((todo) => todo.raw)
+      .join("\n");
+  }
+
   function renderTodos() {
     const todos = currentTodos().filter((todo) => !todo.parsed.completed);
     const inbox = todos.filter((todo) => !todo.parsed.projects.length);
@@ -4287,6 +4481,19 @@ async function createApp() {
     }
   }
 
+  function projectSignalBadges(project) {
+    const tags = new Set((project.tags || []).map((tag) => String(tag).toLowerCase()));
+    return [
+      ["important", "!", "red"],
+      ["a-venir", "à venir", "blue"],
+      ["chef", "chef", "amber"],
+      ["a-archiver", "archive ?", "violet"],
+    ]
+      .filter(([tag]) => tags.has(tag))
+      .map(([, label, color]) => `<span class="chip ${color}">${label}</span>`)
+      .join("");
+  }
+
   function renderProjects() {
     elements.projectList.innerHTML = "";
     for (const project of visibleProjects()) {
@@ -4301,6 +4508,7 @@ async function createApp() {
         </span>
         <span class="summary">${project.summary}</span>
         <span class="chips">
+          ${projectSignalBadges(project)}
           <span class="chip ${project.status === "waiting" ? "amber" : project.status === "dormant" ? "violet" : "green"}">${project.status}</span>
           <span class="chip blue">${project.kind}</span>
           <span class="chip">${openProjectTodos(project.title).length} todos</span>
@@ -4584,13 +4792,14 @@ async function createApp() {
     elements.todoViewList.classList.toggle("hidden", todoMode === "raw");
 
     if (todoMode === "raw") {
-      elements.todoRawEditor.value = state.todos.map((todo) => todo.raw).join("\n");
+      elements.todoRawEditor.value = todosRawSortedForEditor();
       return;
     }
 
     renderTodoGroup(elements.todoViewList, todos, "Aucune tâche dans cette vue.", {
       dragHandle: state.config.todo.sortMode === "file",
       visibleTokens: todoVisibleTokens(),
+      quickActions: true,
     });
   }
 
@@ -4768,7 +4977,10 @@ async function createApp() {
     row.type = "button";
     row.className = `project-row${project.id === selectedProjectId ? " active" : ""}`;
     row.innerHTML = `
-      <span class="project-row-title">${escapeAppHtml(project.title)}</span>
+      <span class="project-row-title">
+        <span class="project-row-name">${escapeAppHtml(project.title)}</span>
+        <span class="project-row-badges">${projectSignalBadges(project)}</span>
+      </span>
       <span class="project-row-meta">
         <span class="status-dot ${escapeAppHtml(project.status || "active")}"></span>
         <span>${escapeAppHtml(project.status || "active")}</span>
@@ -5172,6 +5384,7 @@ async function createApp() {
   function render() {
     renderActiveView();
     renderLayoutState();
+    renderExportDirtyState();
     updateCounts();
     renderFilters();
     renderTodos();
@@ -5249,10 +5462,60 @@ async function createApp() {
   }
 
   function deleteTodo(todoId) {
-    const todo = state.todos.find((item) => item.id === todoId);
+    const index = state.todos.findIndex((item) => item.id === todoId);
+    const todo = state.todos[index];
     if (!todo) return;
-    if (!confirm(`Supprimer cette todo ?\n\n${todo.raw}`)) return;
-    state.todos = state.todos.filter((item) => item.id !== todoId);
+    pendingUndo = { type: "deleteTodo", todo: clone(todo), index };
+    state.todos.splice(index, 1);
+    persist();
+    render();
+    showUndoToast("Todo supprimee", undoDeleteTodo);
+  }
+
+  function showUndoToast(message, onUndo) {
+    clearTimeout(undoToastTimer);
+    elements.undoToast.innerHTML = "";
+    const label = document.createElement("span");
+    label.textContent = message;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "Annuler";
+    button.addEventListener("click", onUndo);
+    elements.undoToast.append(label, button);
+    elements.undoToast.classList.remove("hidden");
+    undoToastTimer = setTimeout(() => {
+      elements.undoToast.classList.add("hidden");
+      pendingUndo = null;
+    }, 7000);
+  }
+
+  function showTodoChangeUndo(message, beforeTodo) {
+    pendingUndo = { type: "updateTodo", todo: beforeTodo };
+    showUndoToast(message, undoTodoChange);
+  }
+
+  function undoTodoChange() {
+    if (!pendingUndo || pendingUndo.type !== "updateTodo") return;
+    clearTimeout(undoToastTimer);
+    const index = state.todos.findIndex((item) => item.id === pendingUndo.todo.id);
+    if (index >= 0) {
+      state.todos[index] = pendingUndo.todo;
+    } else {
+      state.todos.unshift(pendingUndo.todo);
+    }
+    pendingUndo = null;
+    elements.undoToast.classList.add("hidden");
+    persist();
+    render();
+  }
+
+  function undoDeleteTodo() {
+    if (!pendingUndo || pendingUndo.type !== "deleteTodo") return;
+    clearTimeout(undoToastTimer);
+    const index = Math.min(pendingUndo.index, state.todos.length);
+    state.todos.splice(index, 0, pendingUndo.todo);
+    pendingUndo = null;
+    elements.undoToast.classList.add("hidden");
     persist();
     render();
   }
@@ -5318,7 +5581,7 @@ async function createApp() {
     render();
   }
 
-  function startInlineEdit(row, todoId) {
+  function startInlineEdit(row, todoId, options = {}) {
     const todo = state.todos.find((item) => item.id === todoId);
     if (!todo) return;
     const text = row.querySelector(".todo-text");
@@ -5328,7 +5591,14 @@ async function createApp() {
     row.draggable = false;
     text.replaceWith(input);
     input.focus();
-    input.select();
+    if (options.cursorAfter) {
+      const cursor = input.value.indexOf(options.cursorAfter);
+      const position = cursor >= 0 ? cursor + options.cursorAfter.length : input.value.length;
+      input.selectionStart = position;
+      input.selectionEnd = position;
+    } else {
+      input.select();
+    }
     setupTodoAutocomplete(input);
 
     input.addEventListener("pointerdown", (event) => {
@@ -5433,23 +5703,28 @@ async function createApp() {
   }
 
   function saveRawTodos() {
-    const currentRaw = state.todos.map((todo) => todo.raw).join("\n");
+    const currentRaw = todosRawSortedForEditor();
     if (elements.todoRawEditor.value.trim() === currentRaw.trim()) return;
     saveSnapshot("Avant edition raw todo.txt", state);
     const now = new Date().toISOString();
-    state.todos = elements.todoRawEditor.value
+    const existingByRaw = new Map(state.todos.map((todo) => [todo.raw, todo]));
+    const nextTodos = elements.todoRawEditor.value
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean)
       .map((raw, index) => ({
         raw: state.config.todo.autoId ? ensureTodoId(ensureTodoCreatedDate(raw), state.config) : ensureTodoCreatedDate(raw),
-        createdAt: state.todos[index]?.createdAt || now,
+        createdAt: existingByRaw.get(raw)?.createdAt || now,
         updatedAt: now,
       }))
       .map((todo, index) => ({
         ...todo,
-        id: parseTodo(todo.raw).id || state.todos[index]?.id || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${index}`),
+        id: parseTodo(todo.raw).id || existingByRaw.get(todo.raw)?.id || (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${index}`),
       }));
+    state.todos = [
+      ...nextTodos.filter((todo) => !parseTodo(todo.raw).completed),
+      ...nextTodos.filter((todo) => parseTodo(todo.raw).completed),
+    ];
     for (const todo of state.todos) ensureProjectsFromTodoRaw(todo.raw, "raw todo.txt");
     persist();
     render();
@@ -5473,6 +5748,34 @@ async function createApp() {
 
   function saveScratchpad() {
     saveScratchpadMarkdown(scratchpadOverTypeEditor?.getMarkdown() || elements.scratchpadBody.value);
+  }
+
+  function emailScratchpad() {
+    const selection = scratchpadOverTypeEditor?.getSelection() || "";
+    const body = selection.trim() || scratchpadOverTypeEditor?.getMarkdown() || elements.scratchpadBody.value || "";
+    if (!body.trim()) return;
+    const subject = encodeURIComponent("Worklog - Bloc-notes");
+    const encodedBody = encodeURIComponent(body);
+    window.location.href = `mailto:?subject=${subject}&body=${encodedBody}`;
+  }
+
+  function exportFocusedProjectMarkdown() {
+    const project = selectedProject();
+    if (!project) return;
+    const markdown = projectMarkdownFromEditor(activeView === "project" ? "focus" : "home");
+    downloadTextFile(`${slugFilename(project.title, "projet")}.md`, markdown);
+  }
+
+  function exportSelectedJournalMarkdown() {
+    const note = selectedJournal();
+    if (!note) return;
+    const markdown = journalOverTypeEditor?.getMarkdown() || elements.journalBody.value || note.body || "";
+    downloadTextFile(`${slugFilename(note.title, "journal")}.md`, markdown);
+  }
+
+  function exportScratchpadMarkdown() {
+    const markdown = scratchpadOverTypeEditor?.getMarkdown() || elements.scratchpadBody.value || state.scratchpad?.body || "";
+    downloadTextFile(`bloc-notes-${todayISO()}.md`, markdown);
   }
 
   function saveMarkdownTemplates() {
@@ -5743,6 +6046,8 @@ async function createApp() {
     elements.projectTitle.addEventListener("change", saveSelectedProject);
     elements.scratchpadBody.addEventListener("change", saveScratchpad);
     elements.scratchpadBody.addEventListener("blur", saveScratchpad);
+    elements.scratchpadEmailButton.addEventListener("click", emailScratchpad);
+    elements.exportScratchpadMarkdownButton.addEventListener("click", exportScratchpadMarkdown);
     elements.projectTemplateEditor.addEventListener("change", saveMarkdownTemplates);
     elements.journalTemplateEditor.addEventListener("change", saveMarkdownTemplates);
     elements.resetTemplatesButton.addEventListener("click", resetMarkdownTemplates);
@@ -5757,9 +6062,11 @@ async function createApp() {
       render();
     });
     elements.projectNewJournalButton.addEventListener("click", createJournalNoteFromProject);
+    elements.exportProjectMarkdownButton.addEventListener("click", exportFocusedProjectMarkdown);
     elements.archiveProjectButton.addEventListener("click", archiveSelectedProject);
     elements.deleteProjectButton.addEventListener("click", deleteSelectedProject);
     elements.newJournalButton.addEventListener("click", () => createJournalNote());
+    elements.exportJournalMarkdownButton.addEventListener("click", exportSelectedJournalMarkdown);
     elements.deleteJournalButton.addEventListener("click", deleteSelectedJournalNote);
     elements.journalSearchInput.addEventListener("input", renderJournalView);
     elements.journalKindFilter.addEventListener("change", renderJournalView);
@@ -5854,7 +6161,8 @@ async function createApp() {
         state = normalizeImportedState(JSON.parse(await file.text()));
         selectedProjectId = state.projects[0]?.id || null;
         activeFilter = "Tous";
-        await persist();
+        state.config.exportDirty = false;
+        await persist({ markExportDirty: false });
         render();
       } catch (error) {
         alert(`Import JSON impossible.\n\n${error.message || "Le fichier ne semble pas valide."}`);
@@ -5863,7 +6171,12 @@ async function createApp() {
         elements.importFileInput.value = "";
       }
     });
-    elements.exportButton.addEventListener("click", () => exportState(state));
+    elements.exportButton.addEventListener("click", async () => {
+      state.config.exportDirty = false;
+      exportState(state);
+      await persist({ markExportDirty: false });
+      renderExportDirtyState();
+    });
     elements.autoIdToggle.addEventListener("change", () => {
       state.config.todo.autoId = elements.autoIdToggle.checked;
       persist();
