@@ -611,12 +611,14 @@ select:focus-visible {
   margin-bottom: 12px;
 }
 
-.todo-search-wrap {
+.todo-search-wrap,
+.filter-search-wrap {
   position: relative;
   min-width: 0;
 }
 
-.todo-search {
+.todo-search,
+.filter-search-wrap .field {
   width: 100%;
   padding-right: 38px;
 }
@@ -1287,6 +1289,8 @@ select:focus-visible {
 
 .project-title,
 .row-title {
+  display: block;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1354,6 +1358,7 @@ select:focus-visible {
 .timeline-row {
   display: block;
   width: 100%;
+  min-width: 0;
   border-bottom: 1px solid var(--line-soft);
   padding: 9px 0;
   text-align: left;
@@ -1510,6 +1515,10 @@ select:focus-visible {
   text-align: left;
 }
 
+.todo-row.has-relation {
+  grid-template-columns: 18px 22px minmax(0, 1fr) 28px;
+}
+
 .todo-row.is-drag-over {
   border-top: 2px solid var(--blue);
 }
@@ -1540,6 +1549,36 @@ select:focus-visible {
   background: #fff7ed;
 }
 
+.todo-row.priority-a {
+  grid-template-columns: 25px minmax(0, 1fr) 28px;
+  box-shadow: inset 3px 0 0 var(--red);
+  background: linear-gradient(90deg, #fff1f1 0, transparent 56px);
+}
+
+.todo-row.priority-b {
+  grid-template-columns: 25px minmax(0, 1fr) 28px;
+  box-shadow: inset 3px 0 0 var(--amber);
+  background: linear-gradient(90deg, #fff7e8 0, transparent 56px);
+}
+
+.todo-row.priority-c {
+  grid-template-columns: 25px minmax(0, 1fr) 28px;
+  box-shadow: inset 3px 0 0 var(--blue);
+  background: linear-gradient(90deg, #eef6ff 0, transparent 56px);
+}
+
+.todo-row.priority-a.has-relation,
+.todo-row.priority-b.has-relation,
+.todo-row.priority-c.has-relation {
+  grid-template-columns: 25px 22px minmax(0, 1fr) 28px;
+}
+
+.todo-row.priority-a.is-overdue,
+.todo-row.priority-b.is-overdue,
+.todo-row.priority-c.is-overdue {
+  background-blend-mode: multiply;
+}
+
 .drag-handle {
   color: var(--quiet);
   font-size: 15px;
@@ -1548,6 +1587,7 @@ select:focus-visible {
 }
 
 .box {
+  grid-column: 1;
   width: 14px;
   height: 14px;
   justify-self: center;
@@ -1561,9 +1601,62 @@ select:focus-visible {
   background: var(--green);
 }
 
+.todo-relation-toggle {
+  grid-column: 2;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  justify-self: center;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--paper);
+  color: var(--muted);
+  cursor: pointer;
+  font: 800 13px/1 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.todo-relation-toggle:hover,
+.todo-relation-toggle.active {
+  border-color: #9dbcb4;
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.todo-relation-toggle.is-empty {
+  display: none;
+  pointer-events: none;
+}
+
+.todo-relation-toggle[data-count]::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  background: var(--violet-soft);
+  color: var(--violet);
+  text-align: center;
+  font: 800 9px/13px Inter, system-ui, sans-serif;
+}
+
 .todo-main {
+  grid-column: 2;
   min-width: 0;
   overflow: hidden;
+}
+
+.todo-row.has-relation .todo-main {
+  grid-column: 3;
+}
+
+.todo-delete {
+  grid-column: 3;
+}
+
+.todo-row.has-relation .todo-delete {
+  grid-column: 4;
 }
 
 .todo-row.has-actions .todo-main {
@@ -1631,6 +1724,21 @@ select:focus-visible {
 
 .tok-priority {
   color: var(--red);
+}
+
+.priority-a .tok-priority {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+.priority-b .tok-priority {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.priority-c .tok-priority {
+  background: var(--blue-soft);
+  color: var(--blue);
 }
 
 .tok-project {
@@ -1715,7 +1823,8 @@ select:focus-visible {
   color: var(--green);
 }
 
-.todo-search-wrap .icon-button {
+.todo-search-wrap .icon-button,
+.filter-search-wrap .icon-button {
   position: absolute;
   top: 0;
   right: 0;
@@ -1745,6 +1854,40 @@ select:focus-visible {
 .todo-row:hover .todo-delete {
   border-color: var(--line);
   color: var(--red);
+}
+
+.todo-relation-panel {
+  border-bottom: 1px solid var(--line-soft);
+  background: #fbfbf8;
+  padding: 8px 0 8px 28px;
+}
+
+.todo-relation-label {
+  margin: 0 0 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.todo-relation-node {
+  margin-left: calc(var(--depth, 0) * 18px);
+}
+
+.todo-relation-node .todo-row {
+  min-height: 34px;
+  border-bottom: 0;
+  padding: 4px 0;
+}
+
+.todo-relation-node.is-current .todo-row {
+  background: var(--green-soft);
+}
+
+.todo-relation-empty {
+  color: var(--muted);
+  font-size: 12px;
+  padding: 6px 0;
 }
 
 .todo-quick-actions {
@@ -2021,14 +2164,6 @@ select:focus-visible {
               <section class="today-column">
                 <section class="panel today-panel">
                   <div class="panel-head">
-                    <h2>Point chef</h2>
-                    <button id="todayOpenProjectsButton" class="button">Projets</button>
-                  </div>
-                  <div id="todayBossBrief" class="brief-list"></div>
-                </section>
-
-                <section class="panel today-panel">
-                  <div class="panel-head">
                     <h2>A relancer</h2>
                     <span id="todayFollowupCount" class="count"></span>
                   </div>
@@ -2088,33 +2223,6 @@ select:focus-visible {
                   <div id="todayProjects" class="project-list"></div>
                 </section>
 
-                <section class="panel today-panel today-editor-panel">
-                <div class="panel-head">
-                  <h2>Projet ouvert</h2>
-                </div>
-                <div class="document">
-                  <input id="projectTitle" class="title-input">
-                  <div class="insert-bar">
-                    <button class="button" data-insert-template="decision">Décision</button>
-                    <button class="button" data-insert-template="question">Question</button>
-                    <button class="button" data-insert-template="code">Code</button>
-                    <div class="icon-picker" aria-label="Sélecteur d'icône Markdown">
-                      <button class="icon-choice" data-icon="ℹ" title="Information">i</button>
-                      <button class="icon-choice" data-icon="✓" title="Décision">✓</button>
-                      <button class="icon-choice" data-icon="?" title="Question">?</button>
-                      <button class="icon-choice" data-icon="!" title="Attention">!</button>
-                      <button class="icon-choice" data-icon="#" title="Lien">#</button>
-                      <button class="icon-choice" data-icon="{}" title="Code">{ }</button>
-                      <button class="icon-choice" data-icon="☎" title="Téléphone">☎</button>
-                      <button class="icon-choice" data-icon="@" title="Mail">@</button>
-                    </div>
-                  </div>
-                  <div id="projectEditorGrid" class="editor-grid">
-                    <div id="projectEditorHost" class="markdown overtype-host"></div>
-                    <textarea id="projectBody" class="markdown hidden"></textarea>
-                  </div>
-                </div>
-              </section>
               </section>
             </section>
           </div>
@@ -2202,7 +2310,10 @@ select:focus-visible {
                     <span id="projectFocusCount" class="count"></span>
                   </div>
                   <div class="side-filters">
-                    <input id="projectSearchInput" class="field" placeholder="Filtrer projets...">
+                    <div class="filter-search-wrap">
+                      <input id="projectSearchInput" class="field" placeholder="Filtrer projets...">
+                      <button id="projectClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
+                    </div>
                     <select id="projectStatusFilter" class="field">
                       <option value="">Tous statuts</option>
                       <option value="active">active</option>
@@ -2260,7 +2371,10 @@ select:focus-visible {
                     <h2>Notes</h2>
                   </div>
                   <div class="side-filters">
-                    <input id="journalSearchInput" class="field" placeholder="Filtrer journal...">
+                    <div class="filter-search-wrap">
+                      <input id="journalSearchInput" class="field" placeholder="Filtrer journal...">
+                      <button id="journalClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
+                    </div>
                     <select id="journalKindFilter" class="field">
                       <option value="">Tous</option>
                       <option value="note">note</option>
@@ -2421,7 +2535,7 @@ select:focus-visible {
             <div class="block-title"><span id="selectedProjectName">Projet</span><span></span></div>
             <button class="project-line"><span class="row-title">Todos liés</span><span id="selectedProjectTodos" class="row-meta"></span></button>
             <button class="project-line"><span class="row-title">Notes liées</span><span class="row-meta">édition Markdown locale</span></button>
-            <button class="project-line"><span class="row-title">Dernier mouvement</span><span id="selectedProjectActivity" class="row-meta"></span></button>
+            <button class="project-line"><span class="row-title">Dernière activité</span><span id="selectedProjectActivity" class="row-meta"></span></button>
           </section>
 
           <section class="block">
@@ -2469,8 +2583,8 @@ const defaultConfig = {
   markdown: {
     codeHighlight: true,
     templates: {
-      project: "---\ntype: {type}\nstatus: active\ntags: []\n---\n\n# Contexte\n\n{intro}\n\n# Avancement\n\n## {date}\n\n- \n\n# Questions ouvertes\n\n# Décisions\n",
-      journal: "---\ntype: {type}\nprojects: [{projects}]\ntags: []\nprocessed: false\n---\n\n# Notes\n\n- ",
+      project: "---\ntype: {type}\nstatus: active\ntags: []\npersonnes: []\n---\n\n# Contexte\n\n{intro}\n\n# Avancement\n\n## {date}\n\n- \n\n# Questions ouvertes\n\n# Décisions\n",
+      journal: "---\ntype: {type}\nprojects: [{projects}]\ntags: []\npersonnes: []\nprocessed: false\n---\n\n# Notes\n\n- ",
     },
   },
   layout: {
@@ -2487,6 +2601,16 @@ const defaultConfig = {
   },
 };
 function mergeConfig(savedConfig = {}) {
+  const markdownTemplates = {
+    ...defaultConfig.markdown.templates,
+    ...((savedConfig.markdown || {}).templates || {}),
+  };
+  for (const key of ["project", "journal"]) {
+    if (!markdownTemplates[key].includes("personnes:")) {
+      markdownTemplates[key] = markdownTemplates[key].replace("tags: []\n", "tags: []\npersonnes: []\n");
+    }
+  }
+
   return {
     ...defaultConfig,
     ...savedConfig,
@@ -2508,10 +2632,7 @@ function mergeConfig(savedConfig = {}) {
     markdown: {
       ...defaultConfig.markdown,
       ...(savedConfig.markdown || {}),
-      templates: {
-        ...defaultConfig.markdown.templates,
-        ...((savedConfig.markdown || {}).templates || {}),
-      },
+      templates: markdownTemplates,
     },
     layout: {
       ...defaultConfig.layout,
@@ -2701,7 +2822,7 @@ function toolbarButtonsWith(customToolbarButtons) {
   const defaults = window.defaultToolbarButtons || [];
   return [...defaults, { name: "separator" }, ...customToolbarButtons];
 }
-async function createOverTypeEditor({ host, markdown, onChange, toolbarButtons }) {
+async function createOverTypeEditor({ host, markdown, onChange, onBlur, toolbarButtons }) {
   await loadOverTypeScript();
   host.innerHTML = "";
   host.style.height = "clamp(560px, calc(100vh - 230px), 900px)";
@@ -2723,6 +2844,10 @@ async function createOverTypeEditor({ host, markdown, onChange, toolbarButtons }
   function textarea() {
     return editor.textarea || host.querySelector("textarea");
   }
+
+  textarea()?.addEventListener("blur", () => {
+    onBlur?.(editor.getValue() || "");
+  });
 
   return {
     getMarkdown: () => editor.getValue(),
@@ -2778,21 +2903,27 @@ function parseFrontmatter(markdown) {
   return { data, body };
 }
 function readArrayValue(value) {
-  if (Array.isArray(value)) return value;
+  if (Array.isArray(value)) return value.map(cleanYamlScalar).filter(Boolean);
   if (!value) return [];
-  return String(value)
+  const text = String(value).trim();
+  const inner = text.startsWith("[") && text.endsWith("]") ? text.slice(1, -1) : text;
+  return inner
     .split(",")
-    .map((item) => item.trim())
+    .map(cleanYamlScalar)
     .filter(Boolean);
 }
 
 function parseYamlValue(value) {
   if (value.startsWith("[") && value.endsWith("]")) {
-    const inner = value.slice(1, -1).trim();
-    if (!inner) return [];
-    return inner.split(",").map((item) => item.trim());
+    return readArrayValue(value);
   }
   return value;
+}
+
+function cleanYamlScalar(value) {
+  return String(value)
+    .trim()
+    .replace(/^["']|["']$/g, "");
 }
 
 // src/storage/local-store.js
@@ -3214,6 +3345,7 @@ function tokenMeta(token) {
   if (/^@/.test(token)) return "tok-context";
   if (/^id:/.test(token)) return "tok-id";
   if (/^due:/.test(token)) return "tok-due";
+  if (/^next:/.test(token)) return "tok-id";
   if (/^status:/.test(token) || /^waiting:/.test(token) || /^blocked:/.test(token)) return "tok-status";
   if (/^[A-Za-z][A-Za-z0-9_-]*:[^\s]+$/.test(token)) return "tok-key";
   return "";
@@ -3225,6 +3357,7 @@ function tokenType(token) {
   if (/^\+/.test(token)) return "project";
   if (/^@/.test(token)) return "context";
   if (/^id:/.test(token)) return "id";
+  if (/^next:/.test(token)) return "todo-ref";
   if (/^due:/.test(token)) return "due";
   if (/^status:/.test(token)) return "status";
   if (/^waiting:/.test(token)) return "waiting";
@@ -3259,7 +3392,8 @@ function renderTodoTokens(raw, options = {}) {
 }
 function createTodoRow(todo, options = {}) {
   const row = document.createElement("div");
-  row.className = `todo-row${todo.parsed?.completed ? " is-completed" : ""}${todo.duplicateTodoId ? " has-duplicate-id" : ""}${todo.isOverdue ? " is-overdue" : ""}`;
+  const priorityClass = todo.parsed?.priority ? ` priority-${todo.parsed.priority.toLowerCase()}` : "";
+  row.className = `todo-row${priorityClass}${todo.parsed?.completed ? " is-completed" : ""}${todo.duplicateTodoId ? " has-duplicate-id" : ""}${todo.isOverdue ? " is-overdue" : ""}${options.relation?.enabled ? " has-relation" : ""}`;
   row.draggable = options.dragHandle !== false;
   row.tabIndex = 0;
   row.dataset.todoId = todo.id;
@@ -3268,6 +3402,16 @@ function createTodoRow(todo, options = {}) {
   const marker = document.createElement("span");
   marker.className = "box";
   marker.title = options.dragHandle ? "Marquer terminé. Glisser la ligne pour lier." : "Marquer terminé";
+
+  const relationButton = document.createElement("button");
+  relationButton.type = "button";
+  relationButton.className = `todo-relation-toggle${options.relation?.enabled ? "" : " is-empty"}${options.relation?.expanded ? " active" : ""}`;
+  relationButton.title = options.relation?.enabled ? "Afficher la chaîne liée" : "";
+  relationButton.setAttribute("aria-label", "Afficher la chaîne liée");
+  relationButton.setAttribute("aria-expanded", String(Boolean(options.relation?.expanded)));
+  relationButton.textContent = options.relation?.expanded ? "v" : ">";
+  relationButton.disabled = !options.relation?.enabled;
+  if (options.relation?.count) relationButton.dataset.count = String(options.relation.count);
 
   const main = document.createElement("span");
   main.className = "todo-main";
@@ -3283,7 +3427,7 @@ function createTodoRow(todo, options = {}) {
   deleteButton.textContent = "×";
 
   main.prepend(text);
-  row.append(marker, main, deleteButton);
+  row.append(marker, relationButton, main, deleteButton);
   return row;
 }
 
@@ -3373,6 +3517,7 @@ async function createApp() {
   let journalOverTypePending = false;
   const collapsedJournalGroups = new Set();
   const collapsedProjectGroups = new Set();
+  const expandedTodoRelations = new Set();
   let scratchpadOverTypeEditor = null;
   let scratchpadOverTypeLoading = false;
   let undoToastTimer = null;
@@ -3412,7 +3557,6 @@ async function createApp() {
     followupTodos: byId("followupTodos"),
     priorityTodos: byId("priorityTodos"),
     projectList: byId("todayProjects"),
-    todayBossBrief: byId("todayBossBrief"),
     todayFollowups: byId("todayFollowups"),
     todayOverdue: byId("todayOverdue"),
     todayWaiting: byId("todayWaiting"),
@@ -3420,7 +3564,6 @@ async function createApp() {
     todaySolo: byId("todaySolo"),
     todayMeetings: byId("todayMeetings"),
     todayNewJournalButton: byId("todayNewJournalButton"),
-    todayOpenProjectsButton: byId("todayOpenProjectsButton"),
     scratchpadBody: byId("scratchpadBody"),
     scratchpadEditorHost: byId("scratchpadEditorHost"),
     scratchpadSavedAt: byId("scratchpadSavedAt"),
@@ -3453,6 +3596,7 @@ async function createApp() {
     kanbanSubtitle: byId("kanbanSubtitle"),
     projectFocusCount: byId("projectFocusCount"),
     projectSearchInput: byId("projectSearchInput"),
+    projectClearSearchButton: byId("projectClearSearchButton"),
     projectStatusFilter: byId("projectStatusFilter"),
     projectFocusList: byId("projectFocusList"),
     projectFocusTitle: byId("projectFocusTitle"),
@@ -3469,6 +3613,7 @@ async function createApp() {
     exportJournalMarkdownButton: byId("exportJournalMarkdownButton"),
     deleteJournalButton: byId("deleteJournalButton"),
     journalSearchInput: byId("journalSearchInput"),
+    journalClearSearchButton: byId("journalClearSearchButton"),
     journalKindFilter: byId("journalKindFilter"),
     journalProjectFilter: byId("journalProjectFilter"),
     journalProcessedFilter: byId("journalProcessedFilter"),
@@ -3629,6 +3774,7 @@ async function createApp() {
       status: options.status || "active",
       kind: options.kind || "projet",
       tags: options.tags || [],
+      personnes: options.personnes || [],
       summary: options.summary || "Projet créé automatiquement depuis une capture.",
       updatedAt: now,
       body: options.body || projectTemplate({
@@ -3642,8 +3788,9 @@ async function createApp() {
   function ensureProjectsFromNames(projectNames, source = "capture") {
     const existing = new Set(state.projects.map((project) => project.title.toLowerCase()));
     const created = [];
+    const names = readArrayValue(projectNames);
 
-    for (const name of unique(projectNames)) {
+    for (const name of unique(names)) {
       const normalized = name.trim().replace(/\s+/g, "");
       if (!normalized || existing.has(normalized.toLowerCase())) continue;
       const project = createProjectRecord(normalized, { source });
@@ -3677,6 +3824,7 @@ async function createApp() {
     project.status = frontmatter.data.status || project.status || "active";
     project.kind = frontmatter.data.type || project.kind || "projet";
     project.tags = readArrayValue(frontmatter.data.tags);
+    project.personnes = readArrayValue(frontmatter.data.personnes || frontmatter.data.personne);
     project.summary = frontmatter.data.summary || project.summary || "";
   }
 
@@ -3685,6 +3833,7 @@ async function createApp() {
     note.kind = frontmatter.data.type || "note";
     note.projects = readArrayValue(frontmatter.data.projects);
     note.tags = readArrayValue(frontmatter.data.tags);
+    note.personnes = readArrayValue(frontmatter.data.personnes || frontmatter.data.personne);
     note.processed = frontmatter.data.processed === true || frontmatter.data.processed === "true";
     if (frontmatter.data.date) note.date = frontmatter.data.date;
   }
@@ -3717,16 +3866,16 @@ async function createApp() {
     ];
   }
 
-  function saveJournalMarkdown(note, markdown) {
+  function saveJournalMarkdown(note, markdown, options = {}) {
     note.body = markdown;
     note.updatedAt = new Date().toISOString();
     syncJournalFromMarkdown(note);
-    ensureProjectsFromNames(note.projects, "journal");
+    if (options.ensureProjects) ensureProjectsFromNames(note.projects, "journal");
     persist();
   }
 
   function projectEditorParts(scope) {
-    return {
+    const parts = {
       home: {
         host: elements.projectEditorHost,
         textarea: elements.projectBody,
@@ -3740,11 +3889,13 @@ async function createApp() {
         activeViewName: "project",
       },
     }[scope];
+    return parts?.host && parts?.textarea && parts?.title ? parts : null;
   }
 
   function projectMarkdownFromEditor(scope) {
     const slot = projectOverTypeEditors[scope];
     const parts = projectEditorParts(scope);
+    if (!parts) return "";
     return slot.editor?.getMarkdown() || parts.textarea.value;
   }
 
@@ -3828,6 +3979,12 @@ async function createApp() {
           elements.journalBody.value = markdown;
           saveJournalMarkdown(current, markdown);
         },
+        onBlur: (markdown) => {
+          const current = selectedJournal();
+          if (!current || current.id !== journalOverTypeNoteId) return;
+          elements.journalBody.value = markdown;
+          saveJournalMarkdown(current, markdown, { ensureProjects: true });
+        },
       });
       journalOverTypeNoteId = note.id;
     } catch (error) {
@@ -3901,7 +4058,7 @@ async function createApp() {
     }
 
     for (const project of visibleProjects()) {
-      const haystack = `${project.title} ${project.kind} ${project.status} ${project.tags.join(" ")} ${project.body}`.toLowerCase();
+      const haystack = `${project.title} ${project.kind} ${project.status} ${project.tags.join(" ")} ${(project.personnes || []).join(" ")} ${project.body}`.toLowerCase();
       if (haystack.includes(q)) {
         results.push({
           type: "project",
@@ -3913,7 +4070,7 @@ async function createApp() {
     }
 
     for (const note of state.journal) {
-      const haystack = `${note.title} ${note.kind} ${(note.tags || []).join(" ")} ${note.body}`.toLowerCase();
+      const haystack = `${note.title} ${note.kind} ${(note.tags || []).join(" ")} ${(note.personnes || []).join(" ")} ${note.body}`.toLowerCase();
       if (haystack.includes(q)) {
         results.push({
           type: "journal",
@@ -3971,7 +4128,7 @@ async function createApp() {
     const blocked = openTodos.filter((todo) => todo.parsed.values.blocked || todo.parsed.status === "blocked");
     const priorities = openTodos.filter((todo) => todo.parsed.priority === "A");
     const projects = visibleProjects();
-    const dormant = projects.filter((project) => daysBetween(project.updatedAt) > state.config.staleAfterDays);
+    const dormant = projects.filter((project) => projectActivityAge(project) > state.config.staleAfterDays);
 
     setText("todoCount", openTodos.length);
     setText("kanbanCount", openTodos.length);
@@ -3999,43 +4156,82 @@ async function createApp() {
     elements.softAlertLabel.textContent = dueAlerts.length === 1 ? "1 alerte" : `${dueAlerts.length} alertes`;
   }
 
-  function renderTodoGroup(container, todos, emptyLabel, options = {}) {
-    if (!options.append) container.innerHTML = "";
-    if (!todos.length) {
-      if (!options.append) renderEmpty(container, emptyLabel);
-      return;
+  function todoRelationKey(todo) {
+    return todo.id;
+  }
+
+  function todoPublicId(todo) {
+    return todo.parsed?.id || null;
+  }
+
+  function todoParentId(todo) {
+    return todo.parsed?.values?.next || null;
+  }
+
+  function todoRelationContext(allTodos = parsedTodos()) {
+    const activePublicIds = new Set(
+      allTodos
+        .filter((todo) => !todo.parsed.completed)
+        .map(todoPublicId)
+        .filter(Boolean),
+    );
+    const childrenByParentId = new Map();
+
+    for (const todo of allTodos) {
+      const parentId = todoParentId(todo);
+      if (!parentId || todo.parsed.completed || !activePublicIds.has(parentId)) continue;
+      if (!childrenByParentId.has(parentId)) childrenByParentId.set(parentId, []);
+      childrenByParentId.get(parentId).push(todo);
     }
 
-    for (const todo of todos) {
-      const row = createTodoRow(todo, options);
-      if (options.quickActions) {
-        row.classList.add("has-actions");
-        row.append(createTodoQuickActions(todo, row));
+    return { childrenByParentId };
+  }
+
+  function todoRelationInfo(todo, context) {
+    const id = todoPublicId(todo);
+    const children = id ? context.childrenByParentId.get(id) || [] : [];
+    if (!children.length) expandedTodoRelations.delete(todoRelationKey(todo));
+    return {
+      enabled: Boolean(children.length),
+      expanded: Boolean(children.length) && expandedTodoRelations.has(todoRelationKey(todo)),
+      count: children.length,
+    };
+  }
+
+  function bindTodoRowEvents(row, todo, options = {}) {
+    row.addEventListener("click", (event) => {
+      if (event.target.closest(".todo-quick-actions")) {
+        return;
       }
-      row.addEventListener("click", (event) => {
-        if (event.target.closest(".todo-quick-actions")) {
-          return;
-        }
-        if (event.target.closest(".todo-delete")) {
-          deleteTodo(todo.id);
-          return;
-        }
-        if (event.target.closest(".todo-link")) {
-          return;
-        }
-        const token = event.target.closest("[data-token-type]");
-        if (token) {
-          applyTodoTokenFilter(token.dataset.tokenType, token.dataset.tokenValue);
-          return;
-        }
-        if (event.target.closest(".todo-text")) {
-          startInlineEdit(row, todo.id);
-          return;
-        }
-        if (event.target.closest(".box")) {
-          toggleTodo(todo.id);
-        }
-      });
+      if (event.target.closest(".todo-relation-toggle")) {
+        const key = todoRelationKey(todo);
+        if (expandedTodoRelations.has(key)) expandedTodoRelations.delete(key);
+        else expandedTodoRelations.add(key);
+        render();
+        return;
+      }
+      if (event.target.closest(".todo-delete")) {
+        deleteTodo(todo.id);
+        return;
+      }
+      if (event.target.closest(".todo-link")) {
+        return;
+      }
+      const token = event.target.closest("[data-token-type]");
+      if (token) {
+        applyTodoTokenFilter(token.dataset.tokenType, token.dataset.tokenValue);
+        return;
+      }
+      if (event.target.closest(".todo-text")) {
+        startInlineEdit(row, todo.id);
+        return;
+      }
+      if (event.target.closest(".box")) {
+        toggleTodo(todo.id);
+      }
+    });
+
+    if (options.dragHandle !== false) {
       row.addEventListener("dragstart", (event) => {
         event.dataTransfer.setData("text/plain", todo.id);
       });
@@ -4049,7 +4245,93 @@ async function createApp() {
         row.classList.remove("is-drag-over");
         reorderTodo(event.dataTransfer.getData("text/plain"), todo.id);
       });
+    }
+  }
+
+  function renderTodoRelationPanel(anchorTodo, context) {
+    const panel = document.createElement("div");
+    panel.className = "todo-relation-panel";
+
+    const label = document.createElement("div");
+    label.className = "todo-relation-label";
+    label.textContent = "Tâches liées";
+    panel.append(label);
+
+    const children = todoRelationChildren(anchorTodo, context);
+    if (!children.length) {
+      const empty = document.createElement("div");
+      empty.className = "todo-relation-empty";
+      empty.textContent = "Aucune tâche secondaire.";
+      panel.append(empty);
+      return panel;
+    }
+
+    for (const child of children) {
+      renderTodoRelationNode(panel, child, context, 0, new Set([todoPublicId(anchorTodo) || anchorTodo.id]));
+    }
+    return panel;
+  }
+
+  function todoRelationChildren(todo, context) {
+    return (context.childrenByParentId.get(todoPublicId(todo)) || [])
+      .filter((child) => child.id !== todo.id)
+      .sort((a, b) => Number(a.parsed.completed) - Number(b.parsed.completed) || a.raw.localeCompare(b.raw, "fr"));
+  }
+
+  function renderTodoRelationNode(panel, todo, context, depth, visited) {
+    const id = todoPublicId(todo) || todo.id;
+    if (visited.has(id)) return;
+    visited.add(id);
+
+    const wrap = document.createElement("div");
+    wrap.className = "todo-relation-node";
+    wrap.style.setProperty("--depth", String(depth));
+    const row = createTodoRow(todo, {
+      dragHandle: false,
+      visibleTokens: todoVisibleTokens(),
+      relation: { enabled: false },
+    });
+    bindTodoRowEvents(row, todo, { dragHandle: false });
+    wrap.append(row);
+    panel.append(wrap);
+
+    for (const child of todoRelationChildren(todo, context)) {
+      renderTodoRelationNode(panel, child, context, depth + 1, new Set(visited));
+    }
+  }
+
+  function renderTodoGroup(container, todos, emptyLabel, options = {}) {
+    if (!options.append) container.innerHTML = "";
+    if (!todos.length) {
+      if (!options.append) renderEmpty(container, emptyLabel);
+      return;
+    }
+
+    const relationContext = todoRelationContext(options.allTodos);
+    const parentIdsInList = new Set(
+      todos
+        .filter((todo) => !todo.parsed.completed)
+        .map(todoPublicId)
+        .filter(Boolean),
+    );
+    const visibleTodos = options.collapseRelationChildren
+      ? todos.filter((todo) => !todoParentId(todo) || !parentIdsInList.has(todoParentId(todo)))
+      : todos;
+    if (!visibleTodos.length) {
+      if (!options.append) renderEmpty(container, emptyLabel);
+      return;
+    }
+
+    for (const todo of visibleTodos) {
+      const relation = options.relations === false ? { enabled: false } : todoRelationInfo(todo, relationContext);
+      const row = createTodoRow(todo, { ...options, relation });
+      if (options.quickActions) {
+        row.classList.add("has-actions");
+        row.append(createTodoQuickActions(todo, row));
+      }
+      bindTodoRowEvents(row, todo, options);
       container.append(row);
+      if (relation.enabled && relation.expanded) container.append(renderTodoRelationPanel(todo, relationContext));
     }
   }
 
@@ -4345,6 +4627,44 @@ async function createApp() {
     return todo.parsed.followupDate || todo.parsed.dueDate || "9999-12-31";
   }
 
+  function normalizeMarkdownHeadingDate(value) {
+    const source = String(value || "").trim();
+    const isoMatch = source.match(/^(\d{4})-(\d{2})-(\d{2})(?=\s|$)/);
+    if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+    const localMatch = source.match(/^(\d{2})\.(\d{2})\.(\d{4})(?=\s|$)/);
+    if (localMatch) return `${localMatch[3]}-${localMatch[2]}-${localMatch[1]}`;
+    return null;
+  }
+
+  function latestMarkdownHeadingDate(markdown) {
+    let latest = null;
+    for (const line of String(markdown || "").split("\n")) {
+      const match = line.match(/^#{2,6}\s+(.+)$/);
+      if (!match) continue;
+      const date = normalizeMarkdownHeadingDate(match[1]);
+      if (date && (!latest || date > latest)) latest = date;
+    }
+    return latest;
+  }
+
+  function projectActivityDate(project) {
+    return latestMarkdownHeadingDate(project.body) || project.updatedAt;
+  }
+
+  function projectMarkdownActivityDate(project) {
+    return latestMarkdownHeadingDate(project.body);
+  }
+
+  function projectActivityAge(project) {
+    return daysBetween(projectActivityDate(project));
+  }
+
+  function projectActivityLabel(project) {
+    const markdownDate = projectMarkdownActivityDate(project);
+    if (!markdownDate) return "Aucune date Markdown";
+    return `Dernière activité: ${formatDate(new Date(markdownDate), "DD.MM.YYYY")}`;
+  }
+
   function sourceValues(todos, key) {
     return unique(todos.map((todo) => todo.parsed.values[key])).slice(0, 5);
   }
@@ -4394,8 +4714,8 @@ async function createApp() {
       .filter((note) => note.date && note.date >= today)
       .sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title))
       .slice(0, 8);
-    const visibleProjectList = visibleProjects();
-    const activeProjects = visibleProjectList.slice(0, 6);
+    const visibleProjectList = visibleProjects()
+      .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || a.title.localeCompare(b.title, "fr"));
 
     setText("todayFollowupCount", followups.length);
     setText("todayOverdueCount", overdue.length);
@@ -4404,14 +4724,6 @@ async function createApp() {
     setText("todaySoloCount", solo.length);
     setText("todayMeetingsCount", meetings.length);
     setText("todayProjectsCount", visibleProjectList.length);
-
-    elements.todayBossBrief.innerHTML = "";
-    elements.todayBossBrief.append(
-      renderBriefLine("Actif", activeProjects.map((project) => project.title).join(", ")),
-      renderBriefLine("A relancer", sourceValues(followups, "waiting").join(", ") || `${followups.length} action(s)`),
-      renderBriefLine("Bloque", sourceValues(blocked, "blocked").join(", ") || `${blocked.length} action(s)`),
-      renderBriefLine("Urgent", `${overdue.length} en retard, ${followups.length} relance(s)`),
-    );
 
     const displayOptions = { visibleTokens: todoVisibleTokens(), dragHandle: false };
     renderTodoGroup(elements.todayFollowups, followups.slice(0, 8), "Aucune relance arrivee.", { ...displayOptions, quickActions: true });
@@ -4496,7 +4808,9 @@ async function createApp() {
 
   function renderProjects() {
     elements.projectList.innerHTML = "";
-    for (const project of visibleProjects()) {
+    const projects = visibleProjects()
+      .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || a.title.localeCompare(b.title, "fr"));
+    for (const project of projects) {
       const card = document.createElement("button");
       card.type = "button";
       card.className = `project-card${project.id === selectedProjectId ? " active" : ""}`;
@@ -4504,9 +4818,9 @@ async function createApp() {
       card.innerHTML = `
         <span class="card-top">
           <span class="project-title">${project.title}</span>
-          <span class="age">${daysBetween(project.updatedAt)} j</span>
+          <span class="age">${projectActivityAge(project)} j</span>
         </span>
-        <span class="summary">${project.summary}</span>
+        <span class="summary">${escapeAppHtml(projectActivityLabel(project))}</span>
         <span class="chips">
           ${projectSignalBadges(project)}
           <span class="chip ${project.status === "waiting" ? "amber" : project.status === "dormant" ? "violet" : "green"}">${project.status}</span>
@@ -4516,6 +4830,7 @@ async function createApp() {
       `;
       card.addEventListener("click", () => {
         selectedProjectId = project.id;
+        activeView = "project";
         render();
       });
       card.addEventListener("dragover", (event) => {
@@ -4534,13 +4849,13 @@ async function createApp() {
 
   function renderProjectEditor() {
     const project = selectedProject();
-    if (!project) return;
+    if (!project || !elements.projectTitle || !elements.projectBody) return;
     elements.projectTitle.value = project.title;
     elements.projectBody.value = project.body;
     mountProjectOverTypeEditor("home");
     setText("selectedProjectName", `Projet ${project.title}`);
     setText("selectedProjectTodos", `${openProjectTodos(project.title).length} ouverts`);
-    setText("selectedProjectActivity", `${daysBetween(project.updatedAt)} jour(s)`);
+    setText("selectedProjectActivity", `${projectActivityAge(project)} jour(s)`);
   }
 
   function renderTriage() {
@@ -4800,6 +5115,7 @@ async function createApp() {
       dragHandle: state.config.todo.sortMode === "file",
       visibleTokens: todoVisibleTokens(),
       quickActions: true,
+      collapseRelationChildren: true,
     });
   }
 
@@ -4894,10 +5210,11 @@ async function createApp() {
     if (!project) return;
 
     const query = elements.projectSearchInput.value.trim().toLowerCase();
+    elements.projectClearSearchButton.classList.toggle("hidden", !elements.projectSearchInput.value);
     const status = elements.projectStatusFilter.value;
     const projects = visibleProjects().filter((item) => {
       if (status && item.status !== status) return false;
-      const haystack = `${item.title} ${item.status} ${item.kind} ${(item.tags || []).join(" ")} ${item.summary || ""} ${item.body || ""}`.toLowerCase();
+      const haystack = `${item.title} ${item.status} ${item.kind} ${(item.tags || []).join(" ")} ${(item.personnes || []).join(" ")} ${item.summary || ""} ${item.body || ""}`.toLowerCase();
       return !query || haystack.includes(query);
     });
     elements.projectFocusCount.textContent = projects.length;
@@ -4946,7 +5263,7 @@ async function createApp() {
     if (project.status === "blocked" || hasBlocked) return { key: "blocked", label: "Bloques" };
     if (project.status === "waiting" || hasWaiting) return { key: "waiting", label: "En attente" };
     if (!todos.length) return { key: "empty", label: "Sans action ouverte" };
-    if (project.status === "dormant" || daysBetween(project.updatedAt) > state.config.staleAfterDays) return { key: "dormant", label: "Dormants" };
+    if (project.status === "dormant" || projectActivityAge(project) > state.config.staleAfterDays) return { key: "dormant", label: "Dormants" };
     return { key: "active", label: "Actifs" };
   }
 
@@ -4965,7 +5282,7 @@ async function createApp() {
         ...group,
         projects: group.projects.sort((a, b) => {
           return openProjectTodos(b.title).length - openProjectTodos(a.title).length
-            || daysBetween(a.updatedAt) - daysBetween(b.updatedAt)
+            || projectActivityAge(a) - projectActivityAge(b)
             || a.title.localeCompare(b.title, "fr");
         }),
       }));
@@ -4985,7 +5302,7 @@ async function createApp() {
         <span class="status-dot ${escapeAppHtml(project.status || "active")}"></span>
         <span>${escapeAppHtml(project.status || "active")}</span>
         <span>${todos.length} todo${todos.length > 1 ? "s" : ""}</span>
-        <span>${daysBetween(project.updatedAt)}j</span>
+        <span>${projectActivityAge(project)}j</span>
       </span>
     `;
     row.addEventListener("click", () => {
@@ -5045,6 +5362,7 @@ async function createApp() {
     const row = document.createElement("button");
     row.type = "button";
     row.className = "timeline-row";
+    row.title = note.title;
     row.innerHTML = `
       <span class="timeline-kind">note</span>
       <span class="row-title">${escapeAppHtml(note.title)}</span>
@@ -5063,6 +5381,7 @@ async function createApp() {
     const projectFilter = elements.journalProjectFilter.value;
     const processedFilter = elements.journalProcessedFilter.value;
     const query = elements.journalSearchInput.value.trim().toLowerCase();
+    elements.journalClearSearchButton.classList.toggle("hidden", !elements.journalSearchInput.value);
     renderJournalProjectFilter();
     const notes = state.journal
       .filter((note) => !kindFilter || note.kind === kindFilter)
@@ -5074,7 +5393,7 @@ async function createApp() {
       })
       .filter((note) => {
         if (!query) return true;
-        const haystack = `${note.title} ${note.kind} ${(note.tags || []).join(" ")} ${noteProjects(note).join(" ")} ${note.body}`.toLowerCase();
+        const haystack = `${note.title} ${note.kind} ${(note.tags || []).join(" ")} ${(note.personnes || []).join(" ")} ${noteProjects(note).join(" ")} ${note.body}`.toLowerCase();
         return haystack.includes(query);
       })
       .sort(compareJournalNotesForList);
@@ -5159,19 +5478,39 @@ async function createApp() {
     return new Date(year, month - 1, 1).toLocaleDateString("fr-CH", { month: "long", year: "numeric" });
   }
 
+  function dateFromIso(dateIso) {
+    const [year, month, day] = dateIso.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  function startOfCalendarWeek(date = new Date()) {
+    const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const mondayOffset = (start.getDay() + 6) % 7;
+    start.setDate(start.getDate() - mondayOffset);
+    return start;
+  }
+
+  function isSameCalendarWeek(dateIso, now = new Date()) {
+    const date = dateFromIso(dateIso);
+    const start = startOfCalendarWeek(now);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 7);
+    return date >= start && date < end;
+  }
+
   function journalGroupInfo(note) {
     const dateIso = journalDateIso(note);
     const age = daysBetween(dateIso);
     if (age < 0) {
       const daysUntil = Math.abs(age);
       if (daysUntil === 1) return { key: "future:tomorrow", label: "Demain" };
-      if (daysUntil < 7) return { key: "future:week", label: "A venir cette semaine" };
+      if (isSameCalendarWeek(dateIso)) return { key: "future:week", label: "A venir cette semaine" };
       const monthKey = dateIso.slice(0, 7);
       return { key: `future:${monthKey}`, label: `A venir - ${monthLabelFromIso(dateIso)}` };
     }
     if (age === 0) return { key: "today", label: "Aujourd'hui" };
     if (age === 1) return { key: "yesterday", label: "Hier" };
-    if (age >= 0 && age < 7) return { key: "week", label: "Cette semaine" };
+    if (isSameCalendarWeek(dateIso)) return { key: "week", label: "Cette semaine" };
     const monthKey = dateIso.slice(0, 7);
     return { key: `month:${monthKey}`, label: monthLabelFromIso(dateIso) };
   }
@@ -5566,6 +5905,9 @@ async function createApp() {
     } else if (["id", "created", "due", "status", "waiting", "blocked"].includes(type)) {
       elements.todoViewSearch.value = `${type}:${value}`;
       activeFilter = type === "id" ? "id:" : activeFilter;
+    } else if (type === "todo-ref") {
+      elements.todoViewSearch.value = `id:${value}`;
+      activeFilter = "id:";
     } else {
       elements.todoViewSearch.value = value;
     }
@@ -5617,7 +5959,7 @@ async function createApp() {
 
   function saveSelectedProject() {
     const project = selectedProject();
-    if (!project) return;
+    if (!project || !elements.projectTitle) return;
     project.title = elements.projectTitle.value.trim() || project.title;
     project.body = projectMarkdownFromEditor("home");
     project.updatedAt = new Date().toISOString();
@@ -5629,7 +5971,7 @@ async function createApp() {
 
   function saveProjectBodyOnly() {
     const project = selectedProject();
-    if (!project) return;
+    if (!project || !projectEditorParts("home")) return;
     saveProjectMarkdown(project, projectMarkdownFromEditor("home"), "home");
   }
 
@@ -5654,6 +5996,7 @@ async function createApp() {
   function insertProjectMarkdown(scope, text) {
     const slot = projectOverTypeEditors[scope];
     const parts = projectEditorParts(scope);
+    if (!parts) return;
     if (slot.editor) {
       slot.editor.insertBlock(text);
     } else {
@@ -5734,7 +6077,7 @@ async function createApp() {
     const note = selectedJournal();
     if (!note) return;
     note.title = elements.journalTitle.value.trim() || note.title;
-    saveJournalMarkdown(note, journalOverTypeEditor?.getMarkdown() || elements.journalBody.value);
+    saveJournalMarkdown(note, journalOverTypeEditor?.getMarkdown() || elements.journalBody.value, { ensureProjects: true });
   }
 
   function saveScratchpadMarkdown(markdown) {
@@ -5805,6 +6148,7 @@ async function createApp() {
       kind,
       projects,
       tags: [],
+      personnes: [],
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
       body: journalTemplate({ type: kind, projects, date }),
@@ -6042,8 +6386,8 @@ async function createApp() {
       elements.captureInput.value = `${elements.captureInput.value} ${formatDate(new Date(), "YYYY-MM-DD")}`.trim();
       elements.captureInput.focus();
     });
-    elements.projectBody.addEventListener("input", saveProjectBodyOnly);
-    elements.projectTitle.addEventListener("change", saveSelectedProject);
+    elements.projectBody?.addEventListener("input", saveProjectBodyOnly);
+    elements.projectTitle?.addEventListener("change", saveSelectedProject);
     elements.scratchpadBody.addEventListener("change", saveScratchpad);
     elements.scratchpadBody.addEventListener("blur", saveScratchpad);
     elements.scratchpadEmailButton.addEventListener("click", emailScratchpad);
@@ -6054,13 +6398,14 @@ async function createApp() {
     elements.projectFocusBody.addEventListener("input", saveFocusedProjectBodyOnly);
     elements.projectFocusTitle.addEventListener("change", saveFocusedProject);
     elements.projectSearchInput.addEventListener("input", renderProjectFocus);
+    elements.projectClearSearchButton.addEventListener("click", () => {
+      elements.projectSearchInput.value = "";
+      elements.projectSearchInput.focus();
+      renderProjectFocus();
+    });
     elements.projectStatusFilter.addEventListener("change", renderProjectFocus);
     elements.newProjectButton.addEventListener("click", createProject);
     elements.todayNewJournalButton.addEventListener("click", () => createJournalNote({ kind: "meeting", title: `${todayISO()} - Point` }));
-    elements.todayOpenProjectsButton.addEventListener("click", () => {
-      activeView = "project";
-      render();
-    });
     elements.projectNewJournalButton.addEventListener("click", createJournalNoteFromProject);
     elements.exportProjectMarkdownButton.addEventListener("click", exportFocusedProjectMarkdown);
     elements.archiveProjectButton.addEventListener("click", archiveSelectedProject);
@@ -6069,6 +6414,11 @@ async function createApp() {
     elements.exportJournalMarkdownButton.addEventListener("click", exportSelectedJournalMarkdown);
     elements.deleteJournalButton.addEventListener("click", deleteSelectedJournalNote);
     elements.journalSearchInput.addEventListener("input", renderJournalView);
+    elements.journalClearSearchButton.addEventListener("click", () => {
+      elements.journalSearchInput.value = "";
+      elements.journalSearchInput.focus();
+      renderJournalView();
+    });
     elements.journalKindFilter.addEventListener("change", renderJournalView);
     elements.journalProjectFilter.addEventListener("change", renderJournalView);
     elements.journalProcessedFilter.addEventListener("change", renderJournalView);
