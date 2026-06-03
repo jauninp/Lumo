@@ -138,6 +138,7 @@ Regles :
 - `waiting:Pierre` filtre la valeur `waiting`
 - `blocked:raison` filtre la valeur `blocked`
 - `due:2026-05-30`, `followup:2026-05-30`, `id:ABC123` filtrent les metadonnees
+- `next:ABC123` permet de pointer vers une autre todo par son `id:`
 - `priority:A` filtre la priorite
 - `text:mot` cherche seulement dans le texte non structure
 
@@ -191,6 +192,28 @@ Regles :
 - `value: "done"` marque la todo terminee.
 - `value: ""` represente l'absence de valeur pour le champ.
 - le drag-drop garde todo.txt comme source de verite.
+
+## Liens entre todos
+
+```txt
+next:ABC123
+```
+
+Signification :
+
+- pointe vers la todo principale via son `id:`
+- utile pour indiquer une action secondaire, une suite ou une dependance
+- le bouton `>` apparait sur la todo principale et affiche ses taches secondaires recursives
+- seules les taches ouvertes participent a cette relation dans la vue Todo
+- le clic sur le token `next:ABC123` filtre la vue Todo sur `id:ABC123`
+- la relation reste dans la ligne todo.txt, sans donnee cachee dans le JSON
+
+Exemple :
+
+```txt
+Attendre retour validation +Audit waiting:Chef followup:2026-06-05 next:ABC123 id:WAIT01
+Preparer etape suivante +Audit id:ABC123
+```
 
 ## Echeances et relances
 

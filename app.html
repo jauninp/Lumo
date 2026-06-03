@@ -680,6 +680,144 @@ select:focus-visible {
   display: none;
 }
 
+.portfolio-board {
+  display: grid;
+  gap: 12px;
+}
+
+.portfolio-controls {
+  display: flex;
+  min-width: min(520px, 100%);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.portfolio-search-wrap {
+  flex: 1 1 240px;
+  max-width: 360px;
+}
+
+.portfolio-list {
+  display: grid;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.portfolio-row {
+  display: grid;
+  grid-template-columns: 72px minmax(170px, 1.4fr) 105px 52px 52px minmax(160px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--line-soft);
+  box-shadow: inset 4px 0 0 transparent;
+  padding: 7px 10px;
+  text-align: left;
+}
+
+.portfolio-row[draggable="true"] {
+  cursor: grab;
+}
+
+.portfolio-row.tone-important {
+  box-shadow: inset 4px 0 0 var(--red);
+}
+
+.portfolio-row.tone-blocked {
+  box-shadow: inset 4px 0 0 var(--violet);
+}
+
+.portfolio-row.tone-waiting {
+  box-shadow: inset 4px 0 0 var(--amber);
+}
+
+.portfolio-row.tone-future {
+  box-shadow: inset 4px 0 0 var(--blue);
+}
+
+.portfolio-row.tone-dormant {
+  box-shadow: inset 4px 0 0 #9aa19a;
+}
+
+.portfolio-row.tone-active {
+  box-shadow: inset 4px 0 0 var(--green);
+}
+
+.portfolio-row:last-child {
+  border-bottom: 0;
+}
+
+.portfolio-row:hover,
+.portfolio-row.drop-target {
+  background: #f7faf6;
+}
+
+.portfolio-priority,
+.portfolio-status,
+.portfolio-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.portfolio-title {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.portfolio-name,
+.portfolio-short,
+.portfolio-activity {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portfolio-name {
+  font-weight: 760;
+}
+
+.portfolio-short,
+.portfolio-activity,
+.portfolio-age,
+.portfolio-todos,
+.portfolio-status {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.portfolio-actions {
+  justify-content: flex-end;
+}
+
+.portfolio-followup {
+  position: relative;
+  display: inline-flex;
+}
+
+.portfolio-followup-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 5;
+  display: flex;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--paper);
+  padding: 5px;
+  box-shadow: 0 8px 18px rgba(31, 36, 33, 0.12);
+}
+
+.portfolio-actions .button {
+  min-height: 26px;
+  padding: 0 7px;
+  font-size: 12px;
+}
+
 .raw-editor {
   width: 100%;
   min-height: 520px;
@@ -720,6 +858,20 @@ select:focus-visible {
 .project-side-panel {
   position: sticky;
   top: 0;
+}
+
+.project-radar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 8px 10px;
+}
+
+.project-radar-actions .button {
+  min-height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
 }
 
 .focus-editor-grid {
@@ -2087,6 +2239,7 @@ select:focus-visible {
           <button class="nav-item active" data-view-button="home"><span>Aujourd'hui</span><span id="todayNavCount" class="count"></span></button>
           <button class="nav-item" data-view-button="todos"><span>Todos</span><span id="todoCount" class="count"></span></button>
           <button class="nav-item" data-view-button="kanban"><span>Kanban</span><span id="kanbanCount" class="count"></span></button>
+          <button class="nav-item" data-view-button="portfolio"><span>Portfolio</span><span id="portfolioCount" class="count"></span></button>
           <button class="nav-item" data-view-button="project"><span>Projets</span><span id="projectCount" class="count"></span></button>
           <button class="nav-item" data-view-button="journal"><span>Journal</span><span id="journalCount" class="count"></span></button>
           <button class="nav-item" data-view-button="scratchpad"><span>Bloc-notes</span></button>
@@ -2288,6 +2441,31 @@ select:focus-visible {
             </div>
           </section>
 
+          <section class="view" data-view="portfolio">
+            <div class="main-inner">
+              <div class="page-head">
+                <div>
+                  <h1>Portfolio</h1>
+                  <div id="portfolioSubtitle" class="subtitle">Vue globale des projets, ordre manuel par glisser-déposer.</div>
+                </div>
+                <div class="portfolio-controls">
+                  <div class="filter-search-wrap portfolio-search-wrap">
+                    <input id="portfolioSearchInput" class="field" placeholder="Rechercher projet...">
+                    <button id="portfolioClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
+                  </div>
+                  <div class="todo-sort-buttons" aria-label="Tri portfolio">
+                    <button class="icon-button active" data-portfolio-sort="manual" title="Ordre manuel" aria-label="Ordre manuel">#</button>
+                    <button class="icon-button" data-portfolio-sort="activity" title="Activité ancienne" aria-label="Activité ancienne">A</button>
+                    <button class="icon-button" data-portfolio-sort="important" title="Important" aria-label="Important">!</button>
+                    <button class="icon-button" data-portfolio-sort="status" title="Statut" aria-label="Statut">S</button>
+                  </div>
+                </div>
+              </div>
+
+              <section id="portfolioBoard" class="portfolio-board"></section>
+            </div>
+          </section>
+
           <section class="view" data-view="project">
             <div class="main-inner project-focus">
               <div class="page-head">
@@ -2297,6 +2475,7 @@ select:focus-visible {
                 </div>
                 <div class="toolbar">
                   <button id="newProjectButton" class="button primary">Nouveau projet</button>
+                  <button id="newIncidentProjectButton" class="button">Incident</button>
                   <button id="exportProjectMarkdownButton" class="button">Export .md</button>
                   <button id="archiveProjectButton" class="button">Archiver</button>
                   <button id="deleteProjectButton" class="button danger">Supprimer</button>
@@ -2343,6 +2522,11 @@ select:focus-visible {
                 <aside class="panel project-side-panel">
                   <div class="panel-head">
                     <h2>Radar</h2>
+                  </div>
+                  <div class="project-radar-actions">
+                    <button id="projectFollowup1Button" class="button" title="Créer une relance demain">+1j</button>
+                    <button id="projectFollowup3Button" class="button" title="Créer une relance dans 3 jours">+3j</button>
+                    <button id="projectFollowup7Button" class="button" title="Créer une relance dans 7 jours">+7j</button>
                     <button id="projectNewJournalButton" class="button">Note</button>
                   </div>
                   <div id="projectLinkedTodos" class="linked-todos"></div>
@@ -2580,10 +2764,14 @@ const defaultConfig = {
       { id: "done", title: "Done", value: "done" },
     ],
   },
+  portfolio: {
+    order: [],
+    sortMode: "manual",
+  },
   markdown: {
     codeHighlight: true,
     templates: {
-      project: "---\ntype: {type}\nstatus: active\ntags: []\npersonnes: []\n---\n\n# Contexte\n\n{intro}\n\n# Avancement\n\n## {date}\n\n- \n\n# Questions ouvertes\n\n# Décisions\n",
+      project: "---\ntitle: {title}\ntype: {type}\nstatus: active\ntags: []\npersonnes: []\n---\n\n# Contexte\n\n{intro}\n\n# Avancement\n\n## {date}\n\n- \n\n# Questions ouvertes\n\n# Décisions\n",
       journal: "---\ntype: {type}\nprojects: [{projects}]\ntags: []\npersonnes: []\nprocessed: false\n---\n\n# Notes\n\n- ",
     },
   },
@@ -2610,6 +2798,9 @@ function mergeConfig(savedConfig = {}) {
       markdownTemplates[key] = markdownTemplates[key].replace("tags: []\n", "tags: []\npersonnes: []\n");
     }
   }
+  if (!markdownTemplates.project.includes("title:")) {
+    markdownTemplates.project = markdownTemplates.project.replace("---\n", "---\ntitle: {title}\n");
+  }
 
   return {
     ...defaultConfig,
@@ -2628,6 +2819,13 @@ function mergeConfig(savedConfig = {}) {
       columns: Array.isArray((savedConfig.kanban || {}).columns)
         ? savedConfig.kanban.columns
         : defaultConfig.kanban.columns,
+    },
+    portfolio: {
+      ...defaultConfig.portfolio,
+      ...(savedConfig.portfolio || {}),
+      order: Array.isArray((savedConfig.portfolio || {}).order)
+        ? savedConfig.portfolio.order
+        : defaultConfig.portfolio.order,
     },
     markdown: {
       ...defaultConfig.markdown,
@@ -3594,6 +3792,10 @@ async function createApp() {
     todoRawEditor: byId("todoRawEditor"),
     kanbanBoard: byId("kanbanBoard"),
     kanbanSubtitle: byId("kanbanSubtitle"),
+    portfolioBoard: byId("portfolioBoard"),
+    portfolioSubtitle: byId("portfolioSubtitle"),
+    portfolioSearchInput: byId("portfolioSearchInput"),
+    portfolioClearSearchButton: byId("portfolioClearSearchButton"),
     projectFocusCount: byId("projectFocusCount"),
     projectSearchInput: byId("projectSearchInput"),
     projectClearSearchButton: byId("projectClearSearchButton"),
@@ -3605,7 +3807,11 @@ async function createApp() {
     projectFocusEditorGrid: byId("projectFocusEditorGrid"),
     projectLinkedTodos: byId("projectLinkedTodos"),
     projectNewJournalButton: byId("projectNewJournalButton"),
+    projectFollowup1Button: byId("projectFollowup1Button"),
+    projectFollowup3Button: byId("projectFollowup3Button"),
+    projectFollowup7Button: byId("projectFollowup7Button"),
     newProjectButton: byId("newProjectButton"),
+    newIncidentProjectButton: byId("newIncidentProjectButton"),
     exportProjectMarkdownButton: byId("exportProjectMarkdownButton"),
     archiveProjectButton: byId("archiveProjectButton"),
     deleteProjectButton: byId("deleteProjectButton"),
@@ -3765,6 +3971,10 @@ async function createApp() {
     return projectTodos(projectTitle).filter((todo) => !todo.parsed.completed);
   }
 
+  function projectDisplayTitle(project) {
+    return project.displayTitle || project.title;
+  }
+
   function createProjectRecord(title, options = {}) {
     const projectTitle = title.trim().replace(/\s+/g, "");
     const now = new Date().toISOString();
@@ -3773,12 +3983,14 @@ async function createApp() {
       title: projectTitle,
       status: options.status || "active",
       kind: options.kind || "projet",
+      displayTitle: options.displayTitle || options.title || projectTitle,
       tags: options.tags || [],
       personnes: options.personnes || [],
       summary: options.summary || "Projet créé automatiquement depuis une capture.",
       updatedAt: now,
       body: options.body || projectTemplate({
         type: options.kind || "projet",
+        title: options.displayTitle || options.title || projectTitle,
         intro: `Projet créé automatiquement depuis ${options.source || "Worklog"}.`,
         source: options.source || "Worklog",
       }),
@@ -3823,6 +4035,7 @@ async function createApp() {
     const frontmatter = parseFrontmatter(project.body);
     project.status = frontmatter.data.status || project.status || "active";
     project.kind = frontmatter.data.type || project.kind || "projet";
+    project.displayTitle = frontmatter.data.title || project.displayTitle || project.title;
     project.tags = readArrayValue(frontmatter.data.tags);
     project.personnes = readArrayValue(frontmatter.data.personnes || frontmatter.data.personne);
     project.summary = frontmatter.data.summary || project.summary || "";
@@ -3846,6 +4059,7 @@ async function createApp() {
 
   function projectTemplate(values = {}) {
     return renderTemplate(state.config.markdown.templates.project, {
+      title: values.title || values.displayTitle || "",
       type: values.type || "projet",
       date: formatDate(new Date(), state.config.dateInsert),
       intro: values.intro || "",
@@ -4058,7 +4272,7 @@ async function createApp() {
     }
 
     for (const project of visibleProjects()) {
-      const haystack = `${project.title} ${project.kind} ${project.status} ${project.tags.join(" ")} ${(project.personnes || []).join(" ")} ${project.body}`.toLowerCase();
+      const haystack = `${project.title} ${projectDisplayTitle(project)} ${project.kind} ${project.status} ${project.tags.join(" ")} ${(project.personnes || []).join(" ")} ${project.body}`.toLowerCase();
       if (haystack.includes(q)) {
         results.push({
           type: "project",
@@ -4132,6 +4346,7 @@ async function createApp() {
 
     setText("todoCount", openTodos.length);
     setText("kanbanCount", openTodos.length);
+    setText("portfolioCount", projects.length);
     setText("inboxNavCount", inbox.length);
     setText("followupNavCount", followups.length);
     setText("todayNavCount", followups.length + openTodos.filter((todo) => todo.isOverdue).length);
@@ -4627,24 +4842,30 @@ async function createApp() {
     return todo.parsed.followupDate || todo.parsed.dueDate || "9999-12-31";
   }
 
-  function normalizeMarkdownHeadingDate(value) {
+  function parseMarkdownHeadingDate(value) {
     const source = String(value || "").trim();
-    const isoMatch = source.match(/^(\d{4})-(\d{2})-(\d{2})(?=\s|$)/);
-    if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
-    const localMatch = source.match(/^(\d{2})\.(\d{2})\.(\d{4})(?=\s|$)/);
-    if (localMatch) return `${localMatch[3]}-${localMatch[2]}-${localMatch[1]}`;
+    const isoMatch = source.match(/^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?(?=\s|$)/);
+    if (isoMatch) return { date: `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`, time: isoMatch[4] ? `${isoMatch[4]}:${isoMatch[5]}` : "" };
+    const localMatch = source.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2}))?(?=\s|$)/);
+    if (localMatch) return { date: `${localMatch[3]}-${localMatch[2]}-${localMatch[1]}`, time: localMatch[4] ? `${localMatch[4]}:${localMatch[5]}` : "" };
     return null;
   }
 
-  function latestMarkdownHeadingDate(markdown) {
+  function latestMarkdownHeadingActivity(markdown) {
     let latest = null;
     for (const line of String(markdown || "").split("\n")) {
       const match = line.match(/^#{2,6}\s+(.+)$/);
       if (!match) continue;
-      const date = normalizeMarkdownHeadingDate(match[1]);
-      if (date && (!latest || date > latest)) latest = date;
+      const activity = parseMarkdownHeadingDate(match[1]);
+      const sortable = activity ? `${activity.date} ${activity.time || "00:00"}` : "";
+      const latestSortable = latest ? `${latest.date} ${latest.time || "00:00"}` : "";
+      if (activity && (!latest || sortable > latestSortable)) latest = activity;
     }
     return latest;
+  }
+
+  function latestMarkdownHeadingDate(markdown) {
+    return latestMarkdownHeadingActivity(markdown)?.date || null;
   }
 
   function projectActivityDate(project) {
@@ -4660,9 +4881,9 @@ async function createApp() {
   }
 
   function projectActivityLabel(project) {
-    const markdownDate = projectMarkdownActivityDate(project);
-    if (!markdownDate) return "Aucune date Markdown";
-    return `Dernière activité: ${formatDate(new Date(markdownDate), "DD.MM.YYYY")}`;
+    const activity = latestMarkdownHeadingActivity(project.body);
+    if (!activity) return "Aucune date Markdown";
+    return `Dernière activité: ${formatDate(new Date(activity.date), "DD.MM.YYYY")}${activity.time ? ` ${activity.time}` : ""}`;
   }
 
   function sourceValues(todos, key) {
@@ -4715,7 +4936,7 @@ async function createApp() {
       .sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title))
       .slice(0, 8);
     const visibleProjectList = visibleProjects()
-      .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || a.title.localeCompare(b.title, "fr"));
+      .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr"));
 
     setText("todayFollowupCount", followups.length);
     setText("todayOverdueCount", overdue.length);
@@ -4726,10 +4947,10 @@ async function createApp() {
     setText("todayProjectsCount", visibleProjectList.length);
 
     const displayOptions = { visibleTokens: todoVisibleTokens(), dragHandle: false };
-    renderTodoGroup(elements.todayFollowups, followups.slice(0, 8), "Aucune relance arrivee.", { ...displayOptions, quickActions: true });
-    renderTodoGroup(elements.todayOverdue, overdue.slice(0, 8), "Aucune echeance depassee.", { ...displayOptions, quickActions: true });
-    renderTodoGroup(elements.todayWaiting, waiting.slice(0, 8), "Aucune attente suivie.", { ...displayOptions, quickActions: true });
-    renderTodoGroup(elements.todayBlocked, blocked.slice(0, 8), "Aucun blocage suivi.", { ...displayOptions, quickActions: true });
+    renderTodoGroup(elements.todayFollowups, followups.slice(0, 8), "Aucune relance arrivee.", displayOptions);
+    renderTodoGroup(elements.todayOverdue, overdue.slice(0, 8), "Aucune echeance depassee.", displayOptions);
+    renderTodoGroup(elements.todayWaiting, waiting.slice(0, 8), "Aucune attente suivie.", displayOptions);
+    renderTodoGroup(elements.todayBlocked, blocked.slice(0, 8), "Aucun blocage suivi.", displayOptions);
     renderTodoGroup(elements.todaySolo, solo.slice(0, 8), "Aucune todo solitaire ouverte.", displayOptions);
 
     elements.todayMeetings.innerHTML = "";
@@ -4809,7 +5030,7 @@ async function createApp() {
   function renderProjects() {
     elements.projectList.innerHTML = "";
     const projects = visibleProjects()
-      .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || a.title.localeCompare(b.title, "fr"));
+      .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr"));
     for (const project of projects) {
       const card = document.createElement("button");
       card.type = "button";
@@ -4817,7 +5038,7 @@ async function createApp() {
       card.dataset.projectTitle = project.title;
       card.innerHTML = `
         <span class="card-top">
-          <span class="project-title">${project.title}</span>
+          <span class="project-title">${escapeAppHtml(projectDisplayTitle(project))}</span>
           <span class="age">${projectActivityAge(project)} j</span>
         </span>
         <span class="summary">${escapeAppHtml(projectActivityLabel(project))}</span>
@@ -4825,6 +5046,7 @@ async function createApp() {
           ${projectSignalBadges(project)}
           <span class="chip ${project.status === "waiting" ? "amber" : project.status === "dormant" ? "violet" : "green"}">${project.status}</span>
           <span class="chip blue">${project.kind}</span>
+          <span class="chip">+${escapeAppHtml(project.title)}</span>
           <span class="chip">${openProjectTodos(project.title).length} todos</span>
         </span>
       `;
@@ -4853,7 +5075,7 @@ async function createApp() {
     elements.projectTitle.value = project.title;
     elements.projectBody.value = project.body;
     mountProjectOverTypeEditor("home");
-    setText("selectedProjectName", `Projet ${project.title}`);
+    setText("selectedProjectName", projectDisplayTitle(project));
     setText("selectedProjectTodos", `${openProjectTodos(project.title).length} ouverts`);
     setText("selectedProjectActivity", `${projectActivityAge(project)} jour(s)`);
   }
@@ -5205,6 +5427,190 @@ async function createApp() {
     return card;
   }
 
+  function portfolioOrder() {
+    if (!state.config.portfolio) state.config.portfolio = { order: [] };
+    if (!Array.isArray(state.config.portfolio.order)) state.config.portfolio.order = [];
+    return state.config.portfolio.order;
+  }
+
+  function portfolioProjects() {
+    const order = portfolioOrder();
+    const orderIndex = new Map(order.map((id, index) => [id, index]));
+    const query = elements.portfolioSearchInput.value.trim().toLowerCase();
+    const projects = visibleProjects().filter((project) => {
+      if (!query) return true;
+      const haystack = `${projectDisplayTitle(project)} ${project.title} ${project.status} ${project.kind} ${(project.tags || []).join(" ")} ${(project.personnes || []).join(" ")} ${project.body || ""}`.toLowerCase();
+      return haystack.includes(query);
+    });
+    const mode = state.config.portfolio?.sortMode || "manual";
+    return projects.sort((a, b) => {
+      if (mode === "activity") {
+        return projectActivityAge(b) - projectActivityAge(a)
+          || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr");
+      }
+      if (mode === "important") {
+        return projectSignalRank(a) - projectSignalRank(b)
+          || projectActivityAge(b) - projectActivityAge(a)
+          || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr");
+      }
+      if (mode === "status") {
+        return projectStatusRank(a) - projectStatusRank(b)
+          || projectActivityAge(b) - projectActivityAge(a)
+          || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr");
+      }
+      const indexA = orderIndex.has(a.id) ? orderIndex.get(a.id) : Number.MAX_SAFE_INTEGER;
+      const indexB = orderIndex.has(b.id) ? orderIndex.get(b.id) : Number.MAX_SAFE_INTEGER;
+      return indexA - indexB
+        || projectActivityAge(b) - projectActivityAge(a)
+        || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr");
+    });
+  }
+
+  function projectSignalRank(project) {
+    const tags = new Set((project.tags || []).map((tag) => String(tag).toLowerCase()));
+    if (tags.has("important")) return 0;
+    if (project.status === "blocked") return 1;
+    if (project.status === "waiting") return 2;
+    if (tags.has("a-venir")) return 3;
+    if (project.status === "dormant") return 5;
+    return 4;
+  }
+
+  function projectStatusRank(project) {
+    return { blocked: 0, waiting: 1, active: 2, dormant: 3, archived: 4 }[project.status || "active"] ?? 2;
+  }
+
+  function projectTone(project) {
+    const tags = new Set((project.tags || []).map((tag) => String(tag).toLowerCase()));
+    if (tags.has("important")) return "important";
+    if (project.status === "blocked") return "blocked";
+    if (project.status === "waiting") return "waiting";
+    if (tags.has("a-venir")) return "future";
+    if (project.status === "dormant" || projectActivityAge(project) > state.config.staleAfterDays) return "dormant";
+    return "active";
+  }
+
+  function movePortfolioProject(sourceId, targetId) {
+    const visibleIds = portfolioProjects().map((project) => project.id);
+    const sourceIndex = visibleIds.indexOf(sourceId);
+    const targetIndex = visibleIds.indexOf(targetId);
+    if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) return;
+    const [source] = visibleIds.splice(sourceIndex, 1);
+    const nextTargetIndex = visibleIds.indexOf(targetId);
+    visibleIds.splice(nextTargetIndex, 0, source);
+    const hiddenIds = portfolioOrder().filter((id) => !visibleIds.includes(id));
+    state.config.portfolio = { ...(state.config.portfolio || {}), order: [...visibleIds, ...hiddenIds] };
+    persist();
+    renderPortfolioView();
+  }
+
+  function renderPortfolioView() {
+    const projects = portfolioProjects();
+    const sortMode = state.config.portfolio?.sortMode || "manual";
+    elements.portfolioSubtitle.textContent = `${projects.length} projet${projects.length > 1 ? "s" : ""} visible${projects.length > 1 ? "s" : ""} · ${sortMode === "manual" ? "ordre manuel global" : `tri ${sortMode}`}`;
+    elements.portfolioClearSearchButton.classList.toggle("hidden", !elements.portfolioSearchInput.value);
+    document.querySelectorAll("[data-portfolio-sort]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.portfolioSort === sortMode);
+    });
+    elements.portfolioBoard.innerHTML = "";
+
+    if (!projects.length) {
+      renderEmpty(elements.portfolioBoard, "Aucun projet visible.");
+      return;
+    }
+
+    const list = document.createElement("div");
+    list.className = "portfolio-list";
+    for (const project of projects) list.append(createPortfolioRow(project));
+    elements.portfolioBoard.append(list);
+  }
+
+  function createPortfolioRow(project) {
+    const todos = openProjectTodos(project.title);
+    const row = document.createElement("div");
+    row.className = `portfolio-row tone-${projectTone(project)}`;
+    row.draggable = (state.config.portfolio?.sortMode || "manual") === "manual";
+    row.dataset.projectId = project.id;
+    row.tabIndex = 0;
+    row.innerHTML = `
+      <span class="portfolio-priority">${projectSignalBadges(project) || ""}</span>
+      <span class="portfolio-title">
+        <span class="portfolio-name">${escapeAppHtml(projectDisplayTitle(project))}</span>
+        <span class="portfolio-short">+${escapeAppHtml(project.title)}</span>
+      </span>
+      <span class="portfolio-status">
+        <span class="status-dot ${escapeAppHtml(project.status || "active")}"></span>
+        <span>${escapeAppHtml(project.status || "active")}</span>
+      </span>
+      <span class="portfolio-age">${projectActivityAge(project)}j</span>
+      <span class="portfolio-todos">${todos.length}</span>
+      <span class="portfolio-activity">${escapeAppHtml(projectActivityLabel(project))}</span>
+      <span class="portfolio-actions">
+        <span class="portfolio-followup">
+          <button class="button" data-portfolio-followup-toggle title="Créer une relance">Relance</button>
+          <span class="portfolio-followup-menu hidden">
+            <button class="button" data-portfolio-followup="1">+1j</button>
+            <button class="button" data-portfolio-followup="2">+2j</button>
+            <button class="button" data-portfolio-followup="3">+3j</button>
+            <button class="button" data-portfolio-followup="5">+5j</button>
+            <button class="button" data-portfolio-followup="7">+7j</button>
+          </span>
+        </span>
+        <button class="button" data-portfolio-note title="Créer une note">Note</button>
+      </span>
+    `;
+    row.addEventListener("click", (event) => {
+      if (event.target.closest(".portfolio-actions")) return;
+      selectedProjectId = project.id;
+      activeView = "project";
+      render();
+    });
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      selectedProjectId = project.id;
+      activeView = "project";
+      render();
+    });
+    row.querySelector("[data-portfolio-followup-toggle]")?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      row.querySelector(".portfolio-followup-menu")?.classList.toggle("hidden");
+    });
+    row.querySelectorAll("[data-portfolio-followup]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        selectedProjectId = project.id;
+        createProjectFollowupTodo(Number(event.currentTarget.dataset.portfolioFollowup));
+      });
+    });
+    row.querySelector("[data-portfolio-note]")?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      selectedProjectId = project.id;
+      createJournalNoteFromProject();
+    });
+    row.addEventListener("dragstart", (event) => {
+      if ((state.config.portfolio?.sortMode || "manual") !== "manual") {
+        event.preventDefault();
+        return;
+      }
+      event.dataTransfer.setData("text/plain", project.id);
+    });
+    row.addEventListener("dragover", (event) => {
+      if ((state.config.portfolio?.sortMode || "manual") !== "manual") return;
+      event.preventDefault();
+      row.classList.add("drop-target");
+    });
+    row.addEventListener("dragleave", () => row.classList.remove("drop-target"));
+    row.addEventListener("drop", (event) => {
+      event.preventDefault();
+      row.classList.remove("drop-target");
+      if ((state.config.portfolio?.sortMode || "manual") !== "manual") return;
+      const sourceId = event.dataTransfer.getData("text/plain");
+      if (!sourceId || sourceId === project.id) return;
+      movePortfolioProject(sourceId, project.id);
+    });
+    return row;
+  }
+
   function renderProjectFocus() {
     const project = selectedProject();
     if (!project) return;
@@ -5214,7 +5620,7 @@ async function createApp() {
     const status = elements.projectStatusFilter.value;
     const projects = visibleProjects().filter((item) => {
       if (status && item.status !== status) return false;
-      const haystack = `${item.title} ${item.status} ${item.kind} ${(item.tags || []).join(" ")} ${(item.personnes || []).join(" ")} ${item.summary || ""} ${item.body || ""}`.toLowerCase();
+      const haystack = `${item.title} ${projectDisplayTitle(item)} ${item.status} ${item.kind} ${(item.tags || []).join(" ")} ${(item.personnes || []).join(" ")} ${item.summary || ""} ${item.body || ""}`.toLowerCase();
       return !query || haystack.includes(query);
     });
     elements.projectFocusCount.textContent = projects.length;
@@ -5260,15 +5666,20 @@ async function createApp() {
     const todos = openProjectTodos(project.title);
     const hasWaiting = todos.some((todo) => todo.parsed.values.waiting || todo.parsed.status === "waiting");
     const hasBlocked = todos.some((todo) => todo.parsed.values.blocked || todo.parsed.status === "blocked");
+    const tags = new Set((project.tags || []).map((tag) => String(tag).toLowerCase()));
+    const isImportant = tags.has("important");
+    const isFuture = tags.has("a-venir");
     if (project.status === "blocked" || hasBlocked) return { key: "blocked", label: "Bloques" };
+    if (isImportant) return { key: "important", label: "Importants" };
     if (project.status === "waiting" || hasWaiting) return { key: "waiting", label: "En attente" };
-    if (!todos.length) return { key: "empty", label: "Sans action ouverte" };
     if (project.status === "dormant" || projectActivityAge(project) > state.config.staleAfterDays) return { key: "dormant", label: "Dormants" };
+    if (isFuture) return { key: "future", label: "A venir" };
+    if (!todos.length) return { key: "empty", label: "Sans action ouverte" };
     return { key: "active", label: "Actifs" };
   }
 
   function groupProjectsForFocus(projects) {
-    const order = ["blocked", "waiting", "active", "dormant", "empty"];
+    const order = ["important", "blocked", "waiting", "future", "active", "empty", "dormant"];
     const groups = new Map();
     for (const project of projects) {
       const info = projectFocusGroupInfo(project);
@@ -5281,9 +5692,13 @@ async function createApp() {
       .map((group) => ({
         ...group,
         projects: group.projects.sort((a, b) => {
-          return openProjectTodos(b.title).length - openProjectTodos(a.title).length
+          const importantA = (a.tags || []).map((tag) => String(tag).toLowerCase()).includes("important");
+          const importantB = (b.tags || []).map((tag) => String(tag).toLowerCase()).includes("important");
+          return Number(importantB) - Number(importantA)
+            || Number(b.kind === "incident") - Number(a.kind === "incident")
+            || openProjectTodos(b.title).length - openProjectTodos(a.title).length
             || projectActivityAge(a) - projectActivityAge(b)
-            || a.title.localeCompare(b.title, "fr");
+            || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr");
         }),
       }));
   }
@@ -5295,12 +5710,13 @@ async function createApp() {
     row.className = `project-row${project.id === selectedProjectId ? " active" : ""}`;
     row.innerHTML = `
       <span class="project-row-title">
-        <span class="project-row-name">${escapeAppHtml(project.title)}</span>
+        <span class="project-row-name">${escapeAppHtml(projectDisplayTitle(project))}</span>
         <span class="project-row-badges">${projectSignalBadges(project)}</span>
       </span>
       <span class="project-row-meta">
         <span class="status-dot ${escapeAppHtml(project.status || "active")}"></span>
         <span>${escapeAppHtml(project.status || "active")}</span>
+        <span>+${escapeAppHtml(project.title)}</span>
         <span>${todos.length} todo${todos.length > 1 ? "s" : ""}</span>
         <span>${projectActivityAge(project)}j</span>
       </span>
@@ -5732,6 +6148,7 @@ async function createApp() {
     renderProjectEditor();
     renderTodoView();
     renderKanbanView();
+    renderPortfolioView();
     renderProjectFocus();
     renderJournalView();
     renderCalendarView();
@@ -6009,16 +6426,61 @@ async function createApp() {
     }
   }
 
+  function shortProjectNameFromTitle(title) {
+    return String(title || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^A-Za-z0-9_-]+/g, "")
+      .slice(0, 24);
+  }
+
   function createProject() {
-    const title = prompt("Nom du projet ?");
+    const displayTitle = prompt("Titre du projet ?");
+    if (!displayTitle?.trim()) return;
+    const suggestedShortName = shortProjectNameFromTitle(displayTitle);
+    const title = prompt("Nom court pour les todos (+NomCourt) ?", suggestedShortName);
     if (!title?.trim()) return;
     const project = createProjectRecord(title, {
+      displayTitle: displayTitle.trim(),
       summary: "Nouveau projet à compléter.",
-      body: projectTemplate({ type: "projet" }),
+      body: projectTemplate({ type: "projet", title: displayTitle.trim() }),
     });
     state.projects.unshift(project);
     selectedProjectId = project.id;
     activeView = "project";
+    persist();
+    render();
+  }
+
+  function createIncidentProject() {
+    const displayTitle = prompt("Titre de l'incident ?");
+    if (!displayTitle?.trim()) return;
+    const suggestedShortName = shortProjectNameFromTitle(`INC${displayTitle}`);
+    const title = prompt("Nom court pour les todos (+NomCourt) ?", suggestedShortName);
+    if (!title?.trim()) return;
+    const now = new Date();
+    const timestamp = `${todayISO(now)} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    const body = `---\ntitle: ${displayTitle.trim()}\ntype: incident\nstatus: active\ntags: [important, incident]\npersonnes: []\n---\n\n# Situation\n\n# Timeline\n\n## ${timestamp}\n\n- Incident ouvert.\n\n# Actions\n\n# Décisions\n\n# Debrief\n`;
+    const project = createProjectRecord(title, {
+      kind: "incident",
+      displayTitle: displayTitle.trim(),
+      tags: ["important", "incident"],
+      summary: "Incident à suivre.",
+      body,
+    });
+    syncProjectFromMarkdown(project);
+    state.projects.unshift(project);
+    selectedProjectId = project.id;
+    activeView = "project";
+    persist();
+    render();
+  }
+
+  function createProjectFollowupTodo(days) {
+    const project = selectedProject();
+    if (!project) return;
+    const raw = `Relancer ${project.title} +${project.title} followup:${isoDatePlusDays(days)}`;
+    addTodoRaw(raw);
     persist();
     render();
   }
@@ -6395,6 +6857,19 @@ async function createApp() {
     elements.projectTemplateEditor.addEventListener("change", saveMarkdownTemplates);
     elements.journalTemplateEditor.addEventListener("change", saveMarkdownTemplates);
     elements.resetTemplatesButton.addEventListener("click", resetMarkdownTemplates);
+    elements.portfolioSearchInput.addEventListener("input", renderPortfolioView);
+    elements.portfolioClearSearchButton.addEventListener("click", () => {
+      elements.portfolioSearchInput.value = "";
+      elements.portfolioSearchInput.focus();
+      renderPortfolioView();
+    });
+    document.querySelectorAll("[data-portfolio-sort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        state.config.portfolio = { ...(state.config.portfolio || {}), sortMode: button.dataset.portfolioSort };
+        persist();
+        renderPortfolioView();
+      });
+    });
     elements.projectFocusBody.addEventListener("input", saveFocusedProjectBodyOnly);
     elements.projectFocusTitle.addEventListener("change", saveFocusedProject);
     elements.projectSearchInput.addEventListener("input", renderProjectFocus);
@@ -6405,7 +6880,11 @@ async function createApp() {
     });
     elements.projectStatusFilter.addEventListener("change", renderProjectFocus);
     elements.newProjectButton.addEventListener("click", createProject);
+    elements.newIncidentProjectButton.addEventListener("click", createIncidentProject);
     elements.todayNewJournalButton.addEventListener("click", () => createJournalNote({ kind: "meeting", title: `${todayISO()} - Point` }));
+    elements.projectFollowup1Button.addEventListener("click", () => createProjectFollowupTodo(1));
+    elements.projectFollowup3Button.addEventListener("click", () => createProjectFollowupTodo(3));
+    elements.projectFollowup7Button.addEventListener("click", () => createProjectFollowupTodo(7));
     elements.projectNewJournalButton.addEventListener("click", createJournalNoteFromProject);
     elements.exportProjectMarkdownButton.addEventListener("click", exportFocusedProjectMarkdown);
     elements.archiveProjectButton.addEventListener("click", archiveSelectedProject);
