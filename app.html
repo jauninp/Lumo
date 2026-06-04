@@ -251,6 +251,51 @@ select:focus-visible {
   font-weight: 760;
 }
 
+.todo-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10030;
+  display: grid;
+  place-items: center;
+  background: rgba(31, 36, 33, 0.28);
+  padding: 18px;
+}
+
+.todo-edit-dialog {
+  display: grid;
+  width: min(760px, 100%);
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.2);
+  padding: 14px;
+}
+
+.todo-edit-head,
+.todo-edit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.todo-edit-field {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fbfbfa;
+  padding: 10px;
+  color: var(--ink);
+  font: 13px/1.45 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.todo-edit-actions {
+  justify-content: flex-end;
+}
+
 .search-kind {
   color: var(--muted);
   font-size: 11px;
@@ -793,12 +838,12 @@ select:focus-visible {
   justify-content: flex-end;
 }
 
-.portfolio-followup {
+.followup-menu-wrap {
   position: relative;
   display: inline-flex;
 }
 
-.portfolio-followup-menu {
+.followup-menu {
   position: absolute;
   right: 0;
   top: calc(100% + 4px);
@@ -810,6 +855,10 @@ select:focus-visible {
   background: var(--paper);
   padding: 5px;
   box-shadow: 0 8px 18px rgba(31, 36, 33, 0.12);
+}
+
+.followup-menu .button {
+  white-space: nowrap;
 }
 
 .portfolio-actions .button {
@@ -838,6 +887,13 @@ select:focus-visible {
   display: grid;
   grid-template-columns: var(--journal-list-width, 240px) 5px minmax(0, 1fr) 5px var(--journal-side-width, 220px);
   gap: 8px;
+  align-items: start;
+}
+
+.notes-recovery-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+  gap: 10px;
   align-items: start;
 }
 
@@ -872,6 +928,11 @@ select:focus-visible {
   min-height: 28px;
   padding: 0 8px;
   font-size: 12px;
+}
+
+.project-radar-actions .followup-menu {
+  right: auto;
+  left: 0;
 }
 
 .focus-editor-grid {
@@ -2065,7 +2126,7 @@ select:focus-visible {
 }
 
 .quick-action {
-  min-width: 34px;
+  min-width: 54px;
   height: 24px;
   border-color: var(--line);
   background: var(--paper);
@@ -2073,6 +2134,21 @@ select:focus-visible {
   padding: 0 7px;
   font-size: 12px;
   font-weight: 720;
+}
+
+.todo-quick-actions .followup-menu-wrap > .button {
+  height: 24px;
+  min-height: 24px;
+  border-radius: 6px;
+  padding: 0 7px;
+  font-size: 12px;
+  font-weight: 720;
+  line-height: 1;
+}
+
+.todo-quick-actions .followup-menu {
+  bottom: calc(100% + 4px);
+  top: auto;
 }
 
 .quick-action:hover,
@@ -2242,6 +2318,7 @@ select:focus-visible {
           <button class="nav-item" data-view-button="portfolio"><span>Portfolio</span><span id="portfolioCount" class="count"></span></button>
           <button class="nav-item" data-view-button="project"><span>Projets</span><span id="projectCount" class="count"></span></button>
           <button class="nav-item" data-view-button="journal"><span>Journal</span><span id="journalCount" class="count"></span></button>
+          <button class="nav-item" data-view-button="notes"><span>Notes</span><span id="notesCount" class="count"></span></button>
           <button class="nav-item" data-view-button="scratchpad"><span>Bloc-notes</span></button>
           <button class="nav-item" data-view-button="calendar"><span>Calendrier</span></button>
         </aside>
@@ -2524,9 +2601,7 @@ select:focus-visible {
                     <h2>Radar</h2>
                   </div>
                   <div class="project-radar-actions">
-                    <button id="projectFollowup1Button" class="button" title="Créer une relance demain">+1j</button>
-                    <button id="projectFollowup3Button" class="button" title="Créer une relance dans 3 jours">+3j</button>
-                    <button id="projectFollowup7Button" class="button" title="Créer une relance dans 7 jours">+7j</button>
+                    <span id="projectFollowupMenu"></span>
                     <button id="projectNewJournalButton" class="button">Note</button>
                   </div>
                   <div id="projectLinkedTodos" class="linked-todos"></div>
@@ -2597,6 +2672,38 @@ select:focus-visible {
                   </div>
                   <div id="journalLinks" class="linked-todos"></div>
                 </aside>
+              </section>
+            </div>
+          </section>
+
+          <section class="view" data-view="notes">
+            <div class="main-inner">
+              <div class="page-head">
+                <div>
+                  <h1>Notes</h1>
+                  <div class="subtitle">Vue de secours affichant tous les documents Markdown.</div>
+                </div>
+              </div>
+              <section class="notes-recovery-grid">
+                <aside class="panel">
+                  <div class="side-filters">
+                    <div class="filter-search-wrap">
+                      <input id="allNotesSearchInput" class="field" placeholder="Rechercher dans toutes les notes...">
+                      <button id="allNotesClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
+                    </div>
+                  </div>
+                  <div id="allNotesList" class="journal-list"></div>
+                </aside>
+                <section class="panel">
+                  <div class="panel-head">
+                    <h2>Note ouverte</h2>
+                  </div>
+                  <div class="document">
+                    <input id="allNotesTitle" class="title-input">
+                    <div id="allNotesEditorHost" class="overtype-host"></div>
+                    <textarea id="allNotesBody" class="hidden"></textarea>
+                  </div>
+                </section>
               </section>
             </div>
           </section>
@@ -2738,6 +2845,7 @@ select:focus-visible {
 const defaultConfig = {
   dateInsert: "DD.MM.YYYY",
   staleAfterDays: 14,
+  followupOffsets: [1, 2, 3, 5, 7],
   todo: {
     autoId: true,
     idKey: "id",
@@ -2771,8 +2879,8 @@ const defaultConfig = {
   markdown: {
     codeHighlight: true,
     templates: {
-      project: "---\ntitle: {title}\ntype: {type}\nstatus: active\ntags: []\npersonnes: []\n---\n\n# Contexte\n\n{intro}\n\n# Avancement\n\n## {date}\n\n- \n\n# Questions ouvertes\n\n# Décisions\n",
-      journal: "---\ntype: {type}\nprojects: [{projects}]\ntags: []\npersonnes: []\nprocessed: false\n---\n\n# Notes\n\n- ",
+      project: "---\ntitle: {title}\ntype: project\ncategory: {category}\nstatus: active\ntags: []\npersonnes: []\n---\n\n# Contexte\n\n{intro}\n\n# Avancement\n\n## {date}\n\n- \n\n# Questions ouvertes\n\n# Décisions\n",
+      journal: "---\ntype: journal\ncategory: {category}\nprojects: [{projects}]\ntags: []\npersonnes: []\nprocessed: false\n---\n\n# Notes\n\n- ",
     },
   },
   layout: {
@@ -2801,10 +2909,19 @@ function mergeConfig(savedConfig = {}) {
   if (!markdownTemplates.project.includes("title:")) {
     markdownTemplates.project = markdownTemplates.project.replace("---\n", "---\ntitle: {title}\n");
   }
+  if (!markdownTemplates.project.includes("category:")) {
+    markdownTemplates.project = markdownTemplates.project.replace("type: {type}\n", "type: project\ncategory: {category}\n");
+  }
+  if (!markdownTemplates.journal.includes("category:")) {
+    markdownTemplates.journal = markdownTemplates.journal.replace("type: {type}\n", "type: journal\ncategory: {category}\n");
+  }
 
   return {
     ...defaultConfig,
     ...savedConfig,
+    followupOffsets: Array.isArray(savedConfig.followupOffsets)
+      ? savedConfig.followupOffsets
+      : defaultConfig.followupOffsets,
     todo: {
       ...defaultConfig.todo,
       ...(savedConfig.todo || {}),
@@ -2918,7 +3035,7 @@ function validateImportPayload(payload) {
     return { ok: false, errors, state: null };
   }
 
-  if (Array.isArray(payload.todos) || Array.isArray(payload.projects) || Array.isArray(payload.journal)) {
+  if (Array.isArray(payload.todos) || Array.isArray(payload.notes) || Array.isArray(payload.projects) || Array.isArray(payload.journal)) {
     return validateStateObject(payload, errors);
   }
 
@@ -2941,8 +3058,9 @@ function validateImportPayload(payload) {
 
 function validateStateObject(sourceState, errors = []) {
   if (!Array.isArray(sourceState.todos)) errors.push("`state.todos` doit etre une liste.");
-  if (!Array.isArray(sourceState.projects)) errors.push("`state.projects` doit etre une liste.");
-  if (!Array.isArray(sourceState.journal)) errors.push("`state.journal` doit etre une liste.");
+  if (!Array.isArray(sourceState.notes) && !Array.isArray(sourceState.projects) && !Array.isArray(sourceState.journal)) {
+    errors.push("`state.notes` doit etre une liste.");
+  }
   if (!sourceState.config || typeof sourceState.config !== "object") errors.push("`state.config` doit etre un objet.");
 
   for (const [index, todo] of (sourceState.todos || []).entries()) {
@@ -2958,6 +3076,12 @@ function validateStateObject(sourceState, errors = []) {
   }
 
   for (const [index, note] of (sourceState.journal || []).entries()) {
+    if (!note || typeof note !== "object" || typeof note.title !== "string") {
+      errors.push(`Note ${index + 1}: titre manquant ou invalide.`);
+    }
+  }
+
+  for (const [index, note] of (sourceState.notes || []).entries()) {
     if (!note || typeof note !== "object" || typeof note.title !== "string") {
       errors.push(`Note ${index + 1}: titre manquant ou invalide.`);
     }
@@ -3018,7 +3142,16 @@ function createDateToolbarButton(getDateText) {
 function toolbarButtonsWith(customToolbarButtons) {
   if (!customToolbarButtons?.length) return null;
   const defaults = window.defaultToolbarButtons || [];
-  return [...defaults, { name: "separator" }, ...customToolbarButtons];
+  const previewIndex = defaults.findIndex((button) => {
+    const text = `${button?.name || ""} ${button?.actionId || ""} ${button?.title || ""}`.toLowerCase();
+    return text.includes("preview") || text.includes("eye") || text.includes("oeil");
+  });
+  const insertIndex = previewIndex >= 0 ? previewIndex : Math.max(defaults.length - 1, 0);
+  return [
+    ...defaults.slice(0, insertIndex),
+    ...customToolbarButtons,
+    ...defaults.slice(insertIndex),
+  ];
 }
 async function createOverTypeEditor({ host, markdown, onChange, onBlur, toolbarButtons }) {
   await loadOverTypeScript();
@@ -3100,6 +3233,14 @@ function parseFrontmatter(markdown) {
 
   return { data, body };
 }
+function writeFrontmatter(markdown, updates = {}) {
+  const parsed = parseFrontmatter(markdown || "");
+  const data = { ...parsed.data, ...updates };
+  const lines = Object.entries(data)
+    .filter(([, value]) => value !== undefined && value !== null && value !== "")
+    .map(([key, value]) => `${key}: ${formatYamlValue(value)}`);
+  return `---\n${lines.join("\n")}\n---\n\n${parsed.body || ""}`;
+}
 function readArrayValue(value) {
   if (Array.isArray(value)) return value.map(cleanYamlScalar).filter(Boolean);
   if (!value) return [];
@@ -3109,6 +3250,12 @@ function readArrayValue(value) {
     .split(",")
     .map(cleanYamlScalar)
     .filter(Boolean);
+}
+
+function formatYamlValue(value) {
+  if (Array.isArray(value)) return `[${value.join(", ")}]`;
+  if (typeof value === "boolean") return value ? "true" : "false";
+  return String(value);
 }
 
 function parseYamlValue(value) {
@@ -3153,16 +3300,24 @@ function loadSnapshots() {
 function saveSnapshot(label, state) {
   try {
     const now = new Date();
+    const snapshotState = JSON.parse(JSON.stringify(state));
+    delete snapshotState.projects;
+    delete snapshotState.journal;
+    snapshotState.notes = (snapshotState.notes || []).map((note) => {
+      const clean = { ...note };
+      delete clean.kind;
+      return clean;
+    });
     const snapshot = {
       id: `snapshot-${now.getTime()}-${Math.random().toString(36).slice(2, 7)}`,
       label,
       createdAt: now.toISOString(),
       counts: {
         todos: state.todos?.length || 0,
-        projects: state.projects?.length || 0,
-        journal: state.journal?.length || 0,
+        projects: (snapshotState.notes || []).filter((note) => note.type === "project" || note.shortName).length,
+        journal: (snapshotState.notes || []).filter((note) => note.type === "journal").length,
       },
-      state: JSON.parse(JSON.stringify(state)),
+      state: snapshotState,
     };
     const snapshots = [snapshot, ...loadSnapshots()].slice(0, MAX_SNAPSHOTS);
     localStorage.setItem(SNAPSHOTS_KEY, JSON.stringify(snapshots));
@@ -3335,17 +3490,22 @@ const seedState = {
       updatedAt: "2026-05-23T12:01:00.000Z",
     },
   ],
-  projects: [
+  notes: [
     {
       id: "project-iso20022",
       title: "ISO20022",
+      shortName: "ISO20022",
+      displayTitle: "ISO20022",
+      type: "project",
+      category: "incident",
       status: "active",
-      kind: "incident",
       tags: ["pacs", "fournisseur"],
       summary: "Incident PACS.002 en cours, mapping fournisseur à valider.",
       updatedAt: "2026-05-23T09:14:00.000Z",
 body: `---
-type: incident
+title: ISO20022
+type: project
+category: incident
 status: active
 tags: [pacs, fournisseur]
 staleAfterDays: 14
@@ -3386,37 +3546,43 @@ if (due.isToday()) {
     {
       id: "project-fournisseurxml",
       title: "FournisseurXML",
+      shortName: "FournisseurXML",
+      displayTitle: "FournisseurXML",
+      type: "project",
+      category: "suivi",
       status: "waiting",
-      kind: "suivi",
       tags: ["mail"],
       summary: "En attente d'un exemple corrigé, relance prévue aujourd'hui.",
       updatedAt: "2026-05-19T14:20:00.000Z",
-      body: "# Contexte\n\nSuivi du retour fournisseur XML.\n",
+      body: "---\ntitle: FournisseurXML\ntype: project\ncategory: suivi\nstatus: waiting\ntags: [mail]\npersonnes: []\n---\n\n# Contexte\n\nSuivi du retour fournisseur XML.\n",
     },
     {
       id: "project-runbook",
       title: "Documentation runbook",
+      shortName: "Documentationrunbook",
+      displayTitle: "Documentation runbook",
+      type: "project",
+      category: "documentation",
       status: "dormant",
-      kind: "documentation",
       tags: ["review"],
       summary: "Aucune note depuis plus de deux semaines, à reprendre ou fermer.",
       updatedAt: "2026-05-01T08:30:00.000Z",
-      body: "# Contexte\n\nRunbook à reprendre quand les urgences sont passées.\n",
+      body: "---\ntitle: Documentation runbook\ntype: project\ncategory: documentation\nstatus: dormant\ntags: [review]\npersonnes: []\n---\n\n# Contexte\n\nRunbook à reprendre quand les urgences sont passées.\n",
     },
-  ],
-  journal: [
     {
       id: "journal-incident-pacs",
       title: "2026-05-23 - Incident PACS.002",
       date: "2026-05-23",
-      kind: "incident",
+      type: "journal",
+      category: "incident",
       projects: ["ISO20022"],
       tags: ["incident", "pacs"],
       processed: false,
       createdAt: "2026-05-23T09:14:00.000Z",
       updatedAt: "2026-05-23T09:14:00.000Z",
       body: `---
-type: incident
+type: journal
+category: incident
 projects: [ISO20022]
 tags: [incident, pacs]
 processed: false
@@ -3441,14 +3607,16 @@ Erreur reçue pendant le traitement PACS.002.
       id: "journal-daniel",
       title: "2026-05-23 - Discussion avec Daniel",
       date: "2026-05-23",
-      kind: "meeting",
+      type: "journal",
+      category: "meeting",
       projects: [],
       tags: ["discussion"],
       processed: false,
       createdAt: "2026-05-23T10:35:00.000Z",
       updatedAt: "2026-05-23T10:35:00.000Z",
       body: `---
-type: meeting
+type: journal
+category: meeting
 projects: []
 tags: [discussion]
 processed: false
@@ -3700,10 +3868,11 @@ async function createApp() {
   const savedState = await loadAppState();
   let state = savedState
     ? normalizeSavedState(savedState)
-    : stampSchema({ ...clone(seedState), config: clone(defaultConfig) });
+    : normalizeSavedState({ ...clone(seedState), config: clone(defaultConfig) });
 
-  let selectedProjectId = state.projects[0]?.id || null;
-  let selectedJournalId = state.journal?.[0]?.id || null;
+  let selectedProjectId = projectRecords()[0]?.id || null;
+  let selectedJournalId = journalRecords()[0]?.id || null;
+  let selectedAllNoteId = state.notes[0]?.id || null;
   let activeFilter = "Tous";
   let activeView = "home";
   let todoMode = "open";
@@ -3713,6 +3882,10 @@ async function createApp() {
   let journalOverTypeNoteId = null;
   let journalOverTypeLoading = false;
   let journalOverTypePending = false;
+  let allNotesOverTypeEditor = null;
+  let allNotesOverTypeNoteId = null;
+  let allNotesOverTypeLoading = false;
+  let allNotesOverTypePending = false;
   const collapsedJournalGroups = new Set();
   const collapsedProjectGroups = new Set();
   const expandedTodoRelations = new Set();
@@ -3807,9 +3980,7 @@ async function createApp() {
     projectFocusEditorGrid: byId("projectFocusEditorGrid"),
     projectLinkedTodos: byId("projectLinkedTodos"),
     projectNewJournalButton: byId("projectNewJournalButton"),
-    projectFollowup1Button: byId("projectFollowup1Button"),
-    projectFollowup3Button: byId("projectFollowup3Button"),
-    projectFollowup7Button: byId("projectFollowup7Button"),
+    projectFollowupMenu: byId("projectFollowupMenu"),
     newProjectButton: byId("newProjectButton"),
     newIncidentProjectButton: byId("newIncidentProjectButton"),
     exportProjectMarkdownButton: byId("exportProjectMarkdownButton"),
@@ -3831,6 +4002,12 @@ async function createApp() {
     journalEditorHost: byId("journalEditorHost"),
     journalBody: byId("journalBody"),
     journalLinks: byId("journalLinks"),
+    allNotesSearchInput: byId("allNotesSearchInput"),
+    allNotesClearSearchButton: byId("allNotesClearSearchButton"),
+    allNotesList: byId("allNotesList"),
+    allNotesTitle: byId("allNotesTitle"),
+    allNotesEditorHost: byId("allNotesEditorHost"),
+    allNotesBody: byId("allNotesBody"),
     calendarPrevButton: byId("calendarPrevButton"),
     calendarTodayButton: byId("calendarTodayButton"),
     calendarNextButton: byId("calendarNextButton"),
@@ -3858,9 +4035,21 @@ async function createApp() {
     if (options.markExportDirty !== false) {
       state.config.exportDirty = true;
     }
-    state = stampSchema(state);
+    state = stateForStorage(stampSchema(state));
     renderExportDirtyState();
     return saveAppState(state);
+  }
+
+  function stateForStorage(sourceState) {
+    const next = clone(sourceState);
+    delete next.projects;
+    delete next.journal;
+    next.notes = (next.notes || []).map((note) => {
+      const clean = { ...note };
+      delete clean.kind;
+      return clean;
+    });
+    return next;
   }
 
   function todoVisibleTokens() {
@@ -3871,15 +4060,19 @@ async function createApp() {
   }
 
   function normalizeSavedState(savedState) {
-    return normalizeTodoIds(migrateStateSchema({
+    const normalized = normalizeTodoIds(migrateStateSchema({
       ...clone(seedState),
       ...savedState,
+      notes: migrateNotesCollection(savedState),
       scratchpad: {
         ...clone(seedState.scratchpad || { body: "", updatedAt: "" }),
         ...(savedState.scratchpad || {}),
       },
       config: mergeConfig(savedState.config),
     }));
+    delete normalized.projects;
+    delete normalized.journal;
+    return normalized;
   }
 
   function normalizeImportedState(importedState) {
@@ -3892,15 +4085,16 @@ async function createApp() {
       ...clone(seedState),
       ...sourceState,
       todos: Array.isArray(sourceState.todos) ? sourceState.todos : [],
-      projects: Array.isArray(sourceState.projects) ? sourceState.projects : [],
-      journal: Array.isArray(sourceState.journal) ? sourceState.journal : [],
+      notes: migrateNotesCollection(sourceState),
       scratchpad: {
         ...clone(seedState.scratchpad || { body: "", updatedAt: "" }),
         ...(sourceState.scratchpad || {}),
       },
       config: mergeConfig(sourceState.config),
     }));
-    const existing = new Set(normalized.projects.map((project) => project.title.toLowerCase()));
+    delete normalized.projects;
+    delete normalized.journal;
+    const existing = new Set(projectRecords(normalized).map((project) => project.title.toLowerCase()));
     const missing = [];
     for (const todo of normalized.todos) {
       for (const project of parseTodo(todo.raw).projects) {
@@ -3911,9 +4105,89 @@ async function createApp() {
       }
     }
     for (const name of missing) {
-      normalized.projects.unshift(createProjectRecord(name, { source: "import" }));
+      normalized.notes.unshift(createProjectRecord(name, { source: "import" }));
     }
     return normalized;
+  }
+
+  function validNoteType(value) {
+    return ["project", "journal", "note"].includes(value) ? value : "";
+  }
+
+  function noteType(note) {
+    return validNoteType(note?.type) || (note?.shortName ? "project" : "journal");
+  }
+
+  function noteCategory(note) {
+    return parseFrontmatter(note?.body || "").data.category || note.category || note.kind || "";
+  }
+
+  function migrateNotesCollection(sourceState = {}) {
+    if (Array.isArray(sourceState.notes)) return sourceState.notes.map(normalizeNoteRecord);
+    const notes = [];
+    for (const project of sourceState.projects || []) notes.push(projectToNote(project));
+    for (const note of sourceState.journal || []) notes.push(journalToNote(note));
+    return notes;
+  }
+
+  function normalizeNoteRecord(note) {
+    const frontmatter = parseFrontmatter(note.body || "");
+    const type = validNoteType(frontmatter.data.type) || validNoteType(note.type) || (note.shortName ? "project" : "journal");
+    const title = note.title || note.displayTitle || note.shortName || "Sans titre";
+    return {
+      ...note,
+      type,
+      category: frontmatter.data.category || note.category || note.kind || "",
+      shortName: note.shortName || note.projectKey || note.shortTitle || (type === "project" ? shortProjectNameFromTitle(title) : ""),
+      title,
+      tags: readArrayValue(frontmatter.data.tags || note.tags),
+      personnes: readArrayValue(frontmatter.data.personnes || frontmatter.data.personne || note.personnes),
+      projects: readArrayValue(frontmatter.data.projects || note.projects),
+      processed: frontmatter.data.processed === true || frontmatter.data.processed === "true" || Boolean(note.processed),
+      status: frontmatter.data.status || note.status || "",
+      updatedAt: note.updatedAt || new Date().toISOString(),
+    };
+  }
+
+  function projectToNote(project) {
+    const category = noteCategory(project) || project.kind || "projet";
+    const title = project.displayTitle || parseFrontmatter(project.body || "").data.title || project.title;
+    const body = writeFrontmatter(project.body || "", {
+      title,
+      type: "project",
+      category,
+      status: project.status || "active",
+      tags: project.tags || [],
+      personnes: project.personnes || [],
+      summary: project.summary || "",
+    });
+    return normalizeNoteRecord({
+      ...project,
+      title,
+      shortName: project.shortName || project.title,
+      category,
+      type: "project",
+      body,
+    });
+  }
+
+  function journalToNote(note) {
+    const category = noteCategory(note) || note.kind || "note";
+    const projects = readArrayValue(note.projects);
+    const body = writeFrontmatter(note.body || "", {
+      type: "journal",
+      category,
+      projects,
+      tags: note.tags || [],
+      personnes: note.personnes || [],
+      processed: Boolean(note.processed),
+    });
+    return normalizeNoteRecord({
+      ...note,
+      category,
+      type: "journal",
+      body,
+    });
   }
 
   function normalizeTodoIds(sourceState) {
@@ -3959,8 +4233,44 @@ async function createApp() {
     return visibleProjects().find((project) => project.id === selectedProjectId) || visibleProjects()[0];
   }
 
+  function projectRecords(sourceState = state) {
+    return (sourceState.notes || [])
+      .filter((note) => noteType(note) === "project")
+      .map(normalizeProjectNote);
+  }
+
+  function journalRecords(sourceState = state) {
+    return (sourceState.notes || [])
+      .filter((note) => noteType(note) === "journal")
+      .map(normalizeJournalNote);
+  }
+
+  function selectedAllNote() {
+    return state.notes.find((note) => note.id === selectedAllNoteId) || state.notes[0];
+  }
+
+  function normalizeProjectNote(note) {
+    return Object.assign(note, {
+      title: note.shortName || note.title,
+      displayTitle: note.title,
+      kind: noteCategory(note) || "projet",
+      status: parseFrontmatter(note.body || "").data.status || note.status || "active",
+      summary: parseFrontmatter(note.body || "").data.summary || note.summary || "",
+    });
+  }
+
+  function normalizeJournalNote(note) {
+    const frontmatter = parseFrontmatter(note.body || "");
+    return Object.assign(note, {
+      kind: noteCategory(note) || "note",
+      projects: readArrayValue(frontmatter.data.projects || note.projects),
+      processed: frontmatter.data.processed === true || frontmatter.data.processed === "true" || Boolean(note.processed),
+      date: note.date || frontmatter.data.date || "",
+    });
+  }
+
   function visibleProjects() {
-    return state.projects.filter((project) => !project.archivedAt && project.status !== "archived");
+    return projectRecords().filter((project) => !project.archivedAt && project.status !== "archived");
   }
 
   function projectTodos(projectTitle) {
@@ -3977,20 +4287,26 @@ async function createApp() {
 
   function createProjectRecord(title, options = {}) {
     const projectTitle = title.trim().replace(/\s+/g, "");
+    const displayTitle = options.displayTitle || options.title || projectTitle;
+    const category = options.kind || options.category || "projet";
     const now = new Date().toISOString();
     return {
       id: crypto.randomUUID ? crypto.randomUUID() : `project-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: projectTitle,
+      title: displayTitle,
+      shortName: projectTitle,
+      type: "project",
+      category,
       status: options.status || "active",
-      kind: options.kind || "projet",
-      displayTitle: options.displayTitle || options.title || projectTitle,
+      kind: category,
+      displayTitle,
       tags: options.tags || [],
       personnes: options.personnes || [],
       summary: options.summary || "Projet créé automatiquement depuis une capture.",
       updatedAt: now,
       body: options.body || projectTemplate({
-        type: options.kind || "projet",
-        title: options.displayTitle || options.title || projectTitle,
+        type: "project",
+        category,
+        title: displayTitle,
         intro: `Projet créé automatiquement depuis ${options.source || "Worklog"}.`,
         source: options.source || "Worklog",
       }),
@@ -3998,7 +4314,7 @@ async function createApp() {
   }
 
   function ensureProjectsFromNames(projectNames, source = "capture") {
-    const existing = new Set(state.projects.map((project) => project.title.toLowerCase()));
+    const existing = new Set(projectRecords().map((project) => project.title.toLowerCase()));
     const created = [];
     const names = readArrayValue(projectNames);
 
@@ -4006,7 +4322,7 @@ async function createApp() {
       const normalized = name.trim().replace(/\s+/g, "");
       if (!normalized || existing.has(normalized.toLowerCase())) continue;
       const project = createProjectRecord(normalized, { source });
-      state.projects.unshift(project);
+      state.notes.unshift(project);
       existing.add(project.title.toLowerCase());
       created.push(project);
     }
@@ -4019,7 +4335,7 @@ async function createApp() {
   }
 
   function selectedJournal() {
-    return state.journal.find((note) => note.id === selectedJournalId) || state.journal[0];
+    return journalRecords().find((note) => note.id === selectedJournalId) || journalRecords()[0];
   }
 
   function noteProjects(note) {
@@ -4028,13 +4344,17 @@ async function createApp() {
   }
 
   function projectNotes(projectTitle) {
-    return state.journal.filter((note) => noteProjects(note).includes(projectTitle));
+    return journalRecords().filter((note) => noteProjects(note).includes(projectTitle));
   }
 
   function syncProjectFromMarkdown(project) {
     const frontmatter = parseFrontmatter(project.body);
+    const nextType = validNoteType(frontmatter.data.type);
     project.status = frontmatter.data.status || project.status || "active";
-    project.kind = frontmatter.data.type || project.kind || "projet";
+    if (nextType) project.type = nextType;
+    else project.type = validNoteType(project.type) || "project";
+    project.category = frontmatter.data.category || project.category || project.kind || "projet";
+    project.kind = project.category;
     project.displayTitle = frontmatter.data.title || project.displayTitle || project.title;
     project.tags = readArrayValue(frontmatter.data.tags);
     project.personnes = readArrayValue(frontmatter.data.personnes || frontmatter.data.personne);
@@ -4043,12 +4363,36 @@ async function createApp() {
 
   function syncJournalFromMarkdown(note) {
     const frontmatter = parseFrontmatter(note.body);
-    note.kind = frontmatter.data.type || "note";
+    const nextType = validNoteType(frontmatter.data.type);
+    if (nextType) note.type = nextType;
+    else note.type = validNoteType(note.type) || "journal";
+    note.category = frontmatter.data.category || note.category || note.kind || "note";
+    note.kind = note.category;
+    if (note.type === "project" && !note.shortName) {
+      note.shortName = shortProjectNameFromTitle(note.title);
+      note.status = frontmatter.data.status || note.status || "active";
+    }
     note.projects = readArrayValue(frontmatter.data.projects);
     note.tags = readArrayValue(frontmatter.data.tags);
     note.personnes = readArrayValue(frontmatter.data.personnes || frontmatter.data.personne);
     note.processed = frontmatter.data.processed === true || frontmatter.data.processed === "true";
     if (frontmatter.data.date) note.date = frontmatter.data.date;
+  }
+
+  function syncNoteFromMarkdown(note) {
+    const frontmatter = parseFrontmatter(note.body || "");
+    const nextType = validNoteType(frontmatter.data.type);
+    if (nextType) note.type = nextType;
+    else note.type = validNoteType(note.type) || "note";
+    note.category = frontmatter.data.category || note.category || "";
+    note.tags = readArrayValue(frontmatter.data.tags || note.tags);
+    note.personnes = readArrayValue(frontmatter.data.personnes || frontmatter.data.personne || note.personnes);
+    if (note.type === "project") {
+      if (!note.shortName) note.shortName = shortProjectNameFromTitle(note.title);
+      syncProjectFromMarkdown(note);
+    } else if (note.type === "journal") {
+      syncJournalFromMarkdown(note);
+    }
   }
 
   function renderTemplate(template, values = {}) {
@@ -4061,6 +4405,7 @@ async function createApp() {
     return renderTemplate(state.config.markdown.templates.project, {
       title: values.title || values.displayTitle || "",
       type: values.type || "projet",
+      category: values.category || "projet",
       date: formatDate(new Date(), state.config.dateInsert),
       intro: values.intro || "",
       source: values.source || "Worklog",
@@ -4069,7 +4414,8 @@ async function createApp() {
 
   function journalTemplate(values = {}) {
     return renderTemplate(state.config.markdown.templates.journal, {
-      type: values.type || "note",
+      type: values.type || "journal",
+      category: values.category || "note",
       projects: (values.projects || []).join(", "),
     });
   }
@@ -4081,11 +4427,16 @@ async function createApp() {
   }
 
   function saveJournalMarkdown(note, markdown, options = {}) {
+    const previousType = noteType(note);
     note.body = markdown;
     note.updatedAt = new Date().toISOString();
-    syncJournalFromMarkdown(note);
+    if (options.syncMetadata) syncJournalFromMarkdown(note);
     if (options.ensureProjects) ensureProjectsFromNames(note.projects, "journal");
     persist();
+    if (options.syncMetadata && noteType(note) !== previousType) {
+      routeNoteAfterTypeChange(note);
+      render();
+    }
   }
 
   function projectEditorParts(scope) {
@@ -4113,10 +4464,11 @@ async function createApp() {
     return slot.editor?.getMarkdown() || parts.textarea.value;
   }
 
-  function saveProjectMarkdown(project, markdown, scope) {
+  function saveProjectMarkdown(project, markdown, scope, options = {}) {
+    const previousType = noteType(project);
     project.body = markdown;
     project.updatedAt = new Date().toISOString();
-    syncProjectFromMarkdown(project);
+    if (options.syncMetadata) syncProjectFromMarkdown(project);
 
     for (const targetScope of Object.keys(projectOverTypeEditors)) {
       const parts = projectEditorParts(targetScope);
@@ -4124,7 +4476,29 @@ async function createApp() {
     }
 
     persist();
+    if (options.syncMetadata && noteType(project) !== previousType) {
+      routeNoteAfterTypeChange(project);
+      render();
+      return;
+    }
     renderProjects();
+  }
+
+  function routeNoteAfterTypeChange(note) {
+    const type = noteType(note);
+    if (type === "project") {
+      if (!note.shortName) note.shortName = shortProjectNameFromTitle(note.title);
+      selectedProjectId = note.id;
+      activeView = "project";
+      return;
+    }
+    if (type === "journal") {
+      selectedJournalId = note.id;
+      activeView = "journal";
+      return;
+    }
+    selectedJournalId = note.id;
+    activeView = "journal";
   }
 
   async function mountProjectOverTypeEditor(scope) {
@@ -4152,6 +4526,12 @@ async function createApp() {
           if (!current || current.id !== slot.projectId) return;
           parts.textarea.value = markdown;
           saveProjectMarkdown(current, markdown, scope);
+        },
+        onBlur: (markdown) => {
+          const current = state.notes.find((note) => note.id === slot.projectId);
+          if (!current) return;
+          parts.textarea.value = markdown;
+          saveProjectMarkdown(current, markdown, scope, { syncMetadata: true });
         },
       });
       slot.projectId = project.id;
@@ -4194,10 +4574,10 @@ async function createApp() {
           saveJournalMarkdown(current, markdown);
         },
         onBlur: (markdown) => {
-          const current = selectedJournal();
-          if (!current || current.id !== journalOverTypeNoteId) return;
+          const current = state.notes.find((note) => note.id === journalOverTypeNoteId);
+          if (!current) return;
           elements.journalBody.value = markdown;
-          saveJournalMarkdown(current, markdown, { ensureProjects: true });
+          saveJournalMarkdown(current, markdown, { syncMetadata: true, ensureProjects: true });
         },
       });
       journalOverTypeNoteId = note.id;
@@ -4211,6 +4591,56 @@ async function createApp() {
       if (journalOverTypePending) {
         journalOverTypePending = false;
         mountJournalOverTypeEditor();
+      }
+    }
+  }
+
+  async function mountAllNotesOverTypeEditor() {
+    const note = selectedAllNote();
+    if (!note || activeView !== "notes") return;
+    if (allNotesOverTypeLoading) {
+      allNotesOverTypePending = true;
+      return;
+    }
+
+    if (allNotesOverTypeEditor) {
+      if (allNotesOverTypeNoteId !== note.id) {
+        allNotesOverTypeEditor.setMarkdown(note.body || "");
+        allNotesOverTypeNoteId = note.id;
+      }
+      return;
+    }
+
+    allNotesOverTypeLoading = true;
+    try {
+      allNotesOverTypeEditor = await createOverTypeEditor({
+        host: elements.allNotesEditorHost,
+        markdown: note.body || "",
+        toolbarButtons: markdownToolbarButtons(),
+        onChange: (markdown) => {
+          const current = state.notes.find((item) => item.id === allNotesOverTypeNoteId);
+          if (!current) return;
+          elements.allNotesBody.value = markdown;
+          saveAllNoteMarkdown(current, markdown);
+        },
+        onBlur: (markdown) => {
+          const current = state.notes.find((item) => item.id === allNotesOverTypeNoteId);
+          if (!current) return;
+          elements.allNotesBody.value = markdown;
+          saveAllNoteMarkdown(current, markdown, { syncMetadata: true });
+        },
+      });
+      allNotesOverTypeNoteId = note.id;
+    } catch (error) {
+      console.error("OverType indisponible", error);
+      elements.allNotesEditorHost.textContent = "";
+      elements.allNotesBody.classList.remove("hidden");
+      alert(`OverType indisponible.\n\n${error.message || error}`);
+    } finally {
+      allNotesOverTypeLoading = false;
+      if (allNotesOverTypePending) {
+        allNotesOverTypePending = false;
+        mountAllNotesOverTypeEditor();
       }
     }
   }
@@ -4246,7 +4676,7 @@ async function createApp() {
   }
 
   function itemsForDate(dateIso) {
-    const notes = state.journal.filter((note) => note.date === dateIso || note.title.startsWith(dateIso));
+    const notes = journalRecords().filter((note) => note.date === dateIso || note.title.startsWith(dateIso));
     const todos = parsedTodos().filter((todo) => [todo.parsed.dueDate, todo.parsed.followupDate].includes(dateIso));
     return { notes, todos };
   }
@@ -4283,7 +4713,7 @@ async function createApp() {
       }
     }
 
-    for (const note of state.journal) {
+    for (const note of journalRecords()) {
       const haystack = `${note.title} ${note.kind} ${(note.tags || []).join(" ")} ${(note.personnes || []).join(" ")} ${note.body}`.toLowerCase();
       if (haystack.includes(q)) {
         results.push({
@@ -4352,7 +4782,8 @@ async function createApp() {
     setText("todayNavCount", followups.length + openTodos.filter((todo) => todo.isOverdue).length);
     setText("priorityNavCount", priorities.length);
     setText("projectCount", projects.length);
-    setText("journalCount", state.journal.length);
+    setText("journalCount", journalRecords().length);
+    setText("notesCount", state.notes.length);
     setText("openProjectsCount", projects.length);
     setText("metricProjects", projects.length);
     setText("metricTodos", openTodos.length);
@@ -4438,7 +4869,8 @@ async function createApp() {
         return;
       }
       if (event.target.closest(".todo-text")) {
-        startInlineEdit(row, todo.id);
+        if (options.editMode === "modal") openTodoEditModal(todo.id);
+        else startInlineEdit(row, todo.id);
         return;
       }
       if (event.target.closest(".box")) {
@@ -4554,6 +4986,64 @@ async function createApp() {
     const date = new Date();
     date.setDate(date.getDate() + days);
     return todayISO(date);
+  }
+
+  function followupOffsets() {
+    const source = Array.isArray(state.config.followupOffsets) ? state.config.followupOffsets : defaultConfig.followupOffsets;
+    const values = source
+      .map((value) => Number(value))
+      .filter((value) => Number.isInteger(value) && value > 0);
+    return unique(values.length ? values : defaultConfig.followupOffsets).slice(0, 10);
+  }
+
+  function followupDayLabel(days) {
+    const labels = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+    const date = new Date();
+    date.setDate(date.getDate() + Number(days));
+    return labels[date.getDay()];
+  }
+
+  function followupOffsetLabel(days) {
+    return `+${days}j ${followupDayLabel(days)}`;
+  }
+
+  function createFollowupMenu(onSelect) {
+    const wrap = document.createElement("span");
+    wrap.className = "followup-menu-wrap";
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "button";
+    toggle.textContent = "Relance";
+    toggle.title = "Creer une relance";
+    wrap.append(toggle);
+
+    const menu = document.createElement("span");
+    menu.className = "followup-menu hidden";
+    for (const days of followupOffsets()) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "button";
+      button.textContent = followupOffsetLabel(days);
+      button.title = `Creer une relance dans ${days} jour(s)`;
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        menu.classList.add("hidden");
+        onSelect(days);
+      });
+      menu.append(button);
+    }
+    wrap.append(menu);
+
+    toggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      document.querySelectorAll(".followup-menu").forEach((item) => {
+        if (item !== menu) item.classList.add("hidden");
+      });
+      menu.classList.toggle("hidden");
+    });
+
+    return wrap;
   }
 
   function setTodoKey(raw, key, value) {
@@ -4679,19 +5169,7 @@ async function createApp() {
   function createTodoQuickActions(todo, row) {
     const actions = document.createElement("div");
     actions.className = "todo-quick-actions";
-    [
-      ["+1j", 1],
-      ["+3j", 3],
-      ["+1w", 7],
-    ].forEach(([label, days]) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "quick-action";
-      button.textContent = label;
-      button.title = `Reporter followup de ${days} jour(s)`;
-      button.addEventListener("click", () => deferTodoFollowup(todo.id, days));
-      actions.append(button);
-    });
+    actions.append(createFollowupMenu((days) => deferTodoFollowup(todo.id, days)));
 
     const next = document.createElement("button");
     next.type = "button";
@@ -4715,7 +5193,7 @@ async function createApp() {
   function todoAutocompleteValues(kind, prefix) {
     const normalizedPrefix = prefix.toLowerCase();
     const values = kind === "project"
-      ? unique([...state.projects.map((project) => project.title), ...parsedTodos().flatMap((todo) => todo.parsed.projects)])
+      ? unique([...projectRecords().map((project) => project.title), ...parsedTodos().flatMap((todo) => todo.parsed.projects)])
       : unique(parsedTodos().flatMap((todo) => todo.parsed.contexts));
     return values
       .filter((value) => value.toLowerCase().startsWith(normalizedPrefix))
@@ -4931,7 +5409,7 @@ async function createApp() {
     const solo = openTodos
       .filter((todo) => !todo.parsed.projects.length)
       .sort((a, b) => priorityRank(a.parsed.priority) - priorityRank(b.parsed.priority) || todoDateValue(a).localeCompare(todoDateValue(b)));
-    const meetings = state.journal
+    const meetings = journalRecords()
       .filter((note) => note.date && note.date >= today)
       .sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title))
       .slice(0, 8);
@@ -5051,6 +5529,7 @@ async function createApp() {
         </span>
       `;
       card.addEventListener("click", () => {
+        document.activeElement?.blur?.();
         selectedProjectId = project.id;
         activeView = "project";
         render();
@@ -5138,8 +5617,8 @@ async function createApp() {
         if (!confirm(`Restaurer le snapshot "${snapshot.label}" ?\n\nUn snapshot de l'etat actuel sera cree avant restauration.`)) return;
         saveSnapshot("Avant restauration snapshot", state);
         state = normalizeImportedState(snapshot.state);
-        selectedProjectId = visibleProjects()[0]?.id || state.projects[0]?.id || null;
-        selectedJournalId = state.journal[0]?.id || null;
+        selectedProjectId = visibleProjects()[0]?.id || projectRecords()[0]?.id || null;
+        selectedJournalId = journalRecords()[0]?.id || null;
         activeFilter = "Tous";
         await persist();
         elements.snapshotPanel.classList.add("hidden");
@@ -5546,19 +6025,13 @@ async function createApp() {
       <span class="portfolio-todos">${todos.length}</span>
       <span class="portfolio-activity">${escapeAppHtml(projectActivityLabel(project))}</span>
       <span class="portfolio-actions">
-        <span class="portfolio-followup">
-          <button class="button" data-portfolio-followup-toggle title="Créer une relance">Relance</button>
-          <span class="portfolio-followup-menu hidden">
-            <button class="button" data-portfolio-followup="1">+1j</button>
-            <button class="button" data-portfolio-followup="2">+2j</button>
-            <button class="button" data-portfolio-followup="3">+3j</button>
-            <button class="button" data-portfolio-followup="5">+5j</button>
-            <button class="button" data-portfolio-followup="7">+7j</button>
-          </span>
-        </span>
+        <span data-portfolio-followup-host></span>
         <button class="button" data-portfolio-note title="Créer une note">Note</button>
       </span>
     `;
+    row.querySelector("[data-portfolio-followup-host]")?.append(createFollowupMenu((days) => {
+      createProjectFollowupTodo(days, project.id);
+    }));
     row.addEventListener("click", (event) => {
       if (event.target.closest(".portfolio-actions")) return;
       selectedProjectId = project.id;
@@ -5570,17 +6043,6 @@ async function createApp() {
       selectedProjectId = project.id;
       activeView = "project";
       render();
-    });
-    row.querySelector("[data-portfolio-followup-toggle]")?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      row.querySelector(".portfolio-followup-menu")?.classList.toggle("hidden");
-    });
-    row.querySelectorAll("[data-portfolio-followup]").forEach((button) => {
-      button.addEventListener("click", (event) => {
-        event.stopPropagation();
-        selectedProjectId = project.id;
-        createProjectFollowupTodo(Number(event.currentTarget.dataset.portfolioFollowup));
-      });
     });
     row.querySelector("[data-portfolio-note]")?.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -5722,6 +6184,7 @@ async function createApp() {
       </span>
     `;
     row.addEventListener("click", () => {
+      document.activeElement?.blur?.();
       selectedProjectId = project.id;
       render();
     });
@@ -5729,6 +6192,9 @@ async function createApp() {
   }
 
   function renderProjectRadar(project) {
+    elements.projectFollowupMenu.innerHTML = "";
+    elements.projectFollowupMenu.append(createFollowupMenu((days) => createProjectFollowupTodo(days, project.id)));
+
     const todos = projectTodos(project.title).filter((todo) => !todo.parsed.completed);
     const today = todayISO();
     const alerts = todos.filter((todo) => {
@@ -5769,6 +6235,7 @@ async function createApp() {
     const wrap = document.createElement("div");
     renderTodoGroup(wrap, [todo], "Aucune action.", {
       dragHandle: true,
+      editMode: "modal",
       visibleTokens: todoVisibleTokens(),
     });
     return wrap.firstElementChild;
@@ -5799,7 +6266,7 @@ async function createApp() {
     const query = elements.journalSearchInput.value.trim().toLowerCase();
     elements.journalClearSearchButton.classList.toggle("hidden", !elements.journalSearchInput.value);
     renderJournalProjectFilter();
-    const notes = state.journal
+    const notes = journalRecords()
       .filter((note) => !kindFilter || note.kind === kindFilter)
       .filter((note) => !projectFilter || noteProjects(note).includes(projectFilter))
       .filter((note) => {
@@ -5868,7 +6335,7 @@ async function createApp() {
       row.className = "project-line";
       row.innerHTML = `<span class="row-title">Projet ${project}</span><span class="row-meta">ouvrir le contexte projet</span>`;
       row.addEventListener("click", () => {
-        const match = state.projects.find((item) => item.title === project);
+        const match = projectRecords().find((item) => item.title === project);
         if (match && !match.archivedAt && match.status !== "archived") {
           selectedProjectId = match.id;
           activeView = "project";
@@ -5978,6 +6445,7 @@ async function createApp() {
       </span>
     `;
     card.addEventListener("click", () => {
+      document.activeElement?.blur?.();
       selectedJournalId = note.id;
       renderJournalView();
     });
@@ -5986,7 +6454,7 @@ async function createApp() {
 
   function renderJournalProjectFilter() {
     const current = elements.journalProjectFilter.value;
-    const projects = unique(state.journal.flatMap((note) => noteProjects(note))).sort((a, b) => a.localeCompare(b, "fr"));
+    const projects = unique(journalRecords().flatMap((note) => noteProjects(note))).sort((a, b) => a.localeCompare(b, "fr"));
     elements.journalProjectFilter.innerHTML = '<option value="">Tous projets</option>';
     for (const project of projects) {
       const option = document.createElement("option");
@@ -5995,6 +6463,84 @@ async function createApp() {
       elements.journalProjectFilter.append(option);
     }
     elements.journalProjectFilter.value = projects.includes(current) ? current : "";
+  }
+
+  function renderAllNotesView() {
+    const query = elements.allNotesSearchInput.value.trim().toLowerCase();
+    elements.allNotesClearSearchButton.classList.toggle("hidden", !elements.allNotesSearchInput.value);
+    const notes = state.notes
+      .filter((note) => {
+        if (!query) return true;
+        const frontmatter = parseFrontmatter(note.body || "");
+        const haystack = `${note.title || ""} ${note.shortName || ""} ${note.type || ""} ${frontmatter.data.type || ""} ${frontmatter.data.category || ""} ${note.body || ""}`.toLowerCase();
+        return haystack.includes(query);
+      })
+      .sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || "") || String(a.title || "").localeCompare(String(b.title || ""), "fr"));
+
+    elements.allNotesList.innerHTML = "";
+    if (!notes.length) {
+      renderEmpty(elements.allNotesList, "Aucune note.");
+      elements.allNotesTitle.value = "";
+      elements.allNotesBody.value = "";
+      elements.allNotesEditorHost.innerHTML = "";
+      return;
+    }
+
+    for (const note of notes) {
+      const frontmatter = parseFrontmatter(note.body || "");
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = `journal-card${note.id === selectedAllNoteId ? " active" : ""}`;
+      card.innerHTML = `
+        <span class="journal-card-title">${escapeAppHtml(note.title || note.shortName || "Sans titre")}</span>
+        <span class="journal-card-meta">
+          <span class="age">${escapeAppHtml(note.type || "?")}</span>
+          <span class="chip blue">yaml:${escapeAppHtml(frontmatter.data.type || "?")}</span>
+          ${frontmatter.data.category ? `<span class="chip">${escapeAppHtml(frontmatter.data.category)}</span>` : ""}
+        </span>
+      `;
+      card.addEventListener("click", () => {
+        document.activeElement?.blur?.();
+        selectedAllNoteId = note.id;
+        renderAllNotesView();
+      });
+      elements.allNotesList.append(card);
+    }
+
+    const selected = notes.find((note) => note.id === selectedAllNoteId) || notes[0];
+    selectedAllNoteId = selected.id;
+    elements.allNotesTitle.value = selected.title || selected.shortName || "";
+    elements.allNotesBody.value = selected.body || "";
+    mountAllNotesOverTypeEditor();
+  }
+
+  function openNoteFromFallback(note) {
+    if (noteType(note) === "project") {
+      selectedProjectId = note.id;
+      activeView = "project";
+    } else {
+      selectedJournalId = note.id;
+      activeView = "journal";
+    }
+    render();
+  }
+
+  function saveAllNoteMarkdown(note, markdown, options = {}) {
+    const previousType = noteType(note);
+    note.body = markdown;
+    note.updatedAt = new Date().toISOString();
+    if (options.syncMetadata) syncNoteFromMarkdown(note);
+    persist();
+    if (options.syncMetadata && noteType(note) !== previousType) renderAllNotesView();
+  }
+
+  function saveAllNoteTitle() {
+    const note = selectedAllNote();
+    if (!note) return;
+    note.title = elements.allNotesTitle.value.trim() || note.title;
+    note.updatedAt = new Date().toISOString();
+    persist();
+    renderAllNotesView();
   }
 
   function renderCalendarView() {
@@ -6151,6 +6697,7 @@ async function createApp() {
     renderPortfolioView();
     renderProjectFocus();
     renderJournalView();
+    renderAllNotesView();
     renderCalendarView();
     renderScratchpadView();
     renderTriage();
@@ -6189,6 +6736,58 @@ async function createApp() {
     ensureProjectsFromTodoRaw(todo.raw, "todo");
     persist();
     render();
+  }
+
+  function closeTodoEditModal() {
+    document.querySelector(".todo-edit-modal")?.remove();
+  }
+
+  function openTodoEditModal(todoId) {
+    const todo = state.todos.find((item) => item.id === todoId);
+    if (!todo) return;
+    closeTodoEditModal();
+
+    const overlay = document.createElement("div");
+    overlay.className = "todo-edit-modal";
+    overlay.innerHTML = `
+      <div class="todo-edit-dialog" role="dialog" aria-modal="true" aria-label="Editer la todo">
+        <div class="todo-edit-head">
+          <strong>Editer la todo</strong>
+          <button type="button" class="icon-button" data-todo-modal-close aria-label="Fermer">x</button>
+        </div>
+        <textarea class="todo-edit-field"></textarea>
+        <div class="todo-edit-actions">
+          <button type="button" class="button ghost" data-todo-modal-cancel>Annuler</button>
+          <button type="button" class="button primary" data-todo-modal-save>Enregistrer</button>
+        </div>
+      </div>
+    `;
+
+    const input = overlay.querySelector(".todo-edit-field");
+    input.value = todo.raw;
+    document.body.append(overlay);
+    setupTodoAutocomplete(input);
+    requestAnimationFrame(() => {
+      input.focus();
+      input.select();
+    });
+
+    const save = () => {
+      const value = input.value.trim();
+      closeTodoEditModal();
+      if (value) updateTodo(todoId, value);
+    };
+
+    overlay.querySelector("[data-todo-modal-save]").addEventListener("click", save);
+    overlay.querySelector("[data-todo-modal-cancel]").addEventListener("click", closeTodoEditModal);
+    overlay.querySelector("[data-todo-modal-close]").addEventListener("click", closeTodoEditModal);
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) closeTodoEditModal();
+    });
+    input.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") save();
+      if (event.key === "Escape") closeTodoEditModal();
+    });
   }
 
   function ensureTodoCreatedDate(raw) {
@@ -6382,8 +6981,8 @@ async function createApp() {
     project.updatedAt = new Date().toISOString();
     syncProjectFromMarkdown(project);
     persist();
-    renderProjectEditor();
-    renderProjects();
+    routeNoteAfterTypeChange(project);
+    render();
   }
 
   function saveProjectBodyOnly() {
@@ -6406,8 +7005,8 @@ async function createApp() {
     project.updatedAt = new Date().toISOString();
     syncProjectFromMarkdown(project);
     persist();
-    renderProjects();
-    renderProjectEditor();
+    routeNoteAfterTypeChange(project);
+    render();
   }
 
   function insertProjectMarkdown(scope, text) {
@@ -6443,9 +7042,9 @@ async function createApp() {
     const project = createProjectRecord(title, {
       displayTitle: displayTitle.trim(),
       summary: "Nouveau projet à compléter.",
-      body: projectTemplate({ type: "projet", title: displayTitle.trim() }),
+      body: projectTemplate({ type: "project", category: "projet", title: displayTitle.trim() }),
     });
-    state.projects.unshift(project);
+    state.notes.unshift(project);
     selectedProjectId = project.id;
     activeView = "project";
     persist();
@@ -6460,7 +7059,7 @@ async function createApp() {
     if (!title?.trim()) return;
     const now = new Date();
     const timestamp = `${todayISO(now)} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-    const body = `---\ntitle: ${displayTitle.trim()}\ntype: incident\nstatus: active\ntags: [important, incident]\npersonnes: []\n---\n\n# Situation\n\n# Timeline\n\n## ${timestamp}\n\n- Incident ouvert.\n\n# Actions\n\n# Décisions\n\n# Debrief\n`;
+    const body = `---\ntitle: ${displayTitle.trim()}\ntype: project\ncategory: incident\nstatus: active\ntags: [important, incident]\npersonnes: []\n---\n\n# Situation\n\n# Timeline\n\n## ${timestamp}\n\n- Incident ouvert.\n\n# Actions\n\n# Décisions\n\n# Debrief\n`;
     const project = createProjectRecord(title, {
       kind: "incident",
       displayTitle: displayTitle.trim(),
@@ -6469,15 +7068,15 @@ async function createApp() {
       body,
     });
     syncProjectFromMarkdown(project);
-    state.projects.unshift(project);
+    state.notes.unshift(project);
     selectedProjectId = project.id;
     activeView = "project";
     persist();
     render();
   }
 
-  function createProjectFollowupTodo(days) {
-    const project = selectedProject();
+  function createProjectFollowupTodo(days, projectId = selectedProjectId) {
+    const project = projectRecords().find((item) => item.id === projectId) || selectedProject();
     if (!project) return;
     const raw = `Relancer ${project.title} +${project.title} followup:${isoDatePlusDays(days)}`;
     addTodoRaw(raw);
@@ -6501,7 +7100,7 @@ async function createApp() {
     const project = selectedProject();
     if (!project) return;
     if (!confirm(`Supprimer definitivement le projet "${project.title}" ?\n\nLes todos et notes lies ne seront pas supprimes.`)) return;
-    state.projects = state.projects.filter((item) => item.id !== project.id);
+    state.notes = state.notes.filter((item) => item.id !== project.id);
     selectedProjectId = visibleProjects()[0]?.id || null;
     persist();
     render();
@@ -6539,7 +7138,8 @@ async function createApp() {
     const note = selectedJournal();
     if (!note) return;
     note.title = elements.journalTitle.value.trim() || note.title;
-    saveJournalMarkdown(note, journalOverTypeEditor?.getMarkdown() || elements.journalBody.value, { ensureProjects: true });
+    saveJournalMarkdown(note, journalOverTypeEditor?.getMarkdown() || elements.journalBody.value, { syncMetadata: true, ensureProjects: true });
+    render();
   }
 
   function saveScratchpadMarkdown(markdown) {
@@ -6607,15 +7207,17 @@ async function createApp() {
       id: crypto.randomUUID ? crypto.randomUUID() : `journal-${Date.now()}`,
       title,
       date,
+      type: "journal",
+      category: kind,
       kind,
       projects,
       tags: [],
       personnes: [],
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
-      body: journalTemplate({ type: kind, projects, date }),
+      body: journalTemplate({ type: "journal", category: kind, projects, date }),
     };
-    state.journal.unshift(note);
+    state.notes.unshift(note);
     selectedJournalId = note.id;
     activeView = "journal";
     persist();
@@ -6636,8 +7238,8 @@ async function createApp() {
     const note = selectedJournal();
     if (!note) return;
     if (!confirm(`Supprimer la note "${note.title}" ?`)) return;
-    state.journal = state.journal.filter((item) => item.id !== note.id);
-    selectedJournalId = state.journal[0]?.id || null;
+    state.notes = state.notes.filter((item) => item.id !== note.id);
+    selectedJournalId = journalRecords()[0]?.id || null;
     persist();
     render();
   }
@@ -6701,7 +7303,7 @@ async function createApp() {
     if (!note) return;
     const projects = noteProjects(note);
     const linkedProjects = projects
-      .map((title) => state.projects.find((item) => item.title === title))
+      .map((title) => projectRecords().find((item) => item.title === title))
       .filter(Boolean);
     if (!linkedProjects.length) return;
     const frontmatter = parseFrontmatter(note.body);
@@ -6817,6 +7419,7 @@ async function createApp() {
     setupSplitResize(elements.resizeJournalSideHandle, { widthKey: "journalSideWidth", min: 160, max: 420, direction: -1 });
     document.querySelectorAll("[data-view-button]").forEach((button) => {
       button.addEventListener("click", () => {
+        document.activeElement?.blur?.();
         activeView = button.dataset.viewButton;
         render();
       });
@@ -6882,9 +7485,6 @@ async function createApp() {
     elements.newProjectButton.addEventListener("click", createProject);
     elements.newIncidentProjectButton.addEventListener("click", createIncidentProject);
     elements.todayNewJournalButton.addEventListener("click", () => createJournalNote({ kind: "meeting", title: `${todayISO()} - Point` }));
-    elements.projectFollowup1Button.addEventListener("click", () => createProjectFollowupTodo(1));
-    elements.projectFollowup3Button.addEventListener("click", () => createProjectFollowupTodo(3));
-    elements.projectFollowup7Button.addEventListener("click", () => createProjectFollowupTodo(7));
     elements.projectNewJournalButton.addEventListener("click", createJournalNoteFromProject);
     elements.exportProjectMarkdownButton.addEventListener("click", exportFocusedProjectMarkdown);
     elements.archiveProjectButton.addEventListener("click", archiveSelectedProject);
@@ -6902,6 +7502,18 @@ async function createApp() {
     elements.journalProjectFilter.addEventListener("change", renderJournalView);
     elements.journalProcessedFilter.addEventListener("change", renderJournalView);
     elements.journalTitle.addEventListener("change", saveJournalNote);
+    elements.allNotesSearchInput.addEventListener("input", renderAllNotesView);
+    elements.allNotesClearSearchButton.addEventListener("click", () => {
+      elements.allNotesSearchInput.value = "";
+      elements.allNotesSearchInput.focus();
+      renderAllNotesView();
+    });
+    elements.allNotesTitle.addEventListener("change", saveAllNoteTitle);
+    elements.allNotesBody.addEventListener("change", () => {
+      const note = selectedAllNote();
+      if (!note) return;
+      saveAllNoteMarkdown(note, elements.allNotesBody.value, { syncMetadata: true });
+    });
     elements.journalTodoFromSelectionButton?.addEventListener("click", createTodoFromJournalSelection);
     elements.journalExtractTasksButton?.addEventListener("click", extractJournalTasks);
     elements.journalAppendProjectButton?.addEventListener("click", appendJournalToProject);
@@ -6988,7 +7600,7 @@ async function createApp() {
       try {
         saveSnapshot(`Avant import ${file.name}`, state);
         state = normalizeImportedState(JSON.parse(await file.text()));
-        selectedProjectId = state.projects[0]?.id || null;
+        selectedProjectId = projectRecords()[0]?.id || null;
         activeFilter = "Tous";
         state.config.exportDirty = false;
         await persist({ markExportDirty: false });
@@ -7002,7 +7614,7 @@ async function createApp() {
     });
     elements.exportButton.addEventListener("click", async () => {
       state.config.exportDirty = false;
-      exportState(state);
+      exportState(stateForStorage(state));
       await persist({ markExportDirty: false });
       renderExportDirtyState();
     });
