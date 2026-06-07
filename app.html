@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Worklog</title>    <style>
+    <title>Lumo</title>    <style>
 /* src/styles/base.css */
 :root {
   color-scheme: light;
@@ -417,10 +417,107 @@ select:focus-visible {
 }
 
 .nav {
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid var(--line);
   background: var(--panel);
   padding: 14px 10px;
   position: relative;
+}
+
+.nav-mini-calendar {
+  display: grid;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.mini-calendar-title {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 780;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.mini-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.mini-calendar-weekday,
+.mini-calendar-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  min-width: 0;
+}
+
+.mini-calendar-weekday {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.mini-calendar-cell {
+  position: relative;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mini-calendar-number {
+  line-height: 1;
+}
+
+.mini-calendar-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4px;
+  gap: 2px;
+}
+
+.mini-calendar-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.mini-calendar-dot.note {
+  background: var(--blue);
+}
+
+.mini-calendar-dot.followup {
+  background: var(--amber);
+}
+
+.mini-calendar-dot.due {
+  background: var(--red);
+}
+
+.mini-calendar-cell:hover {
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.mini-calendar-cell.today {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.mini-calendar-cell.muted:not(.today),
+.mini-calendar-cell.weekend:not(.today) {
+  opacity: 0.68;
 }
 
 .actions {
@@ -582,6 +679,131 @@ select:focus-visible {
   margin-bottom: 14px;
 }
 
+.morning-ritual {
+  margin-bottom: 14px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+.morning-ritual.complete {
+  border-color: #9dbcb4;
+}
+
+.morning-ritual-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.morning-ritual-head h2 {
+  margin: 0 0 2px;
+  font-size: 16px;
+}
+
+.morning-ritual-progress {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.morning-ritual.complete .morning-ritual-progress {
+  color: var(--green);
+  font-weight: 700;
+}
+
+.morning-ritual-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.morning-ritual-step {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+  min-height: 68px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--paper);
+  padding: 9px;
+  cursor: pointer;
+}
+
+.morning-ritual-step:hover {
+  border-color: #9dbcb4;
+}
+
+.morning-ritual-step.active {
+  border-color: var(--green);
+  box-shadow: inset 0 -2px 0 var(--green);
+}
+
+.morning-ritual-step.complete {
+  border-color: #b9cec8;
+  background: #f1f7f5;
+}
+
+.morning-ritual-step input {
+  width: 16px;
+  height: 16px;
+  margin: 1px 0 0;
+  accent-color: var(--green);
+}
+
+.morning-ritual-step-copy {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.morning-ritual-step-copy strong {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.morning-ritual-step-copy span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.morning-ritual-step.complete strong {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.morning-ritual-detail {
+  margin-top: 10px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 10px;
+}
+
+.morning-ritual-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.morning-ritual-detail-head h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.morning-ritual-detail .todo-row,
+.morning-ritual-detail .clarify-project-row {
+  background: var(--paper);
+}
+
 .today-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(310px, 0.9fr);
@@ -597,6 +819,35 @@ select:focus-visible {
 
 .today-panel {
   min-width: 0;
+}
+
+.focus-panel {
+  border-color: #9dbcb4;
+  box-shadow: inset 3px 0 0 var(--green);
+}
+
+.clarify-project-row {
+  display: grid;
+  width: 100%;
+  gap: 3px;
+  border: 0;
+  border-bottom: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  padding: 9px 2px;
+  text-align: left;
+}
+
+.clarify-project-row:last-child {
+  border-bottom: 0;
+}
+
+.clarify-project-row:hover {
+  background: var(--panel);
+}
+
+.compact-project-list {
+  padding: 4px 10px 8px;
 }
 
 .brief-list,
@@ -674,7 +925,7 @@ select:focus-visible {
 
 .kanban-board {
   display: grid;
-  grid-template-columns: repeat(5, minmax(220px, 1fr));
+  grid-template-columns: repeat(var(--kanban-column-count, 5), minmax(220px, 1fr));
   gap: 12px;
   align-items: start;
   overflow-x: auto;
@@ -897,6 +1148,27 @@ select:focus-visible {
   align-items: start;
 }
 
+.recovery-summary {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.recovery-status {
+  border-bottom: 1px solid var(--line-soft);
+  padding: 8px 10px;
+}
+
+.toolbar.compact {
+  gap: 5px;
+}
+
+.toolbar.compact .button {
+  min-height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
 .split-resize-handle {
   min-width: 5px;
   min-height: 140px;
@@ -1064,9 +1336,199 @@ select:focus-visible {
 
 .scratchpad-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
   align-items: start;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.settings-nav {
+  position: sticky;
+  top: 12px;
+  display: grid;
+  gap: 2px;
+  border-left: 2px solid var(--line);
+  padding-left: 8px;
+}
+
+.settings-nav a {
+  border-radius: 5px;
+  padding: 7px 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.settings-nav a:hover {
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.settings-content {
+  min-width: 0;
+}
+
+.settings-section {
+  scroll-margin-top: 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 4px 0 28px;
+  margin-bottom: 28px;
+}
+
+.settings-section-head {
+  margin-bottom: 14px;
+}
+
+.settings-section-head h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.settings-section-head p,
+.settings-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.settings-section-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-list {
+  display: grid;
+}
+
+.setting-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border-top: 1px solid var(--line-soft);
+  padding: 13px 0;
+}
+
+.setting-row strong,
+.setting-field > span,
+.settings-template-grid label > span {
+  display: block;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.setting-row small,
+.setting-field small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.number-setting {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.setting-field {
+  display: grid;
+  gap: 7px;
+}
+
+.settings-preview-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.settings-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+}
+
+.settings-toggle-grid label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.settings-template-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.settings-template-grid label {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.kanban-config-head,
+.kanban-config-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) 32px;
+  gap: 8px;
+  align-items: center;
+}
+
+.kanban-config-head {
+  margin-top: 16px;
+  padding: 0 2px 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.kanban-columns-editor {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.kanban-config-row {
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 6px;
+}
+
+.kanban-config-row .icon-button {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+}
+
+#config-kanban > .settings-help {
+  margin-top: 10px;
+}
+
+.settings-section summary {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 760;
+}
+
+.settings-section .json-preview {
+  max-height: 320px;
+  margin-top: 12px;
 }
 
 .template-editor {
@@ -1208,6 +1670,26 @@ select:focus-visible {
 
   .workspace-grid {
     grid-template-columns: 1fr;
+  }
+
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-nav {
+    position: static;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-left: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 0 0 10px;
+  }
+
+  .settings-template-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .morning-ritual-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -2276,7 +2758,7 @@ select:focus-visible {
   <body>
     <div class="app">
       <header class="topbar">
-        <div class="brand">Worklog</div>
+        <div class="brand">Lumo</div>
         <input id="searchInput" class="search" placeholder="Rechercher projet, todo, note ou commande...">
         <button id="softAlertButton" class="soft-alert hidden" title="Voir les échéances et relances à traiter">
           <span class="soft-alert-dot"></span>
@@ -2321,6 +2803,8 @@ select:focus-visible {
           <button class="nav-item" data-view-button="notes"><span>Notes</span><span id="notesCount" class="count"></span></button>
           <button class="nav-item" data-view-button="scratchpad"><span>Bloc-notes</span></button>
           <button class="nav-item" data-view-button="calendar"><span>Calendrier</span></button>
+          <button class="nav-item" data-view-button="config"><span>Configuration</span></button>
+          <div id="navMiniCalendar" class="nav-mini-calendar" aria-label="Calendrier quatre semaines"></div>
         </aside>
         <div id="resizeNavHandle" class="resize-handle resize-handle-left" title="Redimensionner navigation"></div>
 
@@ -2360,14 +2844,37 @@ select:focus-visible {
             <div class="page-head">
               <div>
                 <h1>Aujourd'hui</h1>
-                <div class="subtitle">Relances, echeances, seances et projets a garder en tete.</div>
+                <div class="subtitle">Choisir la prochaine action, relancer au bon moment et clarifier les projets actifs.</div>
               </div>
               <div class="toolbar">
                 <button id="todayNewJournalButton" class="button">Nouvelle note</button>
               </div>
             </div>
 
+            <section id="morningRitual" class="morning-ritual" aria-labelledby="morningRitualTitle">
+              <div class="morning-ritual-head">
+                <div>
+                  <h2 id="morningRitualTitle">Démarrer ma journée</h2>
+                  <div id="morningRitualProgress" class="morning-ritual-progress"></div>
+                </div>
+                <button id="resetMorningRitualButton" class="button" type="button">Recommencer</button>
+              </div>
+              <div id="morningRitualSteps" class="morning-ritual-steps"></div>
+              <section id="morningRitualDetail" class="morning-ritual-detail hidden">
+                <div class="morning-ritual-detail-head">
+                  <h3 id="morningRitualDetailTitle"></h3>
+                  <button id="closeMorningRitualDetailButton" class="icon-button" type="button" title="Fermer" aria-label="Fermer">x</button>
+                </div>
+                <div id="morningRitualDetailContent"></div>
+              </section>
+            </section>
+
             <section class="today-summary">
+              <div class="metric">
+                <div class="metric-label">A faire maintenant</div>
+                <div id="metricNextActions" class="metric-value"></div>
+                <div class="metric-note">status:next</div>
+              </div>
               <div class="metric">
                 <div class="metric-label">A relancer</div>
                 <div id="metricFollowups" class="metric-value"></div>
@@ -2379,19 +2886,22 @@ select:focus-visible {
                 <div class="metric-note">due depasse</div>
               </div>
               <div class="metric">
-                <div class="metric-label">En attente</div>
-                <div id="metricWaiting" class="metric-value"></div>
-                <div class="metric-note">waiting ou status</div>
-              </div>
-              <div class="metric">
-                <div class="metric-label">Bloques</div>
-                <div id="metricBlocked" class="metric-value"></div>
-                <div class="metric-note">blocked ou status</div>
+                <div class="metric-label">A clarifier</div>
+                <div id="metricProjectsWithoutNext" class="metric-value"></div>
+                <div class="metric-note">projets actifs sans next</div>
               </div>
             </section>
 
             <section class="today-grid">
               <section class="today-column">
+                <section class="panel today-panel focus-panel">
+                  <div class="panel-head">
+                    <h2>A faire maintenant</h2>
+                    <span id="todayNextCount" class="count"></span>
+                  </div>
+                  <div id="todayNextActions" class="linked-todos"></div>
+                </section>
+
                 <section class="panel today-panel">
                   <div class="panel-head">
                     <h2>A relancer</h2>
@@ -2419,6 +2929,14 @@ select:focus-visible {
               </section>
 
               <section class="today-column">
+                <section class="panel today-panel">
+                  <div class="panel-head">
+                    <h2>A clarifier</h2>
+                    <span id="todayClarifyCount" class="count"></span>
+                  </div>
+                  <div id="todayClarifyProjects" class="project-list compact-project-list"></div>
+                </section>
+
                 <section class="panel today-panel">
                   <div class="panel-head">
                     <h2>En attente</h2>
@@ -2691,13 +3209,28 @@ select:focus-visible {
                       <input id="allNotesSearchInput" class="field" placeholder="Rechercher dans toutes les notes...">
                       <button id="allNotesClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
                     </div>
+                    <select id="allNotesRecoveryFilter" class="field">
+                      <option value="all">Toutes les notes</option>
+                      <option value="repair">À réparer</option>
+                      <option value="unprocessed">À traiter</option>
+                      <option value="project">Projets</option>
+                      <option value="journal">Journal</option>
+                      <option value="note">Notes</option>
+                    </select>
+                    <div id="allNotesRecoverySummary" class="recovery-summary"></div>
                   </div>
                   <div id="allNotesList" class="journal-list"></div>
                 </aside>
                 <section class="panel">
                   <div class="panel-head">
                     <h2>Note ouverte</h2>
+                    <div class="toolbar compact">
+                      <button id="allNotesTypeProjectButton" class="button">Projet</button>
+                      <button id="allNotesTypeJournalButton" class="button">Journal</button>
+                      <button id="allNotesTypeNoteButton" class="button">Note</button>
+                    </div>
                   </div>
+                  <div id="allNotesRecoveryStatus" class="recovery-status"></div>
                   <div class="document">
                     <input id="allNotesTitle" class="title-input">
                     <div id="allNotesEditorHost" class="overtype-host"></div>
@@ -2754,7 +3287,7 @@ select:focus-visible {
               <div class="page-head">
                 <div>
                   <h1>Bloc-notes</h1>
-                  <div class="subtitle">Brouillons, copier-coller et templates Markdown modifiables.</div>
+                  <div class="subtitle">Brouillons rapides et copier-coller temporaire.</div>
                 </div>
                 <div class="toolbar">
                   <span id="scratchpadSavedAt" class="count"></span>
@@ -2773,19 +3306,132 @@ select:focus-visible {
                     <textarea id="scratchpadBody" class="hidden"></textarea>
                   </div>
                 </section>
+              </section>
+            </div>
+          </section>
 
-                <aside class="panel">
-                  <div class="panel-head">
-                    <h2>Templates</h2>
-                  </div>
-                  <div class="template-editor">
-                    <label>Projet</label>
-                    <textarea id="projectTemplateEditor" class="template-textarea" spellcheck="false"></textarea>
-                    <label>Journal</label>
-                    <textarea id="journalTemplateEditor" class="template-textarea" spellcheck="false"></textarea>
-                    <button id="resetTemplatesButton" class="button">Réinitialiser</button>
-                  </div>
-                </aside>
+          <section class="view" data-view="config">
+            <div class="main-inner">
+              <div class="page-head">
+                <div>
+                  <h1>Configuration</h1>
+                  <div class="subtitle">Adapter Lumo à ta manière de travailler.</div>
+                </div>
+                <div class="toolbar">
+                  <button id="resetConfigButton" class="button">Réinitialiser</button>
+                </div>
+              </div>
+
+              <section class="settings-layout">
+                <nav class="settings-nav" aria-label="Sections de configuration">
+                  <a href="#config-general">Général</a>
+                  <a href="#config-followups">Relances</a>
+                  <a href="#config-display">Affichage des todos</a>
+                  <a href="#config-kanban">Kanban</a>
+                  <a href="#config-markdown">Templates Markdown</a>
+                  <a href="#config-advanced">Données avancées</a>
+                </nav>
+
+                <div class="settings-content">
+                  <section id="config-general" class="settings-section">
+                    <div class="settings-section-head">
+                      <h2>Général</h2>
+                      <p>Les comportements de base de Lumo.</p>
+                    </div>
+                    <div class="settings-list">
+                      <label class="setting-row">
+                        <span><strong>Identifiant automatique</strong><small>Ajoute un token id: unique aux nouvelles todos.</small></span>
+                        <input id="autoIdToggle" type="checkbox">
+                      </label>
+                      <label class="setting-row">
+                        <span><strong>Format des dates Markdown</strong><small>Utilisé par le bouton d'insertion de date.</small></span>
+                        <select id="dateFormatSelect" class="field compact-field">
+                          <option value="DD.MM.YYYY">DD.MM.YYYY</option>
+                          <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                        </select>
+                      </label>
+                      <label class="setting-row">
+                        <span><strong>Projet considéré dormant après</strong><small>Nombre de jours sans activité Markdown.</small></span>
+                        <span class="number-setting"><input id="staleDaysInput" class="field compact-field" type="number" min="1"><span>jours</span></span>
+                      </label>
+                    </div>
+                  </section>
+
+                  <section id="config-followups" class="settings-section">
+                    <div class="settings-section-head">
+                      <h2>Relances</h2>
+                      <p>Délais proposés par les menus de relance rapide.</p>
+                    </div>
+                    <label class="setting-field">
+                      <span>Délais en jours</span>
+                      <input id="followupOffsetsInput" class="field" placeholder="1, 2, 3, 5, 7">
+                      <small>Sépare les valeurs par des virgules. Les doublons sont retirés automatiquement.</small>
+                    </label>
+                    <div id="followupOffsetsPreview" class="settings-preview-chips"></div>
+                  </section>
+
+                  <section id="config-display" class="settings-section">
+                    <div class="settings-section-head">
+                      <h2>Affichage des todos</h2>
+                      <p>Choisir les informations visibles dans les lignes todo.</p>
+                    </div>
+                    <div class="settings-toggle-grid">
+                      <label><input id="configShowId" type="checkbox"><span>Identifiant</span></label>
+                      <label><input id="configShowCreated" type="checkbox"><span>Date de création</span></label>
+                      <label><input id="configShowDue" type="checkbox"><span>Échéance</span></label>
+                      <label><input id="configShowProject" type="checkbox"><span>Projet</span></label>
+                      <label><input id="configShowContext" type="checkbox"><span>Contexte</span></label>
+                    </div>
+                  </section>
+
+                  <section id="config-kanban" class="settings-section">
+                    <div class="settings-section-head settings-section-head-row">
+                      <div>
+                        <h2>Kanban</h2>
+                        <p>Choisir le champ todo.txt et les colonnes visibles.</p>
+                      </div>
+                      <button id="resetKanbanButton" class="button">Réinitialiser</button>
+                    </div>
+                    <label class="setting-field">
+                      <span>Organiser le tableau par</span>
+                      <select id="kanbanFieldSelect" class="field compact-field">
+                        <option value="status">Statut</option>
+                        <option value="priority">Priorité</option>
+                        <option value="project">Projet</option>
+                        <option value="context">Contexte</option>
+                      </select>
+                      <small>Le glisser-déposer modifie directement la ligne todo.txt.</small>
+                    </label>
+                    <div class="kanban-config-head" aria-hidden="true">
+                      <span>Nom affiché</span>
+                      <span>Valeur todo.txt</span>
+                      <span></span>
+                    </div>
+                    <div id="kanbanColumnsEditor" class="kanban-columns-editor"></div>
+                    <button id="addKanbanColumnButton" class="button">Ajouter une colonne</button>
+                    <div class="settings-help">La valeur spéciale <code>done</code> termine la todo. Une valeur vide représente l'absence de statut, projet, contexte ou priorité.</div>
+                  </section>
+
+                  <section id="config-markdown" class="settings-section">
+                    <div class="settings-section-head settings-section-head-row">
+                      <div>
+                        <h2>Templates Markdown</h2>
+                        <p>Contenu initial des nouveaux projets et journaux.</p>
+                      </div>
+                      <button id="resetTemplatesButton" class="button">Réinitialiser les templates</button>
+                    </div>
+                    <div class="settings-template-grid">
+                      <label><span>Projet</span><textarea id="projectTemplateEditor" class="template-textarea" spellcheck="false"></textarea></label>
+                      <label><span>Journal</span><textarea id="journalTemplateEditor" class="template-textarea" spellcheck="false"></textarea></label>
+                    </div>
+                  </section>
+
+                  <details id="config-advanced" class="settings-section">
+                    <summary>Données avancées</summary>
+                    <p class="settings-help">Aperçu en lecture seule de la configuration enregistrée.</p>
+                    <pre id="configPreview" class="json-preview"></pre>
+                  </details>
+                </div>
               </section>
             </div>
           </section>
@@ -2829,15 +3475,6 @@ select:focus-visible {
             <button class="project-line"><span class="row-title">Dernière activité</span><span id="selectedProjectActivity" class="row-meta"></span></button>
           </section>
 
-          <section class="block">
-            <div class="block-title"><span>Configuration</span><span>JSON</span></div>
-            <div class="config-grid">
-              <label class="config-row"><span><span class="row-title">Auto ID todo</span><span class="row-meta">ajoute id:xxxxxxx</span></span><input id="autoIdToggle" type="checkbox"></label>
-              <label class="config-row"><span><span class="row-title">Format date</span><span class="row-meta">insertion Markdown</span></span><select id="dateFormatSelect" class="field"><option value="DD.MM.YYYY">DD.MM.YYYY</option><option value="YYYY-MM-DD">YYYY-MM-DD</option></select></label>
-              <label class="config-row"><span><span class="row-title">Inactivité projet</span><span class="row-meta">jours avant dormant</span></span><input id="staleDaysInput" class="field compact-field" type="number" min="1"></label>
-              <pre id="configPreview" class="json-preview"></pre>
-            </div>
-          </section>
         </aside>
       </div>
     </div>    <script type="module">
@@ -3013,16 +3650,16 @@ function ensureTodoId(raw, config) {
 }
 
 // src/core/schema.js
-const WORKLOG_SCHEMA_VERSION = 1;
+const LUMO_SCHEMA_VERSION = 1;
 function stampSchema(state) {
   return {
     ...state,
-    schemaVersion: WORKLOG_SCHEMA_VERSION,
+    schemaVersion: LUMO_SCHEMA_VERSION,
   };
 }
 function migrateStateSchema(state) {
   const version = Number(state.schemaVersion || 1);
-  if (version > WORKLOG_SCHEMA_VERSION) {
+  if (version > LUMO_SCHEMA_VERSION) {
     throw new Error(`Schema trop recent: ${version}`);
   }
   return stampSchema(state);
@@ -3039,14 +3676,14 @@ function validateImportPayload(payload) {
     return validateStateObject(payload, errors);
   }
 
-  if (payload.app !== "worklog") {
-    errors.push("Le fichier n'est pas un export Worklog.");
+  if (!["lumo", "worklog"].includes(payload.app)) {
+    errors.push("Le fichier n'est pas un export Lumo.");
   }
   if (payload.version !== 1) {
     errors.push("Version d'export invalide ou manquante.");
   }
-  if (payload.schemaVersion !== WORKLOG_SCHEMA_VERSION) {
-    errors.push(`Schema attendu: ${WORKLOG_SCHEMA_VERSION}.`);
+  if (payload.schemaVersion !== LUMO_SCHEMA_VERSION) {
+    errors.push(`Schema attendu: ${LUMO_SCHEMA_VERSION}.`);
   }
   if (!payload.state || typeof payload.state !== "object" || Array.isArray(payload.state)) {
     errors.push("Le champ `state` est manquant ou invalide.");
@@ -3129,8 +3766,8 @@ function insertText(editor, text) {
 }
 function createDateToolbarButton(getDateText) {
   return {
-    name: "worklogDate",
-    actionId: "worklogDate",
+    name: "lumoDate",
+    actionId: "lumoDate",
     icon: CALENDAR_ICON,
     title: "Inserer la date du jour",
     action: ({ editor }) => {
@@ -3272,6 +3909,7 @@ function cleanYamlScalar(value) {
 }
 
 // src/storage/local-store.js
+// Historical keys kept so Lumo finds data created before the rename.
 const STORAGE_KEY = "worklog.dev.state.v1";
 const SNAPSHOTS_KEY = "worklog.dev.snapshots.v1";
 const MAX_SNAPSHOTS = 10;
@@ -3314,7 +3952,7 @@ function saveSnapshot(label, state) {
       createdAt: now.toISOString(),
       counts: {
         todos: state.todos?.length || 0,
-        projects: (snapshotState.notes || []).filter((note) => note.type === "project" || note.shortName).length,
+        projects: (snapshotState.notes || []).filter((note) => note.type === "project").length,
         journal: (snapshotState.notes || []).filter((note) => note.type === "journal").length,
       },
       state: snapshotState,
@@ -3336,7 +3974,7 @@ function deleteSnapshot(snapshotId) {
   }
 }
 
-function downloadWorklogJson(filename, payload) {
+function downloadLumoJson(filename, payload) {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -3361,28 +3999,29 @@ function exportState(state) {
   const payload = {
     exportedAt: now.toISOString(),
     exportedAtLocal: now.toLocaleString("fr-CH"),
-    app: "worklog",
+    app: "lumo",
     version: 1,
-    schemaVersion: state.schemaVersion || WORKLOG_SCHEMA_VERSION,
+    schemaVersion: state.schemaVersion || LUMO_SCHEMA_VERSION,
     state,
   };
-  downloadWorklogJson(`backup-${stamp}.json`, payload);
+  downloadLumoJson(`lumo-backup-${stamp}.json`, payload);
 }
 function exportSnapshot(snapshot) {
   const stamp = localTimestamp(new Date(snapshot.createdAt));
   const now = new Date();
-  downloadWorklogJson(`snapshot-${stamp}.json`, {
+  downloadLumoJson(`lumo-snapshot-${stamp}.json`, {
     exportedAt: now.toISOString(),
     exportedAtLocal: now.toLocaleString("fr-CH"),
-    app: "worklog",
+    app: "lumo",
     version: 1,
-    schemaVersion: snapshot.state?.schemaVersion || WORKLOG_SCHEMA_VERSION,
+    schemaVersion: snapshot.state?.schemaVersion || LUMO_SCHEMA_VERSION,
     snapshot,
     state: snapshot.state,
   });
 }
 
 // src/storage/db.js
+// Historical name kept so Lumo opens the existing browser database.
 const DB_NAME = "worklog";
 const DB_VERSION = 1;
 const STATE_STORE = "state";
@@ -3876,6 +4515,7 @@ async function createApp() {
   let activeFilter = "Tous";
   let activeView = "home";
   let todoMode = "open";
+  let activeMorningRitualStep = null;
   let calendarDate = new Date();
   let selectedCalendarDate = todayISO(calendarDate);
   let journalOverTypeEditor = null;
@@ -3916,6 +4556,7 @@ async function createApp() {
     undoToast: byId("undoToast"),
     todoAutocompletePanel: byId("todoAutocompletePanel"),
     toggleNavButton: byId("toggleNavButton"),
+    navMiniCalendar: byId("navMiniCalendar"),
     toggleContextButton: byId("toggleContextButton"),
     resizeNavHandle: byId("resizeNavHandle"),
     resizeContextHandle: byId("resizeContextHandle"),
@@ -3928,8 +4569,18 @@ async function createApp() {
     followupTodos: byId("followupTodos"),
     priorityTodos: byId("priorityTodos"),
     projectList: byId("todayProjects"),
+    morningRitual: byId("morningRitual"),
+    morningRitualProgress: byId("morningRitualProgress"),
+    morningRitualSteps: byId("morningRitualSteps"),
+    morningRitualDetail: byId("morningRitualDetail"),
+    morningRitualDetailTitle: byId("morningRitualDetailTitle"),
+    morningRitualDetailContent: byId("morningRitualDetailContent"),
+    closeMorningRitualDetailButton: byId("closeMorningRitualDetailButton"),
+    resetMorningRitualButton: byId("resetMorningRitualButton"),
+    todayNextActions: byId("todayNextActions"),
     todayFollowups: byId("todayFollowups"),
     todayOverdue: byId("todayOverdue"),
+    todayClarifyProjects: byId("todayClarifyProjects"),
     todayWaiting: byId("todayWaiting"),
     todayBlocked: byId("todayBlocked"),
     todaySolo: byId("todaySolo"),
@@ -3951,6 +4602,18 @@ async function createApp() {
     autoIdToggle: byId("autoIdToggle"),
     dateFormatSelect: byId("dateFormatSelect"),
     staleDaysInput: byId("staleDaysInput"),
+    followupOffsetsInput: byId("followupOffsetsInput"),
+    followupOffsetsPreview: byId("followupOffsetsPreview"),
+    configShowId: byId("configShowId"),
+    configShowCreated: byId("configShowCreated"),
+    configShowDue: byId("configShowDue"),
+    configShowProject: byId("configShowProject"),
+    configShowContext: byId("configShowContext"),
+    kanbanFieldSelect: byId("kanbanFieldSelect"),
+    kanbanColumnsEditor: byId("kanbanColumnsEditor"),
+    addKanbanColumnButton: byId("addKanbanColumnButton"),
+    resetKanbanButton: byId("resetKanbanButton"),
+    resetConfigButton: byId("resetConfigButton"),
     configPreview: byId("configPreview"),
     todoViewSearch: byId("todoViewSearch"),
     todoClearSearchButton: byId("todoClearSearchButton"),
@@ -4004,8 +4667,14 @@ async function createApp() {
     journalLinks: byId("journalLinks"),
     allNotesSearchInput: byId("allNotesSearchInput"),
     allNotesClearSearchButton: byId("allNotesClearSearchButton"),
+    allNotesRecoveryFilter: byId("allNotesRecoveryFilter"),
+    allNotesRecoverySummary: byId("allNotesRecoverySummary"),
     allNotesList: byId("allNotesList"),
     allNotesTitle: byId("allNotesTitle"),
+    allNotesRecoveryStatus: byId("allNotesRecoveryStatus"),
+    allNotesTypeProjectButton: byId("allNotesTypeProjectButton"),
+    allNotesTypeJournalButton: byId("allNotesTypeJournalButton"),
+    allNotesTypeNoteButton: byId("allNotesTypeNoteButton"),
     allNotesEditorHost: byId("allNotesEditorHost"),
     allNotesBody: byId("allNotesBody"),
     calendarPrevButton: byId("calendarPrevButton"),
@@ -4114,12 +4783,54 @@ async function createApp() {
     return ["project", "journal", "note"].includes(value) ? value : "";
   }
 
+  function hasFrontmatter(markdown) {
+    return String(markdown || "").startsWith("---\n");
+  }
+
+  function hasClosedFrontmatter(markdown) {
+    return hasFrontmatter(markdown) && String(markdown || "").indexOf("\n---", 4) !== -1;
+  }
+
+  function hasFrontmatterType(frontmatter) {
+    return Object.prototype.hasOwnProperty.call(frontmatter.data || {}, "type");
+  }
+
+  function yamlNoteType(note) {
+    const frontmatter = parseFrontmatter(note?.body || "");
+    if (hasFrontmatter(note?.body) || hasFrontmatterType(frontmatter)) {
+      return validNoteType(frontmatter.data.type) || "note";
+    }
+    return validNoteType(note?.type) || "note";
+  }
+
   function noteType(note) {
-    return validNoteType(note?.type) || (note?.shortName ? "project" : "journal");
+    return yamlNoteType(note);
   }
 
   function noteCategory(note) {
     return parseFrontmatter(note?.body || "").data.category || note.category || note.kind || "";
+  }
+
+  function noteRecoveryInfo(note) {
+    const markdown = note?.body || "";
+    const frontmatter = parseFrontmatter(markdown);
+    const rawType = hasFrontmatterType(frontmatter) ? String(frontmatter.data.type || "").trim() : "";
+    const yamlBroken = hasFrontmatter(markdown) && !hasClosedFrontmatter(markdown);
+    const missingType = !rawType;
+    const invalidType = Boolean(rawType && !validNoteType(rawType));
+    const type = noteType(note);
+    const category = frontmatter.data.category || note.category || "";
+    const processed = frontmatter.data.processed === true || frontmatter.data.processed === "true" || Boolean(note.processed);
+    return {
+      type,
+      rawType,
+      category,
+      processed,
+      yamlBroken,
+      missingType,
+      invalidType,
+      needsRepair: yamlBroken || missingType || invalidType,
+    };
   }
 
   function migrateNotesCollection(sourceState = {}) {
@@ -4132,7 +4843,9 @@ async function createApp() {
 
   function normalizeNoteRecord(note) {
     const frontmatter = parseFrontmatter(note.body || "");
-    const type = validNoteType(frontmatter.data.type) || validNoteType(note.type) || (note.shortName ? "project" : "journal");
+    const type = hasFrontmatter(note.body) || hasFrontmatterType(frontmatter)
+      ? validNoteType(frontmatter.data.type) || "note"
+      : validNoteType(note.type) || (note.shortName ? "project" : "journal");
     const title = note.title || note.displayTitle || note.shortName || "Sans titre";
     return {
       ...note,
@@ -4307,8 +5020,8 @@ async function createApp() {
         type: "project",
         category,
         title: displayTitle,
-        intro: `Projet créé automatiquement depuis ${options.source || "Worklog"}.`,
-        source: options.source || "Worklog",
+        intro: `Projet créé automatiquement depuis ${options.source || "Lumo"}.`,
+        source: options.source || "Lumo",
       }),
     };
   }
@@ -4352,7 +5065,7 @@ async function createApp() {
     const nextType = validNoteType(frontmatter.data.type);
     project.status = frontmatter.data.status || project.status || "active";
     if (nextType) project.type = nextType;
-    else project.type = validNoteType(project.type) || "project";
+    else project.type = "note";
     project.category = frontmatter.data.category || project.category || project.kind || "projet";
     project.kind = project.category;
     project.displayTitle = frontmatter.data.title || project.displayTitle || project.title;
@@ -4365,7 +5078,7 @@ async function createApp() {
     const frontmatter = parseFrontmatter(note.body);
     const nextType = validNoteType(frontmatter.data.type);
     if (nextType) note.type = nextType;
-    else note.type = validNoteType(note.type) || "journal";
+    else note.type = "note";
     note.category = frontmatter.data.category || note.category || note.kind || "note";
     note.kind = note.category;
     if (note.type === "project" && !note.shortName) {
@@ -4383,7 +5096,7 @@ async function createApp() {
     const frontmatter = parseFrontmatter(note.body || "");
     const nextType = validNoteType(frontmatter.data.type);
     if (nextType) note.type = nextType;
-    else note.type = validNoteType(note.type) || "note";
+    else note.type = "note";
     note.category = frontmatter.data.category || note.category || "";
     note.tags = readArrayValue(frontmatter.data.tags || note.tags);
     note.personnes = readArrayValue(frontmatter.data.personnes || frontmatter.data.personne || note.personnes);
@@ -4408,7 +5121,7 @@ async function createApp() {
       category: values.category || "projet",
       date: formatDate(new Date(), state.config.dateInsert),
       intro: values.intro || "",
-      source: values.source || "Worklog",
+      source: values.source || "Lumo",
     });
   }
 
@@ -4433,7 +5146,7 @@ async function createApp() {
     if (options.syncMetadata) syncJournalFromMarkdown(note);
     if (options.ensureProjects) ensureProjectsFromNames(note.projects, "journal");
     persist();
-    if (options.syncMetadata && noteType(note) !== previousType) {
+    if (noteType(note) !== previousType) {
       routeNoteAfterTypeChange(note);
       render();
     }
@@ -4497,8 +5210,8 @@ async function createApp() {
       activeView = "journal";
       return;
     }
-    selectedJournalId = note.id;
-    activeView = "journal";
+    selectedAllNoteId = note.id;
+    activeView = "notes";
   }
 
   async function mountProjectOverTypeEditor(scope) {
@@ -4753,6 +5466,23 @@ async function createApp() {
     });
   }
 
+  function nextActionTodos(openTodos = parsedTodos().filter((todo) => !todo.parsed.completed)) {
+    return openTodos.filter((todo) => {
+      return todo.parsed.status === "next"
+        && !todo.parsed.values.waiting
+        && todo.parsed.status !== "waiting"
+        && !todo.parsed.values.blocked
+        && todo.parsed.status !== "blocked";
+    });
+  }
+
+  function projectsWithoutNextAction() {
+    return visibleProjects().filter((project) => {
+      if ((project.status || "active") !== "active") return false;
+      return nextActionTodos(openProjectTodos(project.title)).length === 0;
+    });
+  }
+
   function renderEmpty(container, label) {
     container.innerHTML = "";
     const empty = document.createElement("div");
@@ -4771,7 +5501,9 @@ async function createApp() {
     const waiting = openTodos.filter((todo) => todo.parsed.values.waiting || todo.parsed.status === "waiting");
     const blocked = openTodos.filter((todo) => todo.parsed.values.blocked || todo.parsed.status === "blocked");
     const priorities = openTodos.filter((todo) => todo.parsed.priority === "A");
+    const nextActions = nextActionTodos(openTodos);
     const projects = visibleProjects();
+    const withoutNext = projectsWithoutNextAction();
     const dormant = projects.filter((project) => projectActivityAge(project) > state.config.staleAfterDays);
 
     setText("todoCount", openTodos.length);
@@ -4788,8 +5520,10 @@ async function createApp() {
     setText("metricProjects", projects.length);
     setText("metricTodos", openTodos.length);
     setText("metricInbox", `${inbox.length} dans inbox`);
+    setText("metricNextActions", nextActions.length);
     setText("metricFollowups", followups.length);
     setText("metricOverdue", openTodos.filter((todo) => todo.isOverdue).length);
+    setText("metricProjectsWithoutNext", withoutNext.length);
     setText("metricWaiting", waiting.length);
     setText("metricBlocked", blocked.length);
     setText("metricDormant", dormant.length);
@@ -5391,9 +6125,160 @@ async function createApp() {
     return row;
   }
 
+  function createClarifyProjectShortcut(project) {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = "clarify-project-row";
+    const openCount = openProjectTodos(project.title).length;
+    row.innerHTML = `
+      <span class="row-title">${escapeAppHtml(projectDisplayTitle(project))}</span>
+      <span class="row-meta">${openCount ? `${openCount} todo${openCount > 1 ? "s" : ""}, aucune next` : "aucune action ouverte"}</span>
+    `;
+    row.addEventListener("click", () => {
+      selectedProjectId = project.id;
+      activeView = "project";
+      render();
+    });
+    return row;
+  }
+
+  function todayMorningRitual() {
+    const date = todayISO();
+    const saved = state.morningRitual;
+    if (!saved || saved.date !== date || !Array.isArray(saved.completed)) {
+      state.morningRitual = { date, completed: [] };
+    }
+    return state.morningRitual;
+  }
+
+  function renderMorningRitualDetail(stepId, context) {
+    const titles = {
+      alerts: "Ce qui demande ton attention",
+      next: "Choisir parmi les todos disponibles",
+      clarify: "Projets à clarifier",
+      waiting: "Attentes et blocages",
+      start: "La première action à lancer",
+    };
+    elements.morningRitualDetail.classList.toggle("hidden", !stepId);
+    if (!stepId) return;
+
+    elements.morningRitualDetailTitle.textContent = titles[stepId] || "";
+    elements.morningRitualDetailContent.innerHTML = "";
+    const displayOptions = { visibleTokens: todoVisibleTokens(), dragHandle: false, quickActions: true };
+
+    if (stepId === "clarify") {
+      if (!context.clarifyProjects.length) {
+        renderEmpty(elements.morningRitualDetailContent, "Tous les projets actifs ont une prochaine action.");
+      } else {
+        for (const project of context.clarifyProjects.slice(0, 8)) {
+          elements.morningRitualDetailContent.append(createClarifyProjectShortcut(project));
+        }
+      }
+      return;
+    }
+
+    let todos = [];
+    let emptyLabel = "";
+    if (stepId === "alerts") {
+      todos = [...context.overdue, ...context.followups]
+        .filter((todo, index, list) => list.findIndex((item) => item.id === todo.id) === index);
+      emptyLabel = "Rien d'urgent ni à relancer aujourd'hui.";
+    } else if (stepId === "next") {
+      todos = context.nextCandidates;
+      emptyLabel = context.nextActions.length
+        ? "Toutes les todos actionnables sont déjà choisies comme prochaines actions."
+        : "Aucune todo actionnable à choisir pour le moment.";
+    } else if (stepId === "waiting") {
+      todos = [...context.blocked, ...context.waiting]
+        .filter((todo, index, list) => list.findIndex((item) => item.id === todo.id) === index);
+      emptyLabel = "Aucune attente ni aucun blocage à surveiller.";
+    } else if (stepId === "start") {
+      todos = context.nextActions.slice(0, 1);
+      emptyLabel = "Choisis d'abord une todo et marque-la next.";
+    }
+    renderTodoGroup(elements.morningRitualDetailContent, todos.slice(0, 8), emptyLabel, displayOptions);
+  }
+
+  function renderMorningRitual({ nextActions, nextCandidates, followups, overdue, waiting, blocked, clarifyProjects }) {
+    const context = { nextActions, nextCandidates, followups, overdue, waiting, blocked, clarifyProjects };
+    const ritual = todayMorningRitual();
+    const completed = new Set(ritual.completed);
+    const alertCount = new Set([...followups, ...overdue].map((todo) => todo.id)).size;
+    const waitingCount = new Set([...waiting, ...blocked].map((todo) => todo.id)).size;
+    const steps = [
+      {
+        id: "alerts",
+        title: "Regarder ce qui demande mon attention",
+        detail: alertCount ? `${alertCount} alerte${alertCount > 1 ? "s" : ""} aujourd'hui` : "aucune alerte aujourd'hui",
+      },
+      {
+        id: "next",
+        title: "Choisir mes prochaines actions",
+        detail: `${nextActions.length} choisie${nextActions.length === 1 ? "" : "s"}, ${nextCandidates.length} disponible${nextCandidates.length === 1 ? "" : "s"}`,
+      },
+      {
+        id: "clarify",
+        title: "Clarifier un projet si nécessaire",
+        detail: clarifyProjects.length ? `${clarifyProjects.length} projet${clarifyProjects.length > 1 ? "s" : ""} sans prochaine action` : "tous les projets actifs sont clairs",
+      },
+      {
+        id: "waiting",
+        title: "Vérifier attentes et blocages",
+        detail: waitingCount ? `${waitingCount} element${waitingCount > 1 ? "s" : ""} a surveiller` : "rien en attente ou bloque",
+      },
+      {
+        id: "start",
+        title: "Commencer la première action",
+        detail: "ouvrir Lumo, puis agir",
+      },
+    ];
+
+    elements.morningRitualSteps.innerHTML = "";
+    for (const step of steps) {
+      const card = document.createElement("div");
+      card.className = `morning-ritual-step${completed.has(step.id) ? " complete" : ""}${activeMorningRitualStep === step.id ? " active" : ""}`;
+      card.innerHTML = `
+        <input type="checkbox" aria-label="Marquer l'étape comme terminée" ${completed.has(step.id) ? "checked" : ""}>
+        <button class="morning-ritual-step-copy" type="button" aria-expanded="${activeMorningRitualStep === step.id}">
+          <strong>${escapeAppHtml(step.title)}</strong>
+          <span>${escapeAppHtml(step.detail)}</span>
+        </button>
+      `;
+      card.querySelector("input").addEventListener("change", (event) => {
+        const current = new Set(todayMorningRitual().completed);
+        if (event.target.checked) current.add(step.id);
+        else current.delete(step.id);
+        state.morningRitual.completed = steps.map((item) => item.id).filter((id) => current.has(id));
+        persist();
+        renderMorningRitual(context);
+      });
+      card.querySelector("button").addEventListener("click", () => {
+        activeMorningRitualStep = activeMorningRitualStep === step.id ? null : step.id;
+        renderMorningRitual(context);
+      });
+      elements.morningRitualSteps.append(card);
+    }
+
+    const doneCount = steps.filter((step) => completed.has(step.id)).length;
+    const isComplete = doneCount === steps.length;
+    elements.morningRitual.classList.toggle("complete", isComplete);
+    elements.morningRitualProgress.textContent = isComplete
+      ? "Journée lancée. Tu peux maintenant te concentrer sur la première action."
+      : `${doneCount}/${steps.length} étapes`;
+    elements.resetMorningRitualButton.classList.toggle("hidden", doneCount === 0);
+    renderMorningRitualDetail(activeMorningRitualStep, context);
+  }
+
   function renderTodayView() {
     const today = todayISO();
     const openTodos = parsedTodos().filter((todo) => !todo.parsed.completed);
+    const nextActions = nextActionTodos(openTodos)
+      .sort((a, b) => priorityRank(a.parsed.priority) - priorityRank(b.parsed.priority) || todoDateValue(a).localeCompare(todoDateValue(b)));
+    const nextCandidates = openTodos
+      .filter((todo) => todo.parsed.status !== "next")
+      .filter((todo) => !todo.parsed.values.waiting && todo.parsed.status !== "waiting")
+      .filter((todo) => !todo.parsed.values.blocked && todo.parsed.status !== "blocked")
+      .sort((a, b) => priorityRank(a.parsed.priority) - priorityRank(b.parsed.priority) || todoDateValue(a).localeCompare(todoDateValue(b)));
     const followups = openTodos
       .filter((todo) => todo.parsed.followupDate && todo.parsed.followupDate <= today)
       .sort((a, b) => todoDateValue(a).localeCompare(todoDateValue(b)) || priorityRank(a.parsed.priority) - priorityRank(b.parsed.priority));
@@ -5415,21 +6300,37 @@ async function createApp() {
       .slice(0, 8);
     const visibleProjectList = visibleProjects()
       .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr"));
+    const clarifyProjects = projectsWithoutNextAction()
+      .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr"));
 
+    renderMorningRitual({ nextActions, nextCandidates, followups, overdue, waiting, blocked, clarifyProjects });
+
+    setText("todayNextCount", nextActions.length);
     setText("todayFollowupCount", followups.length);
     setText("todayOverdueCount", overdue.length);
+    setText("todayClarifyCount", clarifyProjects.length);
     setText("todayWaitingCount", waiting.length);
     setText("todayBlockedCount", blocked.length);
     setText("todaySoloCount", solo.length);
     setText("todayMeetingsCount", meetings.length);
     setText("todayProjectsCount", visibleProjectList.length);
 
-    const displayOptions = { visibleTokens: todoVisibleTokens(), dragHandle: false };
+    const displayOptions = { visibleTokens: todoVisibleTokens(), dragHandle: false, quickActions: true };
+    renderTodoGroup(elements.todayNextActions, nextActions.slice(0, 8), "Aucune prochaine action. Choisis une todo et utilise next.", displayOptions);
     renderTodoGroup(elements.todayFollowups, followups.slice(0, 8), "Aucune relance arrivee.", displayOptions);
     renderTodoGroup(elements.todayOverdue, overdue.slice(0, 8), "Aucune echeance depassee.", displayOptions);
     renderTodoGroup(elements.todayWaiting, waiting.slice(0, 8), "Aucune attente suivie.", displayOptions);
     renderTodoGroup(elements.todayBlocked, blocked.slice(0, 8), "Aucun blocage suivi.", displayOptions);
     renderTodoGroup(elements.todaySolo, solo.slice(0, 8), "Aucune todo solitaire ouverte.", displayOptions);
+
+    elements.todayClarifyProjects.innerHTML = "";
+    if (!clarifyProjects.length) {
+      renderEmpty(elements.todayClarifyProjects, "Chaque projet actif a une prochaine action.");
+    } else {
+      for (const project of clarifyProjects.slice(0, 8)) {
+        elements.todayClarifyProjects.append(createClarifyProjectShortcut(project));
+      }
+    }
 
     elements.todayMeetings.innerHTML = "";
     if (!meetings.length) {
@@ -5497,7 +6398,6 @@ async function createApp() {
     return [
       ["important", "!", "red"],
       ["a-venir", "à venir", "blue"],
-      ["chef", "chef", "amber"],
       ["a-archiver", "archive ?", "violet"],
     ]
       .filter(([tag]) => tags.has(tag))
@@ -5576,10 +6476,66 @@ async function createApp() {
   }
 
   function renderConfig() {
+    const visibleTokens = todoVisibleTokens();
     elements.autoIdToggle.checked = state.config.todo.autoId;
     elements.dateFormatSelect.value = state.config.dateInsert;
     elements.staleDaysInput.value = state.config.staleAfterDays;
+    elements.followupOffsetsInput.value = followupOffsets().join(", ");
+    elements.followupOffsetsPreview.innerHTML = followupOffsets()
+      .map((days) => `<span class="chip blue">+${days} jour${days > 1 ? "s" : ""}</span>`)
+      .join("");
+    elements.configShowId.checked = visibleTokens.id !== false;
+    elements.configShowCreated.checked = visibleTokens.created !== false;
+    elements.configShowDue.checked = visibleTokens.due !== false;
+    elements.configShowProject.checked = visibleTokens.project !== false;
+    elements.configShowContext.checked = visibleTokens.context !== false;
+    elements.kanbanFieldSelect.value = kanbanConfig().field || "status";
+    renderKanbanColumnsEditor();
     elements.configPreview.textContent = JSON.stringify(state.config, null, 2);
+  }
+
+  function kanbanColumnId(value, index) {
+    const normalized = String(value || "none")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    return `${normalized || "none"}-${index + 1}`;
+  }
+
+  function renderKanbanColumnsEditor() {
+    const columns = kanbanConfig().columns || [];
+    elements.kanbanColumnsEditor.innerHTML = "";
+    columns.forEach((column, index) => {
+      const row = document.createElement("div");
+      row.className = "kanban-config-row";
+      row.innerHTML = `
+        <input class="field" data-kanban-column-title value="${escapeAppHtml(column.title || "")}" aria-label="Nom de la colonne">
+        <input class="field" data-kanban-column-value value="${escapeAppHtml(String(column.value ?? ""))}" aria-label="Valeur todo.txt">
+        <button type="button" class="icon-button" data-kanban-column-remove title="Supprimer la colonne" aria-label="Supprimer la colonne">x</button>
+      `;
+      const titleInput = row.querySelector("[data-kanban-column-title]");
+      const valueInput = row.querySelector("[data-kanban-column-value]");
+      const saveColumn = () => {
+        const target = state.config.kanban.columns[index];
+        if (!target) return;
+        target.title = titleInput.value.trim() || `Colonne ${index + 1}`;
+        target.value = valueInput.value.trim();
+        target.id = kanbanColumnId(target.value, index);
+        persist();
+        renderKanbanView();
+        renderConfig();
+      };
+      titleInput.addEventListener("change", saveColumn);
+      valueInput.addEventListener("change", saveColumn);
+      row.querySelector("[data-kanban-column-remove]").addEventListener("click", () => {
+        state.config.kanban.columns.splice(index, 1);
+        persist();
+        render();
+      });
+      elements.kanbanColumnsEditor.append(row);
+    });
   }
 
   function renderSnapshots() {
@@ -5842,6 +6798,7 @@ async function createApp() {
     const todos = parsedTodos();
     elements.kanbanSubtitle.textContent = `Champ: ${config.field || "status"} · ${columns.length} colonnes · source todo.txt`;
     elements.kanbanBoard.innerHTML = "";
+    elements.kanbanBoard.style.setProperty("--kanban-column-count", Math.max(columns.length, 1));
 
     for (const column of columns) {
       const columnTodos = todos.filter((todo) => kanbanTodoMatchesColumn(todo, column));
@@ -6467,9 +7424,18 @@ async function createApp() {
 
   function renderAllNotesView() {
     const query = elements.allNotesSearchInput.value.trim().toLowerCase();
+    const recoveryFilter = elements.allNotesRecoveryFilter.value;
     elements.allNotesClearSearchButton.classList.toggle("hidden", !elements.allNotesSearchInput.value);
+    const recoveryInfos = state.notes.map((note) => ({ note, info: noteRecoveryInfo(note) }));
+    const repairCount = recoveryInfos.filter((item) => item.info.needsRepair).length;
+    const unprocessedCount = recoveryInfos.filter((item) => item.info.type === "journal" && !item.info.processed).length;
+    elements.allNotesRecoverySummary.textContent = `${state.notes.length} notes · ${repairCount} à réparer · ${unprocessedCount} à traiter`;
     const notes = state.notes
       .filter((note) => {
+        const info = noteRecoveryInfo(note);
+        if (recoveryFilter === "repair" && !info.needsRepair) return false;
+        if (recoveryFilter === "unprocessed" && !(info.type === "journal" && !info.processed)) return false;
+        if (["project", "journal", "note"].includes(recoveryFilter) && info.type !== recoveryFilter) return false;
         if (!query) return true;
         const frontmatter = parseFrontmatter(note.body || "");
         const haystack = `${note.title || ""} ${note.shortName || ""} ${note.type || ""} ${frontmatter.data.type || ""} ${frontmatter.data.category || ""} ${note.body || ""}`.toLowerCase();
@@ -6482,21 +7448,29 @@ async function createApp() {
       renderEmpty(elements.allNotesList, "Aucune note.");
       elements.allNotesTitle.value = "";
       elements.allNotesBody.value = "";
+      elements.allNotesRecoveryStatus.innerHTML = "";
       elements.allNotesEditorHost.innerHTML = "";
       return;
     }
 
     for (const note of notes) {
-      const frontmatter = parseFrontmatter(note.body || "");
+      const info = noteRecoveryInfo(note);
+      const issueChips = [
+        info.yamlBroken ? '<span class="chip red">yaml cassé</span>' : "",
+        info.invalidType ? '<span class="chip red">type invalide</span>' : "",
+        info.missingType ? '<span class="chip amber">type manquant</span>' : "",
+      ].join("");
       const card = document.createElement("button");
       card.type = "button";
       card.className = `journal-card${note.id === selectedAllNoteId ? " active" : ""}`;
       card.innerHTML = `
         <span class="journal-card-title">${escapeAppHtml(note.title || note.shortName || "Sans titre")}</span>
         <span class="journal-card-meta">
-          <span class="age">${escapeAppHtml(note.type || "?")}</span>
-          <span class="chip blue">yaml:${escapeAppHtml(frontmatter.data.type || "?")}</span>
-          ${frontmatter.data.category ? `<span class="chip">${escapeAppHtml(frontmatter.data.category)}</span>` : ""}
+          <span class="chip blue">${escapeAppHtml(info.type)}</span>
+          <span class="chip">yaml:${escapeAppHtml(info.rawType || "?")}</span>
+          ${info.category ? `<span class="chip">${escapeAppHtml(info.category)}</span>` : ""}
+          ${info.type === "journal" ? (info.processed ? '<span class="chip green">traite</span>' : '<span class="chip amber">a traiter</span>') : ""}
+          ${issueChips}
         </span>
       `;
       card.addEventListener("click", () => {
@@ -6511,16 +7485,35 @@ async function createApp() {
     selectedAllNoteId = selected.id;
     elements.allNotesTitle.value = selected.title || selected.shortName || "";
     elements.allNotesBody.value = selected.body || "";
+    renderAllNotesRecoveryStatus(selected);
     mountAllNotesOverTypeEditor();
   }
 
+  function renderAllNotesRecoveryStatus(note) {
+    const info = noteRecoveryInfo(note);
+    const chips = [
+      `<span class="chip blue">vue:${escapeAppHtml(info.type)}</span>`,
+      `<span class="chip">yaml:${escapeAppHtml(info.rawType || "?")}</span>`,
+      info.category ? `<span class="chip">${escapeAppHtml(info.category)}</span>` : "",
+      info.yamlBroken ? '<span class="chip red">yaml cassé</span>' : "",
+      info.invalidType ? '<span class="chip red">type invalide</span>' : "",
+      info.missingType ? '<span class="chip amber">type manquant</span>' : "",
+      info.type === "journal" && !info.processed ? '<span class="chip amber">a traiter</span>' : "",
+    ].filter(Boolean).join("");
+    elements.allNotesRecoveryStatus.innerHTML = `<div class="chips">${chips}</div>`;
+  }
+
   function openNoteFromFallback(note) {
-    if (noteType(note) === "project") {
+    const type = noteType(note);
+    if (type === "project") {
       selectedProjectId = note.id;
       activeView = "project";
-    } else {
+    } else if (type === "journal") {
       selectedJournalId = note.id;
       activeView = "journal";
+    } else {
+      selectedAllNoteId = note.id;
+      activeView = "notes";
     }
     render();
   }
@@ -6531,7 +7524,13 @@ async function createApp() {
     note.updatedAt = new Date().toISOString();
     if (options.syncMetadata) syncNoteFromMarkdown(note);
     persist();
-    if (options.syncMetadata && noteType(note) !== previousType) renderAllNotesView();
+    if (!options.syncMetadata) return;
+    if (noteType(note) !== previousType) {
+      routeNoteAfterTypeChange(note);
+      render();
+      return;
+    }
+    renderAllNotesView();
   }
 
   function saveAllNoteTitle() {
@@ -6541,6 +7540,80 @@ async function createApp() {
     note.updatedAt = new Date().toISOString();
     persist();
     renderAllNotesView();
+  }
+
+  function setSelectedAllNoteType(type) {
+    const note = selectedAllNote();
+    if (!note || !validNoteType(type)) return;
+    const markdown = allNotesOverTypeEditor?.getMarkdown() || elements.allNotesBody.value || note.body || "";
+    const nextMarkdown = writeFrontmatter(markdown, { type });
+    elements.allNotesBody.value = nextMarkdown;
+    saveAllNoteMarkdown(note, nextMarkdown, { syncMetadata: true });
+  }
+
+  function renderNavMiniCalendar() {
+    const today = new Date();
+    const todayIso = todayISO(today);
+    const weekStart = startOfCalendarWeek(today);
+    const gridStart = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() - 14);
+    const weekdays = ["L", "M", "M", "J", "V", "S", "D"];
+    const openTodos = parsedTodos().filter((todo) => !todo.parsed.completed);
+    const journalDates = journalRecords().map(journalDateIso);
+    elements.navMiniCalendar.innerHTML = "";
+
+    const title = document.createElement("div");
+    title.className = "mini-calendar-title";
+    title.textContent = today.toLocaleDateString("fr-CH", { month: "long", year: "numeric" });
+    elements.navMiniCalendar.append(title);
+
+    const grid = document.createElement("div");
+    grid.className = "mini-calendar-grid";
+    for (const weekday of weekdays) {
+      const label = document.createElement("div");
+      label.className = "mini-calendar-weekday";
+      label.textContent = weekday;
+      grid.append(label);
+    }
+
+    for (let offset = 0; offset < 35; offset += 1) {
+      const date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + offset);
+      const dateIso = todayISO(date);
+      const day = date.getDay();
+      const notesCount = journalDates.filter((item) => item === dateIso).length;
+      const followupCount = openTodos.filter((todo) => todo.parsed.followupDate === dateIso).length;
+      const dueCount = openTodos.filter((todo) => todo.parsed.dueDate === dateIso).length;
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = [
+        "mini-calendar-cell",
+        dateIso === todayIso ? "today" : "",
+        date.getMonth() !== today.getMonth() ? "muted" : "",
+        day === 0 || day === 6 ? "weekend" : "",
+      ].filter(Boolean).join(" ");
+      cell.title = [
+        date.toLocaleDateString("fr-CH"),
+        notesCount ? `${notesCount} note${notesCount > 1 ? "s" : ""}` : "",
+        followupCount ? `${followupCount} relance${followupCount > 1 ? "s" : ""}` : "",
+        dueCount ? `${dueCount} échéance${dueCount > 1 ? "s" : ""}` : "",
+      ].filter(Boolean).join(" - ");
+      cell.innerHTML = `
+        <span class="mini-calendar-number">${date.getDate()}</span>
+        <span class="mini-calendar-dots">
+          ${notesCount ? '<span class="mini-calendar-dot note"></span>' : ""}
+          ${followupCount ? '<span class="mini-calendar-dot followup"></span>' : ""}
+          ${dueCount ? '<span class="mini-calendar-dot due"></span>' : ""}
+        </span>
+      `;
+      cell.addEventListener("click", () => {
+        selectedCalendarDate = dateIso;
+        calendarDate = new Date(date.getFullYear(), date.getMonth(), 1);
+        activeView = "calendar";
+        render();
+      });
+      grid.append(cell);
+    }
+
+    elements.navMiniCalendar.append(grid);
   }
 
   function renderCalendarView() {
@@ -6686,6 +7759,7 @@ async function createApp() {
     renderActiveView();
     renderLayoutState();
     renderExportDirtyState();
+    renderNavMiniCalendar();
     updateCounts();
     renderFilters();
     renderTodos();
@@ -7159,7 +8233,7 @@ async function createApp() {
     const selection = scratchpadOverTypeEditor?.getSelection() || "";
     const body = selection.trim() || scratchpadOverTypeEditor?.getMarkdown() || elements.scratchpadBody.value || "";
     if (!body.trim()) return;
-    const subject = encodeURIComponent("Worklog - Bloc-notes");
+    const subject = encodeURIComponent("Lumo - Bloc-notes");
     const encodedBody = encodeURIComponent(body);
     window.location.href = `mailto:?subject=${subject}&body=${encodedBody}`;
   }
@@ -7193,7 +8267,64 @@ async function createApp() {
     if (!confirm("Réinitialiser les templates Markdown ?")) return;
     state.config.markdown.templates = clone(defaultConfig.markdown.templates);
     persist();
-    renderScratchpadView();
+    renderConfig();
+  }
+
+  function saveFollowupOffsets() {
+    const values = elements.followupOffsetsInput.value
+      .split(",")
+      .map((value) => Number(value.trim()))
+      .filter((value) => Number.isInteger(value) && value > 0);
+    state.config.followupOffsets = unique(values).slice(0, 10);
+    if (!state.config.followupOffsets.length) {
+      state.config.followupOffsets = clone(defaultConfig.followupOffsets);
+    }
+    persist();
+    renderConfig();
+  }
+
+  function setConfigVisibleToken(key, checked) {
+    todoVisibleTokens()[key] = checked;
+    persist();
+    render();
+  }
+
+  function setKanbanField() {
+    state.config.kanban.field = elements.kanbanFieldSelect.value;
+    persist();
+    render();
+  }
+
+  function addKanbanColumn() {
+    const columns = state.config.kanban.columns;
+    const index = columns.length;
+    columns.push({
+      id: kanbanColumnId("", index),
+      title: `Colonne ${index + 1}`,
+      value: "",
+    });
+    persist();
+    render();
+  }
+
+  function resetKanbanConfiguration() {
+    if (!confirm("Réinitialiser les colonnes Kanban ?")) return;
+    state.config.kanban = clone(defaultConfig.kanban);
+    persist();
+    render();
+  }
+
+  function resetConfiguration() {
+    if (!confirm("Réinitialiser la configuration de Lumo ?\n\nLa disposition des panneaux sera conservée.")) return;
+    const layout = clone(state.config.layout || defaultConfig.layout);
+    const exportDirty = state.config.exportDirty;
+    state.config = mergeConfig({
+      ...clone(defaultConfig),
+      layout,
+      exportDirty,
+    });
+    persist();
+    render();
   }
 
   function createJournalNote(options = {}) {
@@ -7485,6 +8616,16 @@ async function createApp() {
     elements.newProjectButton.addEventListener("click", createProject);
     elements.newIncidentProjectButton.addEventListener("click", createIncidentProject);
     elements.todayNewJournalButton.addEventListener("click", () => createJournalNote({ kind: "meeting", title: `${todayISO()} - Point` }));
+    elements.resetMorningRitualButton.addEventListener("click", () => {
+      state.morningRitual = { date: todayISO(), completed: [] };
+      activeMorningRitualStep = null;
+      persist();
+      renderTodayView();
+    });
+    elements.closeMorningRitualDetailButton.addEventListener("click", () => {
+      activeMorningRitualStep = null;
+      renderTodayView();
+    });
     elements.projectNewJournalButton.addEventListener("click", createJournalNoteFromProject);
     elements.exportProjectMarkdownButton.addEventListener("click", exportFocusedProjectMarkdown);
     elements.archiveProjectButton.addEventListener("click", archiveSelectedProject);
@@ -7508,12 +8649,16 @@ async function createApp() {
       elements.allNotesSearchInput.focus();
       renderAllNotesView();
     });
+    elements.allNotesRecoveryFilter.addEventListener("change", renderAllNotesView);
     elements.allNotesTitle.addEventListener("change", saveAllNoteTitle);
     elements.allNotesBody.addEventListener("change", () => {
       const note = selectedAllNote();
       if (!note) return;
       saveAllNoteMarkdown(note, elements.allNotesBody.value, { syncMetadata: true });
     });
+    elements.allNotesTypeProjectButton.addEventListener("click", () => setSelectedAllNoteType("project"));
+    elements.allNotesTypeJournalButton.addEventListener("click", () => setSelectedAllNoteType("journal"));
+    elements.allNotesTypeNoteButton.addEventListener("click", () => setSelectedAllNoteType("note"));
     elements.journalTodoFromSelectionButton?.addEventListener("click", createTodoFromJournalSelection);
     elements.journalExtractTasksButton?.addEventListener("click", extractJournalTasks);
     elements.journalAppendProjectButton?.addEventListener("click", appendJournalToProject);
@@ -7633,6 +8778,20 @@ async function createApp() {
       persist();
       render();
     });
+    elements.followupOffsetsInput.addEventListener("change", saveFollowupOffsets);
+    [
+      [elements.configShowId, "id"],
+      [elements.configShowCreated, "created"],
+      [elements.configShowDue, "due"],
+      [elements.configShowProject, "project"],
+      [elements.configShowContext, "context"],
+    ].forEach(([checkbox, key]) => {
+      checkbox.addEventListener("change", () => setConfigVisibleToken(key, checkbox.checked));
+    });
+    elements.kanbanFieldSelect.addEventListener("change", setKanbanField);
+    elements.addKanbanColumnButton.addEventListener("click", addKanbanColumn);
+    elements.resetKanbanButton.addEventListener("click", resetKanbanConfiguration);
+    elements.resetConfigButton.addEventListener("click", resetConfiguration);
     document.addEventListener("keydown", (event) => {
       if (event.ctrlKey && event.key.toLowerCase() === "enter") {
         addTodo();
