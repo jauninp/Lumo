@@ -1,21 +1,53 @@
-# Format Markdown / YAML Worklog
+# Format Markdown / YAML Lumo
 
-Ce fichier documente les conventions YAML/frontmatter utilisees par Worklog.
+Ce fichier documente les conventions YAML/frontmatter utilisees par Lumo.
 
 ## Principes
 
 - Le Markdown garde le contexte humain.
 - Le frontmatter YAML garde les metadonnees lisibles par l'application.
-- Le champ officiel pour classer un document est `type`.
+- Le champ officiel pour placer un document dans une vue est `type`.
+- Le champ officiel pour qualifier la nature d'un document est `category`.
 - Ne pas utiliser `kind`.
 - Les tags servent a retrouver, filtrer et regrouper les informations.
+
+Types de vue :
+
+```txt
+project
+journal
+note
+```
+
+Regle d'affichage :
+
+- seule la valeur `type` decide la vue principale
+- `category` ne decide jamais la vue
+- pendant l'edition, le Markdown est sauvegarde en live
+- `type` et `category` sont relus depuis le YAML seulement quand on quitte l'editeur ou change de note
+- la vue Notes affiche tous les documents, meme si `type` est invalide ou incomplet
+
+Categories possibles :
+
+```txt
+incident
+meeting
+decision
+question
+documentation
+suivi
+demande
+maintenance
+worklog
+```
 
 ## Projet
 
 ```yaml
 ---
 title: Incident paiement PACS.002
-type: incident
+type: project
+category: incident
 status: active
 tags: [pacs, fournisseur]
 personnes: [Daniel, SupportIT]
@@ -26,7 +58,8 @@ summary: Incident PACS.002 en cours.
 Champs reconnus :
 
 - `title` : titre lisible du projet, affiche dans les listes.
-- `type` : categorie du projet.
+- `type` : vue principale. Pour un projet, utiliser `project`.
+- `category` : categorie du projet.
 - `status` : etat du projet.
 - `tags` : tags libres.
 - `personnes` : participants, contacts ou personnes concernees.
@@ -40,22 +73,22 @@ Nom court todo.txt :
 
 Activite projet :
 
-- Worklog cherche les titres Markdown qui commencent par une date.
+- Lumo cherche les titres Markdown qui commencent par une date.
 - La date la plus recente trouvee sert a afficher l'activite projet.
-- Si aucune date n'est trouvee, Worklog utilise la date technique de modification.
+- Si aucune date n'est trouvee, Lumo utilise la date technique de modification.
 
 Formats reconnus :
 
 ```md
 ## 2026-06-02
-## 2026-06-02 - Point chef
+## 2026-06-02 - Point coordination
 ## 2026-06-02 10:25 - Incident ouvert
 ## 02.06.2026
 ## 02.06.2026 - Recette
 ## 02.06.2026 10:25 - Escalade support
 ```
 
-Types projet possibles :
+Categories projet possibles :
 
 ```txt
 projet
@@ -102,14 +135,15 @@ Convention de titre :
 YYYY-MM-DD - sujet
 ```
 
-Pour le classement dans la vue Journal, Worklog utilise d'abord la date au debut du titre.
+Pour le classement dans la vue Journal, Lumo utilise d'abord la date au debut du titre.
 Cela permet de creer aujourd'hui une note pour une seance future.
 
 ```yaml
 ---
-type: meeting
+type: journal
+category: meeting
 projects: [ISO20022, Audit]
-tags: [chef, decision]
+tags: [decision, suivi]
 personnes: [Daniel, Marie]
 processed: false
 ---
@@ -117,13 +151,14 @@ processed: false
 
 Champs reconnus :
 
-- `type` : categorie de note.
+- `type` : vue principale. Pour le journal, utiliser `journal`.
+- `category` : categorie de note.
 - `projects` : projets lies.
 - `tags` : tags libres.
 - `personnes` : participants ou personnes concernees.
 - `processed` : `true` si l'information a ete traitee, sinon `false`.
 
-Types journal possibles :
+Categories journal possibles :
 
 ```txt
 note
@@ -147,14 +182,13 @@ Les tags sont libres.
 Exemples :
 
 ```yaml
-tags: [chef, decision, TODO, vendor, a-relire]
+tags: [decision, TODO, vendor, a-relire]
 ```
 
 Tags projet recommandes :
 
 ```txt
 important
-chef
 relance
 decision
 TODO
@@ -171,7 +205,6 @@ doc
 Signification :
 
 - `important` : projet a surveiller regulierement.
-- `chef` : sujet souvent discute avec le chef.
 - `relance` : sujet avec suivis ou retours externes frequents.
 - `decision` : decision prise ou attendue.
 - `TODO` : document qui contient des actions a retrouver ou extraire.
@@ -188,13 +221,11 @@ Signaux visibles dans les listes projet :
 
 - `important` affiche `!`
 - `a-venir` affiche `a venir`
-- `chef` affiche `chef`
 - `a-archiver` affiche `archive ?`
 
 Usages possibles :
 
 - retrouver les decisions
-- retrouver les discussions avec le chef
 - marquer les notes a relire
 - regrouper les incidents
 - filtrer les notes par sujet transverse

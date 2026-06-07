@@ -1,6 +1,6 @@
-# Format todo.txt Worklog
+# Format todo.txt Lumo
 
-Ce fichier documente les conventions todo.txt utilisees par Worklog.
+Ce fichier documente les conventions todo.txt utilisees par Lumo.
 Il sert de reference produit et pourra alimenter une aide integree plus tard.
 
 ## Principes
@@ -85,7 +85,7 @@ Conventions :
 - un projet commence par `+`
 - une todo peut avoir plusieurs projets
 - une todo peut aussi rester solitaire, sans projet
-- si un projet inconnu apparait, Worklog peut creer le projet
+- si un projet inconnu apparait, Lumo peut creer le projet
 
 Exemple :
 
@@ -99,7 +99,6 @@ Preparer point transverse +ISO20022 +Audit
 @mail
 @tel
 @bureau
-@chef
 @vendor
 ```
 
@@ -121,7 +120,7 @@ status:waiting
 is:alert
 is:overdue
 -is:done
-+ISO20022 @chef
++ISO20022 @bureau
 "texte exact" -vendor
 ```
 
@@ -389,14 +388,14 @@ id:5RKH02
 
 Conventions :
 
-- identifiant court genere par Worklog
+- identifiant court genere par Lumo
 - reste une metadonnee `key:value`
 - permet de garder une todo stable quand le texte change
 - permet de detecter les doublons
 
 ## Autres metadonnees libres
 
-Worklog accepte les tokens `key:value`.
+Lumo accepte les tokens `key:value`.
 
 Possibilites utiles :
 
@@ -442,7 +441,7 @@ Signification :
 ## Todo multi-projets
 
 ```txt
-Preparer point de coordination +ISO20022 +Audit @chef due:2026-06-02
+Preparer point de coordination +ISO20022 +Audit @bureau due:2026-06-02
 ```
 
 Signification :
