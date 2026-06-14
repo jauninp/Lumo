@@ -297,6 +297,87 @@ select:focus-visible {
   justify-content: flex-end;
 }
 
+.plan-next-dialog {
+  width: min(660px, 100%);
+}
+
+.plan-next-project {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.plan-next-dialog label {
+  display: grid;
+  gap: 5px;
+}
+
+.plan-next-dialog label > span,
+.plan-next-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.plan-next-intents {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.plan-next-intents button {
+  min-height: 38px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  font-weight: 720;
+}
+
+.plan-next-intents button:last-child {
+  border-right: 0;
+}
+
+.plan-next-intents button.active {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.plan-next-offsets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.plan-next-offsets .button.active {
+  border-color: #78a99c;
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.plan-next-advanced {
+  border-top: 1px solid var(--line-soft);
+  padding-top: 8px;
+}
+
+.plan-next-advanced summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.plan-next-options {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
 .project-selection-menu {
   position: fixed;
   z-index: 10040;
@@ -852,6 +933,67 @@ select:focus-visible {
   align-items: start;
 }
 
+.review-panel {
+  margin-bottom: 14px;
+  border-color: #9dbcb4;
+  box-shadow: inset 3px 0 0 var(--green);
+}
+
+.review-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.review-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 10px 12px;
+}
+
+.review-row:nth-child(odd) {
+  border-right: 1px solid var(--line-soft);
+}
+
+.review-row-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.review-row-copy strong,
+.review-row-copy > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.review-row-copy > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.review-kind {
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.review-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.review-row-actions .followup-menu {
+  right: 0;
+  left: auto;
+}
+
 .today-secondary {
   margin-top: 14px;
   border-top: 1px solid var(--line);
@@ -1219,9 +1361,13 @@ select:focus-visible {
 
 .project-focus-grid {
   display: grid;
-  grid-template-columns: var(--project-list-width, 230px) 5px minmax(0, 1fr) 5px var(--project-side-width, 240px);
+  grid-template-columns: minmax(0, 1fr) 5px var(--project-side-width, 280px);
   gap: 8px;
   align-items: start;
+}
+
+.project-focus-grid.is-radar-collapsed {
+  grid-template-columns: minmax(0, 1fr) 5px 42px;
 }
 
 .journal-grid {
@@ -1233,9 +1379,116 @@ select:focus-visible {
 
 .notes-recovery-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
   gap: 10px;
   align-items: start;
+}
+
+.control-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.control-issues-panel {
+  margin-bottom: 16px;
+}
+
+.panel-subtitle {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.compact-field {
+  width: 180px;
+}
+
+.control-issue-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.control-issue-row {
+  display: grid;
+  grid-template-columns: 4px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 82px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 10px 12px 10px 8px;
+}
+
+.control-issue-row:nth-child(odd) {
+  border-right: 1px solid var(--line-soft);
+}
+
+.control-issue-marker {
+  width: 3px;
+  height: 42px;
+  border-radius: 3px;
+  background: var(--amber);
+}
+
+.control-issue-row.severity-critical .control-issue-marker {
+  background: var(--red);
+}
+
+.control-issue-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.control-issue-copy strong,
+.control-issue-copy > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.control-issue-copy > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.control-issue-label {
+  color: var(--amber);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.severity-critical .control-issue-label {
+  color: var(--red);
+}
+
+.control-issue-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-documents {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.control-documents > summary {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 760;
+}
+
+.control-documents[open] > summary {
+  margin-bottom: 10px;
 }
 
 .recovery-summary {
@@ -1272,10 +1525,125 @@ select:focus-visible {
   background: #b9c8c4;
 }
 
-.project-focus-list,
 .project-side-panel {
   position: sticky;
   top: 0;
+}
+
+.project-side-panel.is-collapsed {
+  min-height: 52px;
+  overflow: hidden;
+}
+
+.project-side-panel.is-collapsed .panel-head {
+  justify-content: center;
+  padding: 10px 6px;
+}
+
+.project-side-panel.is-collapsed .panel-head h2 {
+  display: none;
+}
+
+.project-page-identity {
+  display: grid;
+  gap: 7px;
+}
+
+.project-selector-trigger {
+  display: flex;
+  min-width: 330px;
+  max-width: min(680px, 55vw);
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-color: var(--line);
+  background: var(--paper);
+  padding: 8px 11px;
+  text-align: left;
+}
+
+.project-selector-trigger:hover,
+.project-selector-trigger[aria-expanded="true"] {
+  border-color: #9dbcb4;
+  background: var(--green-soft);
+}
+
+.project-selector-trigger > span:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.project-selector-trigger strong,
+.project-selector-trigger small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-selector-trigger strong {
+  font-size: 15px;
+}
+
+.project-selector-trigger small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.project-focus {
+  position: relative;
+}
+
+.project-selector-panel {
+  position: absolute;
+  top: 86px;
+  left: 0;
+  z-index: 10010;
+  display: grid;
+  width: min(780px, calc(100vw - 300px));
+  max-height: min(720px, calc(100vh - 150px));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 18px 48px rgba(31, 36, 33, 0.2);
+}
+
+.project-selector-head {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 8px 10px 8px 14px;
+}
+
+.project-selector-head > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.project-selector-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px;
+  gap: 8px;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 10px;
+}
+
+.project-selector-list {
+  overflow: auto;
+  padding: 8px 10px 12px;
+}
+
+.project-selector-list .project-group + .project-group {
+  margin-top: 8px;
+}
+
+.project-selector-list .project-row {
+  padding: 8px 9px;
 }
 
 .project-radar-actions {
@@ -1298,7 +1666,7 @@ select:focus-visible {
 }
 
 .focus-editor-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .linked-todos {
@@ -3130,9 +3498,9 @@ select:focus-visible {
                 <div class="metric-note">status:next</div>
               </div>
               <div class="metric">
-                <div class="metric-label">A relancer</div>
+                <div class="metric-label">À revoir</div>
                 <div id="metricFollowups" class="metric-value"></div>
-                <div class="metric-note">followup arrive</div>
+                <div class="metric-note">rappels et projets a reprendre</div>
               </div>
               <div class="metric">
                 <div class="metric-label">En retard</div>
@@ -3144,6 +3512,14 @@ select:focus-visible {
                 <div id="metricProjectsWithoutNext" class="metric-value"></div>
                 <div class="metric-note">projets actifs sans next</div>
               </div>
+            </section>
+
+            <section class="panel today-panel review-panel">
+              <div class="panel-head">
+                <h2>À revoir</h2>
+                <span id="todayFollowupCount" class="count"></span>
+              </div>
+              <div id="todayFollowups" class="review-list"></div>
             </section>
 
             <section class="today-focus-grid">
@@ -3158,14 +3534,6 @@ select:focus-visible {
               </section>
 
               <section class="today-column">
-                <section class="panel today-panel alert-panel">
-                  <div class="panel-head">
-                    <h2>A relancer</h2>
-                    <span id="todayFollowupCount" class="count"></span>
-                  </div>
-                  <div id="todayFollowups" class="linked-todos"></div>
-                </section>
-
                 <section class="panel today-panel alert-panel">
                   <div class="panel-head">
                     <h2>En retard</h2>
@@ -3330,9 +3698,15 @@ select:focus-visible {
           <section class="view" data-view="project">
             <div class="main-inner project-focus">
               <div class="page-head">
-                <div>
+                <div class="project-page-identity">
                   <h1>Projet</h1>
-                  <div class="subtitle">Vue calme pour lire, écrire et retrouver le contexte d'un sujet.</div>
+                  <button id="projectSelectorButton" class="project-selector-trigger" type="button" aria-expanded="false">
+                    <span>
+                      <strong id="projectSelectorName">Choisir un projet</strong>
+                      <small id="projectSelectorMeta"></small>
+                    </span>
+                    <span aria-hidden="true">⌄</span>
+                  </button>
                 </div>
                 <div class="toolbar">
                   <button id="newProjectButton" class="button primary">Nouveau projet</button>
@@ -3343,32 +3717,35 @@ select:focus-visible {
                 </div>
               </div>
 
-              <section class="project-focus-grid">
-                <aside class="panel project-focus-list">
-                  <div class="panel-head">
-                    <h2>Projets</h2>
+              <section id="projectSelectorPanel" class="project-selector-panel hidden" aria-label="Choisir un projet">
+                <div class="project-selector-head">
+                  <div>
+                    <strong>Ouvrir un projet</strong>
                     <span id="projectFocusCount" class="count"></span>
                   </div>
-                  <div class="side-filters">
-                    <div class="filter-search-wrap">
-                      <input id="projectSearchInput" class="field" placeholder="status:active category:incident tag:important">
-                      <button id="projectClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
-                    </div>
-                    <select id="projectStatusFilter" class="field">
-                      <option value="">Tous statuts</option>
-                      <option value="active">active</option>
-                      <option value="waiting">waiting</option>
-                      <option value="blocked">blocked</option>
-                      <option value="dormant">dormant</option>
-                    </select>
+                  <button id="closeProjectSelectorButton" class="icon-button" type="button" title="Fermer" aria-label="Fermer">x</button>
+                </div>
+                <div class="project-selector-filters">
+                  <div class="filter-search-wrap">
+                    <input id="projectSearchInput" class="field" placeholder="Nom, +Projet, category:incident, status:blocked">
+                    <button id="projectClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
                   </div>
-                  <div id="projectFocusList" class="project-list"></div>
-                </aside>
-                <div id="resizeProjectListHandle" class="split-resize-handle" title="Redimensionner liste projets"></div>
+                  <select id="projectStatusFilter" class="field">
+                    <option value="">Tous statuts</option>
+                    <option value="active">active</option>
+                    <option value="waiting">waiting</option>
+                    <option value="blocked">blocked</option>
+                    <option value="dormant">dormant</option>
+                  </select>
+                </div>
+                <div id="projectFocusList" class="project-selector-list project-list"></div>
+              </section>
 
+              <section class="project-focus-grid">
                 <section class="panel">
                   <div class="panel-head">
                     <h2>Document projet</h2>
+                    <button id="planProjectNextButton" class="button primary" type="button">Planifier la suite</button>
                   </div>
                   <div class="document">
                     <input id="projectFocusTitle" class="title-input">
@@ -3380,15 +3757,18 @@ select:focus-visible {
                 </section>
                 <div id="resizeProjectSideHandle" class="split-resize-handle" title="Redimensionner actions liées"></div>
 
-                <aside class="panel project-side-panel">
+                <aside id="projectSidePanel" class="panel project-side-panel">
                   <div class="panel-head">
                     <h2>Radar</h2>
+                    <button id="toggleProjectRadarButton" class="icon-button" type="button" title="Replier le Radar" aria-label="Replier le Radar">›</button>
                   </div>
-                  <div class="project-radar-actions">
-                    <span id="projectFollowupMenu"></span>
-                    <button id="projectNewJournalButton" class="button">Note</button>
+                  <div id="projectRadarContent">
+                    <div class="project-radar-actions">
+                      <span id="projectFollowupMenu"></span>
+                      <button id="projectNewJournalButton" class="button">Note</button>
+                    </div>
+                    <div id="projectLinkedTodos" class="linked-todos"></div>
                   </div>
-                  <div id="projectLinkedTodos" class="linked-todos"></div>
                 </aside>
               </section>
             </div>
@@ -3464,46 +3844,91 @@ select:focus-visible {
             <div class="main-inner">
               <div class="page-head">
                 <div>
-                  <h1>Notes</h1>
-                  <div class="subtitle">Vue de secours affichant tous les documents Markdown.</div>
+                  <h1>Contrôle</h1>
+                  <div class="subtitle">Repérer ce qui risque d'être oublié, puis réparer les documents si nécessaire.</div>
                 </div>
               </div>
-              <section class="notes-recovery-grid">
-                <aside class="panel">
-                  <div class="side-filters">
-                    <div class="filter-search-wrap">
-                      <input id="allNotesSearchInput" class="field" placeholder="type:note category:runbook texte">
-                      <button id="allNotesClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
-                    </div>
-                    <select id="allNotesRecoveryFilter" class="field">
-                      <option value="all">Toutes les notes</option>
-                      <option value="repair">À réparer</option>
-                      <option value="unprocessed">À traiter</option>
-                      <option value="project">Projets</option>
-                      <option value="journal">Journal</option>
-                      <option value="note">Notes</option>
-                    </select>
-                    <div id="allNotesRecoverySummary" class="recovery-summary"></div>
-                  </div>
-                  <div id="allNotesList" class="journal-list"></div>
-                </aside>
-                <section class="panel">
-                  <div class="panel-head">
-                    <h2>Note ouverte</h2>
-                    <div class="toolbar compact">
-                      <button id="allNotesTypeProjectButton" class="button">Projet</button>
-                      <button id="allNotesTypeJournalButton" class="button">Journal</button>
-                      <button id="allNotesTypeNoteButton" class="button">Note</button>
-                    </div>
-                  </div>
-                  <div id="allNotesRecoveryStatus" class="recovery-status"></div>
-                  <div class="document">
-                    <input id="allNotesTitle" class="title-input">
-                    <div id="allNotesEditorHost" class="overtype-host"></div>
-                    <textarea id="allNotesBody" class="hidden"></textarea>
-                  </div>
-                </section>
+
+              <section class="control-summary">
+                <div class="metric">
+                  <div class="metric-label">Projets suivis</div>
+                  <div id="controlProjectCount" class="metric-value"></div>
+                  <div class="metric-note">non archivés</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">À corriger</div>
+                  <div id="controlIssueCount" class="metric-value"></div>
+                  <div class="metric-note">actions ou rappels manquants</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">YAML</div>
+                  <div id="controlRepairCount" class="metric-value"></div>
+                  <div class="metric-note">documents à réparer</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">À traiter</div>
+                  <div id="controlUnprocessedCount" class="metric-value"></div>
+                  <div class="metric-note">notes journal non traitées</div>
+                </div>
               </section>
+
+              <section class="panel control-issues-panel">
+                <div class="panel-head">
+                  <div>
+                    <h2>Points d'attention</h2>
+                    <span id="controlIssueSummary" class="panel-subtitle"></span>
+                  </div>
+                  <select id="controlIssueFilter" class="field compact-field">
+                    <option value="all">Tout afficher</option>
+                    <option value="project">Projets</option>
+                    <option value="todo">Todos</option>
+                    <option value="document">Documents</option>
+                  </select>
+                </div>
+                <div id="controlIssueList" class="control-issue-list"></div>
+              </section>
+
+              <details class="control-documents" open>
+                <summary>
+                  <span>Tous les documents et récupération</span>
+                  <span id="allNotesRecoverySummary" class="recovery-summary"></span>
+                </summary>
+                <section class="notes-recovery-grid">
+                  <aside class="panel">
+                    <div class="side-filters">
+                      <div class="filter-search-wrap">
+                        <input id="allNotesSearchInput" class="field" placeholder="type:note category:runbook texte">
+                        <button id="allNotesClearSearchButton" class="icon-button hidden" title="Effacer la recherche" aria-label="Effacer la recherche">x</button>
+                      </div>
+                      <select id="allNotesRecoveryFilter" class="field">
+                        <option value="all">Tous les documents</option>
+                        <option value="repair">À réparer</option>
+                        <option value="unprocessed">À traiter</option>
+                        <option value="project">Projets</option>
+                        <option value="journal">Journal</option>
+                        <option value="note">Notes</option>
+                      </select>
+                    </div>
+                    <div id="allNotesList" class="journal-list"></div>
+                  </aside>
+                  <section class="panel">
+                    <div class="panel-head">
+                      <h2>Document ouvert</h2>
+                      <div class="toolbar compact">
+                        <button id="allNotesTypeProjectButton" class="button">Projet</button>
+                        <button id="allNotesTypeJournalButton" class="button">Journal</button>
+                        <button id="allNotesTypeNoteButton" class="button">Note</button>
+                      </div>
+                    </div>
+                    <div id="allNotesRecoveryStatus" class="recovery-status"></div>
+                    <div class="document">
+                      <input id="allNotesTitle" class="title-input">
+                      <div id="allNotesEditorHost" class="overtype-host"></div>
+                      <textarea id="allNotesBody" class="hidden"></textarea>
+                    </div>
+                  </section>
+                </section>
+              </details>
             </div>
           </section>
 
@@ -4259,7 +4684,7 @@ function validateStateObject(sourceState, errors = []) {
 }
 
 // src/core/version.js
-const LUMO_VERSION = "1.0.0";
+const LUMO_VERSION = "1.3.0";
 
 // src/markdown/overtype-adapter.js
 const OVERTYPE_JS_URL = "src/vendor/overtype.min.js";
@@ -5017,6 +5442,7 @@ async function createApp() {
   let todoMode = "open";
   let activeMorningRitualStep = null;
   let todayProjectsOldestFirst = true;
+  let projectRadarCollapsed = false;
   let calendarDate = new Date();
   let selectedCalendarDate = todayISO(calendarDate);
   let journalOverTypeEditor = null;
@@ -5063,7 +5489,6 @@ async function createApp() {
     toggleContextButton: byId("toggleContextButton"),
     resizeNavHandle: byId("resizeNavHandle"),
     resizeContextHandle: byId("resizeContextHandle"),
-    resizeProjectListHandle: byId("resizeProjectListHandle"),
     resizeProjectSideHandle: byId("resizeProjectSideHandle"),
     resizeJournalListHandle: byId("resizeJournalListHandle"),
     resizeJournalSideHandle: byId("resizeJournalSideHandle"),
@@ -5144,7 +5569,16 @@ async function createApp() {
     projectClearSearchButton: byId("projectClearSearchButton"),
     projectStatusFilter: byId("projectStatusFilter"),
     projectFocusList: byId("projectFocusList"),
+    projectSelectorButton: byId("projectSelectorButton"),
+    projectSelectorPanel: byId("projectSelectorPanel"),
+    projectSelectorName: byId("projectSelectorName"),
+    projectSelectorMeta: byId("projectSelectorMeta"),
+    closeProjectSelectorButton: byId("closeProjectSelectorButton"),
     projectFocusTitle: byId("projectFocusTitle"),
+    planProjectNextButton: byId("planProjectNextButton"),
+    projectSidePanel: byId("projectSidePanel"),
+    projectRadarContent: byId("projectRadarContent"),
+    toggleProjectRadarButton: byId("toggleProjectRadarButton"),
     projectFocusEditorHost: byId("projectFocusEditorHost"),
     projectFocusBody: byId("projectFocusBody"),
     projectFocusEditorGrid: byId("projectFocusEditorGrid"),
@@ -5172,6 +5606,13 @@ async function createApp() {
     journalEditorHost: byId("journalEditorHost"),
     journalBody: byId("journalBody"),
     journalLinks: byId("journalLinks"),
+    controlProjectCount: byId("controlProjectCount"),
+    controlIssueCount: byId("controlIssueCount"),
+    controlRepairCount: byId("controlRepairCount"),
+    controlUnprocessedCount: byId("controlUnprocessedCount"),
+    controlIssueSummary: byId("controlIssueSummary"),
+    controlIssueFilter: byId("controlIssueFilter"),
+    controlIssueList: byId("controlIssueList"),
     allNotesSearchInput: byId("allNotesSearchInput"),
     allNotesClearSearchButton: byId("allNotesClearSearchButton"),
     allNotesRecoveryFilter: byId("allNotesRecoveryFilter"),
@@ -5207,7 +5648,7 @@ async function createApp() {
     portfolio: { label: "Portfolio", countId: "portfolioCount" },
     project: { label: "Projets", countId: "projectCount" },
     journal: { label: "Journal", countId: "journalCount" },
-    notes: { label: "Notes", countId: "notesCount" },
+    notes: { label: "Contrôle", countId: "notesCount" },
     scratchpad: { label: "Bloc-notes" },
     calendar: { label: "Calendrier" },
     config: { label: "Configuration" },
@@ -6122,23 +6563,25 @@ async function createApp() {
     const projects = visibleProjects();
     const withoutNext = projectsWithoutNextAction();
     const dormant = projects.filter((project) => projectActivityAge(project) > state.config.staleAfterDays);
+    const reviewItems = todayReviewItems({ followups, clarifyProjects: withoutNext, projects });
+    const overdueOutsideReview = openTodos.filter((todo) => todo.isOverdue && !followups.some((item) => item.id === todo.id));
 
     setText("todoCount", openTodos.length);
     setText("kanbanCount", openTodos.length);
     setText("portfolioCount", projects.length);
     setText("inboxNavCount", inbox.length);
     setText("followupNavCount", followups.length);
-    setText("todayNavCount", followups.length + openTodos.filter((todo) => todo.isOverdue).length);
+    setText("todayNavCount", reviewItems.length + overdueOutsideReview.length);
     setText("priorityNavCount", priorities.length);
     setText("projectCount", projects.length);
     setText("journalCount", journalRecords().length);
-    setText("notesCount", state.notes.length);
+    setText("notesCount", controlIssues().length);
     setText("openProjectsCount", projects.length);
     setText("metricProjects", projects.length);
     setText("metricTodos", openTodos.length);
     setText("metricInbox", `${inbox.length} dans inbox`);
     setText("metricNextActions", nextActions.length);
-    setText("metricFollowups", followups.length);
+    setText("metricFollowups", reviewItems.length);
     setText("metricOverdue", openTodos.filter((todo) => todo.isOverdue).length);
     setText("metricProjectsWithoutNext", withoutNext.length);
     setText("metricWaiting", waiting.length);
@@ -6362,15 +6805,15 @@ async function createApp() {
     return `+${days}j ${followupDayLabel(days)}`;
   }
 
-  function createFollowupMenu(onSelect) {
+  function createFollowupMenu(onSelect, options = {}) {
     const wrap = document.createElement("span");
     wrap.className = "followup-menu-wrap";
 
     const toggle = document.createElement("button");
     toggle.type = "button";
     toggle.className = "button";
-    toggle.textContent = "Relance";
-    toggle.title = "Creer une relance";
+    toggle.textContent = options.label || "Relance";
+    toggle.title = options.title || "Creer une relance";
     wrap.append(toggle);
 
     const menu = document.createElement("span");
@@ -6828,6 +7271,128 @@ async function createApp() {
     return row;
   }
 
+  function todayReviewItems({ followups, clarifyProjects, projects }) {
+    const items = [];
+    const representedProjects = new Set();
+
+    for (const todo of followups) {
+      const project = todo.parsed.projects
+        .map((title) => projectRecords().find((item) => item.title === title))
+        .find(Boolean);
+      if (project) representedProjects.add(project.id);
+      items.push({
+        type: "todo",
+        todo,
+        project,
+        date: todo.parsed.followupDate,
+        rank: todo.parsed.contexts.includes("followup") ? 0 : 1,
+      });
+    }
+
+    for (const project of projects) {
+      if (representedProjects.has(project.id)) continue;
+      const hasPlannedReminder = openProjectTodos(project.title).some((todo) => todo.parsed.followupDate);
+      if (project.status === "waiting" && !hasPlannedReminder) {
+        items.push({ type: "project", project, reason: "waiting", rank: 2 });
+        representedProjects.add(project.id);
+      }
+    }
+
+    for (const project of projects) {
+      if (representedProjects.has(project.id)) continue;
+      if (projectActivityAge(project) > state.config.staleAfterDays) {
+        items.push({ type: "project", project, reason: "stale", rank: 3 });
+        representedProjects.add(project.id);
+      }
+    }
+
+    for (const project of clarifyProjects) {
+      if (representedProjects.has(project.id)) continue;
+      items.push({ type: "project", project, reason: "no-next", rank: 4 });
+      representedProjects.add(project.id);
+    }
+
+    return items.sort((a, b) => {
+      if (a.rank !== b.rank) return a.rank - b.rank;
+      if (a.date || b.date) return String(a.date || "9999-12-31").localeCompare(String(b.date || "9999-12-31"));
+      return projectActivityAge(b.project) - projectActivityAge(a.project);
+    });
+  }
+
+  function reviewReasonLabel(item) {
+    if (item.type === "todo") {
+      if (item.todo.parsed.contexts.includes("review")) return `À revoir depuis le ${formatIsoDateLabel(item.date)}`;
+      if (item.todo.parsed.values.waiting) return `Réponse attendue · relance le ${formatIsoDateLabel(item.date)}`;
+      return `Relance prévue le ${formatIsoDateLabel(item.date)}`;
+    }
+    if (item.reason === "waiting") return "En attente, sans date de relance";
+    if (item.reason === "stale") return `Sans avancement depuis ${projectActivityAge(item.project)} jours`;
+    return "Aucune prochaine action choisie";
+  }
+
+  function openProjectWorkspace(project, { plan = false } = {}) {
+    if (!project) return;
+    selectedProjectId = project.id;
+    activeView = "project";
+    render();
+    if (plan) requestAnimationFrame(() => openPlanProjectNextModal(project.id));
+  }
+
+  function renderTodayReviewItems(items) {
+    elements.todayFollowups.innerHTML = "";
+    if (!items.length) {
+      renderEmpty(elements.todayFollowups, "Rien à revoir aujourd'hui.");
+      return;
+    }
+
+    for (const item of items.slice(0, 10)) {
+      const project = item.project;
+      const card = document.createElement("article");
+      card.className = "review-row";
+      card.innerHTML = `
+        <div class="review-row-copy">
+          <span class="review-kind">${escapeAppHtml(item.type === "todo"
+            ? (item.todo.parsed.contexts.includes("review") ? "Revoir" : "Relancer")
+            : "Projet")}</span>
+          <strong>${escapeAppHtml(item.type === "todo" ? item.todo.parsed.text : projectDisplayTitle(project))}</strong>
+          <span>${escapeAppHtml(reviewReasonLabel(item))}${project ? ` · +${escapeAppHtml(project.title)}` : ""}</span>
+        </div>
+        <div class="review-row-actions"></div>
+      `;
+      const actions = card.querySelector(".review-row-actions");
+
+      if (project) {
+        const open = document.createElement("button");
+        open.type = "button";
+        open.className = "button";
+        open.textContent = "Ouvrir";
+        open.addEventListener("click", () => openProjectWorkspace(project));
+        actions.append(open);
+      }
+
+      if (item.type === "todo") {
+        actions.append(createFollowupMenu((days) => deferTodoFollowup(item.todo.id, days), {
+          label: "Reporter",
+          title: "Reporter ce rappel",
+        }));
+        const done = document.createElement("button");
+        done.type = "button";
+        done.className = "button primary";
+        done.textContent = "Terminé";
+        done.addEventListener("click", () => toggleTodo(item.todo.id));
+        actions.append(done);
+      } else {
+        const plan = document.createElement("button");
+        plan.type = "button";
+        plan.className = "button primary";
+        plan.textContent = "Planifier";
+        plan.addEventListener("click", () => openProjectWorkspace(project, { plan: true }));
+        actions.append(plan);
+      }
+      elements.todayFollowups.append(card);
+    }
+  }
+
   function todayMorningRitual() {
     const date = todayISO();
     const saved = state.morningRitual;
@@ -6989,11 +7554,12 @@ async function createApp() {
       .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr"));
     const clarifyProjects = projectsWithoutNextAction()
       .sort((a, b) => projectActivityAge(b) - projectActivityAge(a) || projectDisplayTitle(a).localeCompare(projectDisplayTitle(b), "fr"));
+    const reviewItems = todayReviewItems({ followups, clarifyProjects, projects: visibleProjectList });
 
     renderMorningRitual({ nextActions, nextCandidates, followups, overdue, waiting, blocked, clarifyProjects });
 
     setText("todayNextCount", nextActions.length);
-    setText("todayFollowupCount", followups.length);
+    setText("todayFollowupCount", reviewItems.length);
     setText("todayOverdueCount", overdue.length);
     setText("todayClarifyCount", clarifyProjects.length);
     setText("todayWaitingCount", waiting.length);
@@ -7007,7 +7573,7 @@ async function createApp() {
 
     const displayOptions = { visibleTokens: todoVisibleTokens(), dragHandle: false, quickActions: true };
     renderTodoGroup(elements.todayNextActions, nextActions.slice(0, 5), "Aucune prochaine action. Choisis une todo et utilise next.", displayOptions);
-    renderTodoGroup(elements.todayFollowups, followups.slice(0, 5), "Aucune relance arrivee.", displayOptions);
+    renderTodayReviewItems(reviewItems);
     renderTodoGroup(elements.todayOverdue, overdue.slice(0, 5), "Aucune echeance depassee.", displayOptions);
     renderTodoGroup(elements.todayWaiting, waiting.slice(0, 8), "Aucune attente suivie.", displayOptions);
     renderTodoGroup(elements.todayBlocked, blocked.slice(0, 8), "Aucun blocage suivi.", displayOptions);
@@ -7792,7 +8358,13 @@ async function createApp() {
 
   function renderProjectFocus() {
     const project = selectedProject();
-    if (!project) return;
+    if (!project) {
+      elements.projectSelectorName.textContent = "Aucun projet";
+      elements.projectSelectorMeta.textContent = "";
+      elements.projectFocusList.innerHTML = "";
+      elements.projectFocusCount.textContent = "0";
+      return;
+    }
 
     const query = elements.projectSearchInput.value.trim();
     elements.projectClearSearchButton.classList.toggle("hidden", !elements.projectSearchInput.value);
@@ -7834,6 +8406,9 @@ async function createApp() {
       elements.projectFocusList.append(section);
     }
 
+    elements.projectSelectorName.textContent = projectDisplayTitle(project);
+    elements.projectSelectorMeta.textContent = `+${project.title} · ${project.kind || "projet"} · ${project.status || "active"}`;
+    elements.projectSelectorButton.setAttribute("aria-expanded", String(!elements.projectSelectorPanel.classList.contains("hidden")));
     elements.projectFocusTitle.value = project.title;
     elements.projectFocusBody.value = project.body;
     mountProjectOverTypeEditor("focus");
@@ -7848,16 +8423,18 @@ async function createApp() {
     const isImportant = tags.has("important");
     const isFuture = tags.has("a-venir");
     if (project.status === "blocked" || hasBlocked) return { key: "blocked", label: "Bloques" };
-    if (isImportant) return { key: "important", label: "Importants" };
     if (project.status === "waiting" || hasWaiting) return { key: "waiting", label: "En attente" };
-    if (project.status === "dormant" || projectActivityAge(project) > state.config.staleAfterDays) return { key: "dormant", label: "Dormants" };
+    if (project.kind === "incident") return { key: "incident", label: "Incidents" };
+    if (isImportant) return { key: "important", label: "Importants" };
     if (isFuture) return { key: "future", label: "A venir" };
+    if (project.status === "dormant" || projectActivityAge(project) > state.config.staleAfterDays) return { key: "dormant", label: "Dormants" };
+    if (projectActivityAge(project) <= 7) return { key: "recent", label: "Recents" };
     if (!todos.length) return { key: "empty", label: "Sans action ouverte" };
     return { key: "active", label: "Actifs" };
   }
 
   function groupProjectsForFocus(projects) {
-    const order = ["important", "blocked", "waiting", "future", "active", "empty", "dormant"];
+    const order = ["blocked", "waiting", "incident", "important", "recent", "future", "active", "empty", "dormant"];
     const groups = new Map();
     for (const project of projects) {
       const info = projectFocusGroupInfo(project);
@@ -7902,12 +8479,43 @@ async function createApp() {
     row.addEventListener("click", () => {
       document.activeElement?.blur?.();
       selectedProjectId = project.id;
+      closeProjectSelector();
       render();
     });
     return row;
   }
 
+  function openProjectSelector() {
+    elements.projectSelectorPanel.classList.remove("hidden");
+    elements.projectSelectorButton.setAttribute("aria-expanded", "true");
+    renderProjectFocus();
+    requestAnimationFrame(() => {
+      elements.projectSearchInput.focus();
+      elements.projectSearchInput.select();
+    });
+  }
+
+  function closeProjectSelector() {
+    elements.projectSelectorPanel.classList.add("hidden");
+    elements.projectSelectorButton.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleProjectSelector() {
+    if (elements.projectSelectorPanel.classList.contains("hidden")) openProjectSelector();
+    else closeProjectSelector();
+  }
+
+  function renderProjectRadarState() {
+    document.querySelector(".project-focus-grid")?.classList.toggle("is-radar-collapsed", projectRadarCollapsed);
+    elements.projectRadarContent.classList.toggle("hidden", projectRadarCollapsed);
+    elements.projectSidePanel.classList.toggle("is-collapsed", projectRadarCollapsed);
+    elements.toggleProjectRadarButton.textContent = projectRadarCollapsed ? "‹" : "›";
+    elements.toggleProjectRadarButton.title = projectRadarCollapsed ? "Afficher le Radar" : "Replier le Radar";
+    elements.toggleProjectRadarButton.setAttribute("aria-label", elements.toggleProjectRadarButton.title);
+  }
+
   function renderProjectRadar(project) {
+    renderProjectRadarState();
     elements.projectFollowupMenu.innerHTML = "";
     elements.projectFollowupMenu.append(createFollowupMenu((days) => createProjectFollowupTodo(days, project.id)));
 
@@ -8187,7 +8795,13 @@ async function createApp() {
     const recoveryInfos = state.notes.map((note) => ({ note, info: noteRecoveryInfo(note) }));
     const repairCount = recoveryInfos.filter((item) => item.info.needsRepair).length;
     const unprocessedCount = recoveryInfos.filter((item) => item.info.type === "journal" && !item.info.processed).length;
-    elements.allNotesRecoverySummary.textContent = `${state.notes.length} notes · ${repairCount} à réparer · ${unprocessedCount} à traiter`;
+    const issues = controlIssues();
+    elements.controlProjectCount.textContent = visibleProjects().length;
+    elements.controlIssueCount.textContent = issues.length;
+    elements.controlRepairCount.textContent = repairCount;
+    elements.controlUnprocessedCount.textContent = unprocessedCount;
+    elements.allNotesRecoverySummary.textContent = `${state.notes.length} documents · ${repairCount} à réparer · ${unprocessedCount} à traiter`;
+    renderControlIssues(issues);
     const notes = state.notes
       .filter((note) => {
         const info = noteRecoveryInfo(note);
@@ -8243,6 +8857,202 @@ async function createApp() {
     elements.allNotesBody.value = selected.body || "";
     renderAllNotesRecoveryStatus(selected);
     mountAllNotesOverTypeEditor();
+  }
+
+  function controlIssues() {
+    const issues = [];
+    const add = (issue) => {
+      if (!issues.some((item) => item.key === issue.key)) issues.push(issue);
+    };
+
+    for (const note of state.notes) {
+      const info = noteRecoveryInfo(note);
+      if (!info.needsRepair) continue;
+      const detail = info.yamlBroken
+        ? "Le frontmatter YAML n'est pas fermé."
+        : info.invalidType
+          ? `Le type YAML "${info.rawType}" n'est pas reconnu.`
+          : "Le champ YAML type est manquant.";
+      add({
+        key: `document:${note.id}`,
+        family: "document",
+        severity: "critical",
+        title: note.title || note.shortName || "Document sans titre",
+        detail,
+        label: "YAML",
+        note,
+      });
+    }
+
+    for (const project of visibleProjects()) {
+      const todos = openProjectTodos(project.title);
+      if (!todos.length) {
+        add({
+          key: `project:no-todo:${project.id}`,
+          family: "project",
+          severity: "critical",
+          title: projectDisplayTitle(project),
+          detail: "Ce projet non archivé ne possède aucune todo ouverte.",
+          label: "Sans tâche",
+          project,
+        });
+        continue;
+      }
+
+      const hasReturnPath = todos.some((todo) => {
+        return todo.parsed.status === "next" || todo.parsed.dueDate || todo.parsed.followupDate;
+      });
+      if (!hasReturnPath) {
+        add({
+          key: `project:no-return:${project.id}`,
+          family: "project",
+          severity: "warning",
+          title: projectDisplayTitle(project),
+          detail: "Aucune tâche ne dit quand agir ou quand revoir ce projet.",
+          label: "Sans retour",
+          project,
+        });
+      }
+
+      const hasWaitingTodo = todos.some((todo) => todo.parsed.values.waiting || todo.parsed.status === "waiting");
+      const hasBlockedTodo = todos.some((todo) => todo.parsed.values.blocked || todo.parsed.status === "blocked");
+      if (project.status === "waiting" && !hasWaitingTodo) {
+        add({
+          key: `project:waiting:${project.id}`,
+          family: "project",
+          severity: "warning",
+          title: projectDisplayTitle(project),
+          detail: "Le projet est waiting, mais aucune todo ne précise ce qui est attendu.",
+          label: "Attente imprécise",
+          project,
+        });
+      }
+      if (project.status === "blocked" && !hasBlockedTodo) {
+        add({
+          key: `project:blocked:${project.id}`,
+          family: "project",
+          severity: "warning",
+          title: projectDisplayTitle(project),
+          detail: "Le projet est blocked, mais aucune todo ne décrit le blocage.",
+          label: "Blocage imprécis",
+          project,
+        });
+      }
+      if (project.status === "dormant" && !todos.some((todo) => todo.parsed.followupDate)) {
+        add({
+          key: `project:dormant:${project.id}`,
+          family: "project",
+          severity: "warning",
+          title: projectDisplayTitle(project),
+          detail: "Un projet dormant devrait avoir une date de réexamen.",
+          label: "Dormant sans rappel",
+          project,
+        });
+      }
+
+      for (const todo of todos) {
+        const waiting = todo.parsed.values.waiting || todo.parsed.status === "waiting";
+        const blocked = todo.parsed.values.blocked || todo.parsed.status === "blocked";
+        if (!todo.parsed.followupDate && (waiting || blocked)) {
+          add({
+            key: `todo:followup:${todo.id}`,
+            family: "todo",
+            severity: "warning",
+            title: todo.parsed.text || todo.raw,
+            detail: waiting
+              ? "Cette attente n'a aucune date de relance."
+              : "Ce blocage n'a aucune date de réexamen.",
+            label: waiting ? "Attente sans relance" : "Blocage sans rappel",
+            todo,
+            project,
+          });
+        }
+      }
+    }
+
+    const severityRank = { critical: 0, warning: 1, info: 2 };
+    return issues.sort((a, b) => {
+      return severityRank[a.severity] - severityRank[b.severity]
+        || a.family.localeCompare(b.family)
+        || a.title.localeCompare(b.title, "fr");
+    });
+  }
+
+  function renderControlIssues(issues) {
+    const filter = elements.controlIssueFilter.value;
+    const visible = issues.filter((issue) => filter === "all" || issue.family === filter);
+    const criticalCount = issues.filter((issue) => issue.severity === "critical").length;
+    elements.controlIssueSummary.textContent = issues.length
+      ? `${criticalCount} prioritaire${criticalCount > 1 ? "s" : ""}, ${issues.length - criticalCount} à clarifier`
+      : "Tout possède une prochaine étape ou une date de retour.";
+    elements.controlIssueList.innerHTML = "";
+
+    if (!visible.length) {
+      renderEmpty(elements.controlIssueList, filter === "all"
+        ? "Aucun point d'attention. Le système est cohérent."
+        : "Aucun problème dans cette catégorie.");
+      return;
+    }
+
+    for (const issue of visible) {
+      const row = document.createElement("article");
+      row.className = `control-issue-row severity-${issue.severity}`;
+      row.innerHTML = `
+        <span class="control-issue-marker" aria-hidden="true"></span>
+        <div class="control-issue-copy">
+          <span class="control-issue-label">${escapeAppHtml(issue.label)}</span>
+          <strong>${escapeAppHtml(issue.title)}</strong>
+          <span>${escapeAppHtml(issue.detail)}</span>
+        </div>
+        <div class="control-issue-actions"></div>
+      `;
+      const actions = row.querySelector(".control-issue-actions");
+
+      if (issue.project) {
+        const open = document.createElement("button");
+        open.type = "button";
+        open.className = "button";
+        open.textContent = "Ouvrir";
+        open.addEventListener("click", () => openProjectWorkspace(issue.project));
+        actions.append(open);
+
+        if (issue.family === "project") {
+          const plan = document.createElement("button");
+          plan.type = "button";
+          plan.className = "button primary";
+          plan.textContent = "Planifier";
+          plan.addEventListener("click", () => openProjectWorkspace(issue.project, { plan: true }));
+          actions.append(plan);
+        }
+      }
+
+      if (issue.todo) {
+        const todoButton = document.createElement("button");
+        todoButton.type = "button";
+        todoButton.className = "button primary";
+        todoButton.textContent = "Voir la todo";
+        todoButton.addEventListener("click", () => navigateTo("todos", { id: todoPublicId(issue.todo) || issue.todo.id }));
+        actions.append(todoButton);
+      }
+
+      if (issue.note) {
+        const repair = document.createElement("button");
+        repair.type = "button";
+        repair.className = "button primary";
+        repair.textContent = "Réparer";
+        repair.addEventListener("click", () => {
+          selectedAllNoteId = issue.note.id;
+          elements.allNotesRecoveryFilter.value = "all";
+          elements.allNotesSearchInput.value = "";
+          document.querySelector(".control-documents").open = true;
+          renderAllNotesView();
+          requestAnimationFrame(() => elements.allNotesEditorHost.scrollIntoView({ block: "center", behavior: "smooth" }));
+        });
+        actions.append(repair);
+      }
+
+      elements.controlIssueList.append(row);
+    }
   }
 
   function renderAllNotesRecoveryStatus(note) {
@@ -8970,6 +9780,191 @@ async function createApp() {
     render();
   }
 
+  function closePlanProjectNextModal() {
+    document.querySelector(".plan-next-modal")?.remove();
+  }
+
+  function planNextDefaultText(intent, project, source = "") {
+    if (intent === "review") return `Revoir ${projectDisplayTitle(project)}`;
+    if (intent === "waiting") return source.trim()
+      ? `Relancer ${source.trim()}`
+      : `Relancer pour ${projectDisplayTitle(project)}`;
+    return `Prochaine action pour ${projectDisplayTitle(project)}`;
+  }
+
+  function waitingTokenValue(value) {
+    return String(value || "")
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/[^A-Za-z0-9_.-]/g, "")
+      .slice(0, 40);
+  }
+
+  function setProjectStatus(project, status) {
+    const target = sourceNote(project);
+    if (!target || !status) return;
+    target.status = status;
+    target.body = writeFrontmatter(target.body, { status });
+    target.updatedAt = new Date().toISOString();
+  }
+
+  function openPlanProjectNextModal(projectId = selectedProjectId) {
+    const project = projectRecords().find((item) => item.id === projectId) || selectedProject();
+    if (!project) return;
+    closePlanProjectNextModal();
+
+    const overlay = document.createElement("div");
+    overlay.className = "todo-edit-modal plan-next-modal";
+    overlay.innerHTML = `
+      <div class="todo-edit-dialog plan-next-dialog" role="dialog" aria-modal="true" aria-label="Planifier la suite">
+        <div class="todo-edit-head">
+          <div>
+            <strong>Planifier la suite</strong>
+            <span class="plan-next-project">${escapeAppHtml(projectDisplayTitle(project))}</span>
+          </div>
+          <button type="button" class="icon-button" data-plan-close aria-label="Fermer">x</button>
+        </div>
+        <div class="plan-next-intents" role="group" aria-label="Intention">
+          <button type="button" class="active" data-plan-intent="review">Revoir</button>
+          <button type="button" data-plan-intent="waiting">Attendre / relancer</button>
+          <button type="button" data-plan-intent="action">Prochaine action</button>
+        </div>
+        <label class="plan-next-source hidden">
+          <span>J'attends une reponse de</span>
+          <input class="field" data-plan-source placeholder="Personne, équipe ou fournisseur">
+        </label>
+        <label>
+          <span>Que faudra-t-il faire ?</span>
+          <input class="field" data-plan-text>
+        </label>
+        <div>
+          <span class="plan-next-label">Quand Lumo doit-il me le remontrer ?</span>
+          <div class="plan-next-offsets"></div>
+        </div>
+        <label>
+          <span>Date</span>
+          <input class="field" type="date" min="${todayISO()}" data-plan-date>
+        </label>
+        <details class="plan-next-advanced">
+          <summary>Options</summary>
+          <div class="plan-next-options">
+            <label>
+              <span>Priorité</span>
+              <select class="field" data-plan-priority>
+                <option value="">Aucune</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </label>
+            <label>
+              <span>Statut du projet</span>
+              <select class="field" data-plan-status>
+                <option value="">Ne pas changer</option>
+                <option value="active">active</option>
+                <option value="waiting">waiting</option>
+                <option value="blocked">blocked</option>
+                <option value="dormant">dormant</option>
+              </select>
+            </label>
+          </div>
+        </details>
+        <div class="todo-edit-actions">
+          <button type="button" class="button ghost" data-plan-cancel>Annuler</button>
+          <button type="button" class="button primary" data-plan-save>Planifier</button>
+        </div>
+      </div>
+    `;
+
+    const textInput = overlay.querySelector("[data-plan-text]");
+    const sourceInput = overlay.querySelector("[data-plan-source]");
+    const sourceLabel = overlay.querySelector(".plan-next-source");
+    const dateInput = overlay.querySelector("[data-plan-date]");
+    const statusInput = overlay.querySelector("[data-plan-status]");
+    const priorityInput = overlay.querySelector("[data-plan-priority]");
+    const offsets = overlay.querySelector(".plan-next-offsets");
+    let intent = "review";
+    let generatedText = planNextDefaultText(intent, project);
+    textInput.value = generatedText;
+
+    const setDate = (days) => {
+      dateInput.value = isoDatePlusDays(days);
+      offsets.querySelectorAll("button").forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.days) === Number(days));
+      });
+    };
+    for (const days of followupOffsets()) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "button";
+      button.dataset.days = String(days);
+      button.textContent = followupOffsetLabel(days);
+      button.addEventListener("click", () => setDate(days));
+      offsets.append(button);
+    }
+    setDate(followupOffsets().includes(3) ? 3 : followupOffsets()[0]);
+
+    const applyIntent = (nextIntent) => {
+      const canReplaceText = !textInput.value.trim() || textInput.value === generatedText;
+      intent = nextIntent;
+      overlay.querySelectorAll("[data-plan-intent]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.planIntent === intent);
+      });
+      sourceLabel.classList.toggle("hidden", intent !== "waiting");
+      statusInput.value = intent === "waiting" ? "waiting" : "";
+      generatedText = planNextDefaultText(intent, project, sourceInput.value);
+      if (canReplaceText) textInput.value = generatedText;
+      (intent === "waiting" ? sourceInput : textInput).focus();
+    };
+
+    const save = () => {
+      const text = textInput.value.trim();
+      const date = dateInput.value;
+      if (!text || !date) return;
+      let raw = `${text} +${project.title} followup:${date}`;
+      if (intent === "review") raw += " @review";
+      if (intent === "waiting") {
+        raw += " @followup";
+        const source = waitingTokenValue(sourceInput.value);
+        raw += source ? ` waiting:${source}` : " status:waiting";
+      }
+      if (intent === "action" && date <= todayISO()) raw += " status:next";
+      if (priorityInput.value) raw = `(${priorityInput.value}) ${raw}`;
+      addTodoRaw(raw);
+      if (statusInput.value) setProjectStatus(project, statusInput.value);
+      closePlanProjectNextModal();
+      persist();
+      render();
+    };
+
+    document.body.append(overlay);
+    requestAnimationFrame(() => textInput.focus());
+    overlay.querySelectorAll("[data-plan-intent]").forEach((button) => {
+      button.addEventListener("click", () => applyIntent(button.dataset.planIntent));
+    });
+    sourceInput.addEventListener("input", () => {
+      if (!textInput.value.trim() || textInput.value === generatedText) {
+        generatedText = planNextDefaultText(intent, project, sourceInput.value);
+        textInput.value = generatedText;
+      }
+    });
+    dateInput.addEventListener("input", () => {
+      offsets.querySelectorAll("button").forEach((button) => button.classList.remove("active"));
+    });
+    overlay.querySelector("[data-plan-save]").addEventListener("click", save);
+    overlay.querySelector("[data-plan-close]").addEventListener("click", closePlanProjectNextModal);
+    overlay.querySelector("[data-plan-cancel]").addEventListener("click", closePlanProjectNextModal);
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) closePlanProjectNextModal();
+    });
+    overlay.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") save();
+      if (event.key === "Escape") closePlanProjectNextModal();
+    });
+  }
+
   function archiveSelectedProject() {
     const project = selectedProject();
     const target = sourceNote(project);
@@ -9341,6 +10336,9 @@ async function createApp() {
   function setupEvents() {
     document.addEventListener("pointerdown", (event) => {
       if (!event.target.closest(".project-selection-menu")) closeProjectSelectionMenu();
+      if (!event.target.closest("#projectSelectorPanel") && !event.target.closest("#projectSelectorButton")) {
+        closeProjectSelector();
+      }
     });
     document.addEventListener("scroll", closeProjectSelectionMenu, true);
     elements.toggleNavButton.addEventListener("click", () => {
@@ -9373,7 +10371,6 @@ async function createApp() {
         state.config.layout.contextCollapsed = !state.config.layout.contextCollapsed;
       },
     });
-    setupSplitResize(elements.resizeProjectListHandle, { widthKey: "projectListWidth", min: 180, max: 420, direction: 1 });
     setupSplitResize(elements.resizeProjectSideHandle, { widthKey: "projectSideWidth", min: 180, max: 420, direction: -1 });
     setupSplitResize(elements.resizeJournalListHandle, { widthKey: "journalListWidth", min: 180, max: 460, direction: 1 });
     setupSplitResize(elements.resizeJournalSideHandle, { widthKey: "journalSideWidth", min: 160, max: 420, direction: -1 });
@@ -9441,6 +10438,13 @@ async function createApp() {
     });
     elements.projectFocusBody.addEventListener("input", saveFocusedProjectBodyOnly);
     elements.projectFocusTitle.addEventListener("change", saveFocusedProject);
+    elements.planProjectNextButton.addEventListener("click", () => openPlanProjectNextModal());
+    elements.projectSelectorButton.addEventListener("click", toggleProjectSelector);
+    elements.closeProjectSelectorButton.addEventListener("click", closeProjectSelector);
+    elements.toggleProjectRadarButton.addEventListener("click", () => {
+      projectRadarCollapsed = !projectRadarCollapsed;
+      renderProjectRadarState();
+    });
     elements.projectSearchInput.addEventListener("input", () => {
       renderProjectFocus();
       syncUrl();
@@ -9449,6 +10453,11 @@ async function createApp() {
       elements.projectSearchInput.value = "";
       elements.projectSearchInput.focus();
       renderProjectFocus();
+    });
+    elements.projectSearchInput.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      const firstProject = elements.projectFocusList.querySelector(".project-row");
+      if (firstProject) firstProject.click();
     });
     elements.projectStatusFilter.addEventListener("change", renderProjectFocus);
     elements.newProjectButton.addEventListener("click", createProject);
@@ -9488,6 +10497,7 @@ async function createApp() {
       renderAllNotesView();
       syncUrl();
     });
+    elements.controlIssueFilter.addEventListener("change", renderAllNotesView);
     elements.allNotesClearSearchButton.addEventListener("click", () => {
       elements.allNotesSearchInput.value = "";
       elements.allNotesSearchInput.focus();
@@ -9642,7 +10652,10 @@ async function createApp() {
     elements.resetKanbanButton.addEventListener("click", resetKanbanConfiguration);
     elements.resetConfigButton.addEventListener("click", resetConfiguration);
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeProjectSelectionMenu();
+      if (event.key === "Escape") {
+        closeProjectSelectionMenu();
+        closeProjectSelector();
+      }
       if (event.ctrlKey && event.key.toLowerCase() === "enter") {
         addTodo();
       }
