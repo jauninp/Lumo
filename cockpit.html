@@ -65,12 +65,13 @@ button {
 }
 
 .sidebar {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   gap: 18px;
   padding: 18px;
   border-right: 1px solid var(--line);
   background: var(--sidebar);
+  overflow: hidden;
 }
 
 .brand {
@@ -152,18 +153,92 @@ button {
   font-weight: 750;
 }
 
-.sidebar-actions {
-  display: grid;
-  gap: 8px;
-  margin-top: auto;
+.sidebar-scroll {
+  min-height: 0;
+  overflow: auto;
 }
 
-.sidebar-actions button,
-.import-label {
+.sidebar-footer {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sidebar-menu-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.sidebar-menu {
+  position: relative;
+}
+
+.sidebar-menu summary {
   display: grid;
   place-items: center;
-  padding: 7px 9px;
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--text);
   font-size: 13px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.sidebar-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar-menu[open] summary {
+  border-color: var(--accent);
+}
+
+.sidebar-menu:first-child summary {
+  color: var(--accent-dark);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sidebar-popover {
+  position: absolute;
+  right: 0;
+  bottom: 42px;
+  z-index: 30;
+  display: grid;
+  gap: 5px;
+  width: 184px;
+  padding: 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.sidebar-menu:first-child .sidebar-popover {
+  right: auto;
+  left: 0;
+}
+
+.sidebar-popover button,
+.sidebar-popover .import-label {
+  display: block;
+  width: 100%;
+  min-height: 32px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  padding: 7px 8px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.sidebar-popover button:hover,
+.sidebar-popover .import-label:hover {
+  background: var(--panel-soft);
 }
 
 .import-label input {
@@ -178,6 +253,161 @@ button {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.35;
+}
+
+.mini-calendar {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.mini-calendar-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mini-calendar-header strong {
+  font-size: 12px;
+}
+
+.mini-calendar-header span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.mini-calendar-weekdays,
+.mini-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.mini-calendar-weekdays {
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 9px;
+  text-align: center;
+}
+
+.mini-calendar-day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  height: 25px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.mini-calendar-day:hover {
+  border-color: var(--line-strong);
+  background: var(--panel);
+}
+
+.mini-calendar-day.today {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+.mini-calendar-day.other-month {
+  opacity: 0.48;
+}
+
+.calendar-dots {
+  position: absolute;
+  bottom: 1px;
+  display: flex;
+  gap: 2px;
+}
+
+.calendar-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.calendar-dot.due {
+  background: var(--danger);
+}
+
+.calendar-dot.followup {
+  background: #c58a22;
+}
+
+.calendar-dot.journal {
+  background: var(--accent);
+}
+
+.capture-dialog {
+  width: min(660px, calc(100vw - 48px));
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.capture-dialog::backdrop {
+  background: rgba(22, 29, 26, 0.34);
+}
+
+.capture-form {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+
+.capture-form-header,
+.capture-form-actions {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.capture-form-header h2,
+.capture-form-header p {
+  margin: 0;
+}
+
+.capture-form-header h2 {
+  font-size: 20px;
+}
+
+.capture-form-header p,
+.capture-form-actions span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+#captureInput {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  outline: none;
+  padding: 12px;
+  line-height: 1.5;
+}
+
+#captureInput:focus {
+  border-color: var(--accent);
+}
+
+.capture-form-actions {
+  align-items: center;
+}
+
+.capture-form-actions .capture-button {
+  padding: 7px 14px;
 }
 
 .database-pane {
@@ -259,6 +489,16 @@ button {
 
 .title-link:hover {
   text-decoration: underline;
+}
+
+.tree-child-type {
+  display: inline-block;
+  min-width: 46px;
+  margin-right: 7px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .pill {
@@ -397,14 +637,23 @@ button {
 #markdownEditor {
   display: block;
   width: 100%;
-  min-height: calc(100vh - 144px);
-  resize: none;
+  height: calc(100vh - 144px);
+  min-height: 420px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  outline: none;
   background: #fff;
+  overflow: hidden;
+}
+
+.markdown-fallback {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  border: 0;
+  outline: none;
+  padding: 18px;
   color: var(--text);
-  padding: 16px;
+  background: white;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   font-size: 14px;
   line-height: 1.62;
@@ -448,6 +697,37 @@ button {
   min-width: 0;
   overflow-wrap: anywhere;
   font-weight: 650;
+}
+
+.prop-edit-trigger {
+  width: 100%;
+  min-height: 28px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  padding: 4px 5px;
+  text-align: left;
+}
+
+.prop-edit-trigger:hover,
+.prop-edit-trigger:focus-visible {
+  border-color: var(--line);
+  background: white;
+  outline: none;
+}
+
+.prop-editor {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  border: 1px solid var(--accent);
+  border-radius: 5px;
+  background: white;
+  color: var(--text);
+  padding: 0 6px;
+  outline: none;
+  font-size: 12.5px;
 }
 
 .linked-list {
@@ -584,7 +864,7 @@ button {
   }
 
   #markdownEditor {
-    min-height: calc(100vh - 128px);
+    height: calc(100vh - 128px);
   }
 
   .inspector-pane {
@@ -607,28 +887,55 @@ button {
 
         <button class="capture-button" id="quickCaptureButton" type="button">+ Capture</button>
 
-        <nav class="nav-list" aria-label="Vues">
-          <button class="nav-item active" type="button" data-view="today">Aujourd'hui</button>
-          <button class="nav-item" type="button" data-view="inbox">Inbox</button>
-          <button class="nav-item" type="button" data-view="review">A revoir</button>
-          <button class="nav-item" type="button" data-view="projects">Projets</button>
-          <button class="nav-item" type="button" data-view="tasks">Taches</button>
-          <button class="nav-item" type="button" data-view="notes">Notes / Journal</button>
-          <button class="nav-item" type="button" data-view="control">Controle</button>
-        </nav>
-
-        <div class="sidebar-actions">
-          <button type="button" id="newProjectButton">Nouveau projet</button>
-          <button type="button" id="newFollowupButton">Relance</button>
-          <button type="button" id="exportButton">Exporter JSON</button>
-          <button type="button" id="exportMarkdownButton">Exporter Markdown</button>
-          <label class="import-label">
-            Importer JSON
-            <input id="importInput" type="file" accept="application/json">
-          </label>
+        <div class="sidebar-scroll">
+          <nav class="nav-list" aria-label="Vues">
+            <button class="nav-item active" type="button" data-view="today">Aujourd'hui</button>
+            <button class="nav-item" type="button" data-view="inbox">Inbox</button>
+            <button class="nav-item" type="button" data-view="review">A revoir</button>
+            <button class="nav-item" type="button" data-view="projects">Projets</button>
+            <button class="nav-item" type="button" data-view="tasks">Taches</button>
+            <button class="nav-item" type="button" data-view="journal">Journal</button>
+            <button class="nav-item" type="button" data-view="divers">Divers</button>
+            <button class="nav-item" type="button" data-view="control">Controle</button>
+          </nav>
         </div>
 
-        <div class="storage-status" id="storageStatus">Initialisation...</div>
+        <div class="sidebar-footer">
+          <section class="mini-calendar" aria-label="Mini calendrier">
+            <div class="mini-calendar-header">
+              <strong id="miniCalendarLabel"></strong>
+            </div>
+            <div class="mini-calendar-weekdays" aria-hidden="true">
+              <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            </div>
+            <div class="mini-calendar-grid" id="miniCalendarGrid"></div>
+          </section>
+
+          <div class="sidebar-menu-row">
+            <details class="sidebar-menu">
+              <summary aria-label="Creer un element">+</summary>
+              <div class="sidebar-popover">
+                <button type="button" id="newProjectButton">Nouveau projet</button>
+                <button type="button" id="newJournalButton">Journal</button>
+                <button type="button" id="newDiversButton">Divers</button>
+                <button type="button" id="newFollowupButton">Relance</button>
+              </div>
+            </details>
+            <details class="sidebar-menu sidebar-menu-wide">
+              <summary>Donnees ···</summary>
+              <div class="sidebar-popover">
+                <button type="button" id="exportButton">Exporter JSON</button>
+                <button type="button" id="exportMarkdownButton">Exporter Markdown</button>
+                <label class="import-label">
+                  Importer JSON
+                  <input id="importInput" type="file" accept="application/json">
+                </label>
+              </div>
+            </details>
+          </div>
+
+          <div class="storage-status" id="storageStatus">Initialisation...</div>
+        </div>
       </aside>
 
       <main class="database-pane">
@@ -643,9 +950,8 @@ button {
               <option value="">Types</option>
               <option value="project">project</option>
               <option value="task">task</option>
-              <option value="followup">followup</option>
-              <option value="note">note</option>
               <option value="journal">journal</option>
+              <option value="divers">divers</option>
             </select>
             <select id="statusFilter" aria-label="Filtre statut">
               <option value="">Statuts</option>
@@ -661,10 +967,27 @@ button {
       <aside class="detail-pane" id="detailPane" aria-label="Detail">
         <div class="empty-detail">
           <h2>Selectionne une page</h2>
-          <p>Le grand editeur Markdown/YAML s'ouvrira ici.</p>
+          <p>Le grand editeur Markdown s'ouvrira ici.</p>
         </div>
       </aside>
     </div>
+
+    <dialog class="capture-dialog" id="captureDialog">
+      <form method="dialog" class="capture-form">
+        <div class="capture-form-header">
+          <div>
+            <h2>Vider la tete</h2>
+            <p>Une ligne devient une tache Inbox. Tu classeras plus tard.</p>
+          </div>
+          <button type="submit" class="icon-button" value="cancel">Fermer</button>
+        </div>
+        <textarea id="captureInput" placeholder="Relancer Xavier sur KPI&#10;Regarder fichier Excel ATM&#10;Idee amelioration reco bancomat"></textarea>
+        <div class="capture-form-actions">
+          <span id="captureCount">0 ligne</span>
+          <button type="button" class="capture-button" id="captureSubmitButton">Capturer</button>
+        </div>
+      </form>
+    </dialog>
 
     <template id="pageTemplate">
       <header class="detail-header">
@@ -680,8 +1003,8 @@ button {
         <span id="markdownStatus">Sauvegarde locale</span>
       </div>
       <div class="detail-content">
-        <section class="editor-shell">
-          <textarea id="markdownEditor" spellcheck="true"></textarea>
+          <section class="editor-shell">
+          <div id="markdownEditor"></div>
         </section>
         <aside class="inspector-pane" id="detailInspector"></aside>
       </div>
@@ -811,8 +1134,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     </script>
     <script>
 (function () {
-  const STATUSES = ["active", "next", "waiting", "blocked", "someday", "dormant", "done", "archived"];
-  const TYPES = ["project", "task", "followup", "note", "journal"];
+  const STATUSES = ["inbox", "active", "next", "waiting", "blocked", "someday", "dormant", "done", "archived"];
+  const TYPES = ["project", "task", "journal", "divers"];
+  const LEGACY_TYPES = ["followup", "note"];
   const PRIORITIES = ["low", "medium", "high", "urgent"];
 
   function isoNow() {
@@ -850,6 +1174,51 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       .filter(Boolean);
   }
 
+  function parseCaptureLine(source) {
+    const raw = String(source || "").trim();
+    const tokens = raw.split(/\s+/).filter(Boolean);
+    const projects = [];
+    const contexts = [];
+    const values = {};
+    const text = [];
+    let priority = "medium";
+
+    const priorityMatch = raw.match(/^\(([A-D])\)\s+/i);
+    if (priorityMatch) {
+      priority = { A: "urgent", B: "high", C: "medium", D: "low" }[priorityMatch[1].toUpperCase()];
+      tokens.splice(0, 1);
+    }
+
+    tokens.forEach((token) => {
+      if (/^\+[\p{L}\p{N}_.-]+$/u.test(token)) {
+        projects.push(token.slice(1));
+        return;
+      }
+      if (/^@[\p{L}\p{N}_.-]+$/u.test(token)) {
+        contexts.push(token.slice(1));
+        return;
+      }
+      const valueMatch = token.match(/^([A-Za-z][A-Za-z0-9_-]*):(.+)$/);
+      if (valueMatch) {
+        values[valueMatch[1]] = valueMatch[2];
+        return;
+      }
+      text.push(token);
+    });
+
+    return {
+      raw,
+      title: text.join(" ").trim() || raw,
+      projectName: projects[0] || "",
+      tags: contexts,
+      priority,
+      status: values.status || (values.waiting || values.followup ? "waiting" : values.blocked ? "blocked" : "inbox"),
+      dueDate: values.due || "",
+      followupDate: values.followup || "",
+      reviewDate: values.review || "",
+    };
+  }
+
   function parseScalar(value) {
     const trimmed = String(value || "").trim();
     if (!trimmed) return "";
@@ -881,12 +1250,62 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return value == null ? "" : String(value);
   }
 
+  function propsForType(props) {
+    const type = props.type === "note" ? "divers" : props.type === "followup" ? "task" : props.type;
+    const validStatus = STATUSES.includes(props.status) ? props.status : "active";
+    const common = {
+      type: TYPES.includes(type) ? type : "task",
+      status: validStatus,
+      priority: props.priority || "medium",
+    };
+
+    if (common.type === "project") {
+      if (["inbox", "next"].includes(common.status)) common.status = "active";
+      return {
+        ...common,
+        reviewDate: props.reviewDate || "",
+        tags: normalizeTags(props.tags),
+        archivedAt: props.archivedAt || "",
+      };
+    }
+    if (common.type === "journal") {
+      if (!["active", "done", "archived"].includes(common.status)) common.status = "active";
+      return {
+        ...common,
+        project: props.project || "",
+        tags: normalizeTags(props.tags),
+        archivedAt: props.archivedAt || "",
+      };
+    }
+    if (common.type === "divers") {
+      if (!["active", "archived"].includes(common.status)) common.status = "active";
+      return {
+        ...common,
+        project: props.project || "",
+        parent: props.parent || "",
+        tags: normalizeTags(props.tags),
+        archivedAt: props.archivedAt || "",
+      };
+    }
+    return {
+      ...common,
+      project: props.project || "",
+      parent: props.parent || "",
+      dueDate: props.dueDate || "",
+      followupDate: props.followupDate || "",
+      reviewDate: props.reviewDate || "",
+      tags: normalizeTags(props.tags),
+      archivedAt: props.archivedAt || "",
+    };
+  }
+
   function stringifyYaml(props) {
-    const order = ["type", "status", "priority", "project", "parent", "dueDate", "followupDate", "reviewDate", "tags", "archivedAt"];
-    const keys = order.concat(Object.keys(props).filter((key) => !order.includes(key)).sort());
+    const cleanProps = propsForType(props);
+    const order = ["type", "status", "priority", "project", "parent", "date", "dueDate", "followupDate", "reviewDate", "tags", "archivedAt"];
+    const keys = order.concat(Object.keys(cleanProps).filter((key) => !order.includes(key)).sort());
     return keys
-      .filter((key) => props[key] !== undefined)
-      .map((key) => `${key}: ${formatScalar(props[key])}`)
+      .filter((key) => cleanProps[key] !== undefined && cleanProps[key] !== "" && !(Array.isArray(cleanProps[key]) && cleanProps[key].length === 0))
+      .map((key) => `${key}: ${formatScalar(cleanProps[key])}`)
       .join("\n");
   }
 
@@ -909,14 +1328,33 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return `---\n${stringifyYaml(props)}\n---\n\n${String(body || "").replace(/^\s+/, "")}`;
   }
 
+  function completeProjectBody(body) {
+    let result = String(body || "").trim();
+    const title = firstHeading(result) || "Nouveau projet";
+    if (!result) result = `# ${title}`;
+    const sections = [
+      ["Info", "Info", ""],
+      ["Contexte", "Contexte", "Projet cree automatiquement depuis une capture."],
+      ["Avancement", "Avancement", ""],
+      ["Questions ouvertes", "Questions\\s+ouvertes", ""],
+      ["Décisions", "D[eé]cisions", ""],
+    ];
+    sections.forEach(([heading, headingPattern, fallback]) => {
+      const pattern = new RegExp(`^#\\s+${headingPattern}\\s*$`, "im");
+      if (!pattern.test(result)) result += `\n\n# ${heading}${fallback ? `\n\n${fallback}` : ""}`;
+    });
+    return result;
+  }
+
   function markdownFromLegacy(raw) {
     const title = raw.title || "Sans titre";
     const props = {
-      type: TYPES.includes(raw.type) ? raw.type : "task",
+      type: TYPES.includes(raw.type) || LEGACY_TYPES.includes(raw.type) ? raw.type : "task",
       status: STATUSES.includes(raw.status) ? raw.status : "active",
       priority: PRIORITIES.includes(raw.priority) ? raw.priority : "medium",
       project: raw.project || raw.projectId || "",
       parent: raw.parent || raw.parentId || "",
+      date: raw.date || "",
       dueDate: raw.dueDate || "",
       followupDate: raw.followupDate || "",
       reviewDate: raw.reviewDate || "",
@@ -928,7 +1366,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function normalizeDocument(raw) {
     const now = isoNow();
-    const markdown = raw.markdown ? String(raw.markdown) : markdownFromLegacy(raw);
+    const sourceMarkdown = raw.markdown ? String(raw.markdown) : markdownFromLegacy(raw);
+    const source = splitMarkdown(sourceMarkdown);
+    const cleanProps = propsForType(source.props);
+    const body = cleanProps.type === "project" ? completeProjectBody(source.body) : source.body;
+    const markdown = composeMarkdown(cleanProps, body);
     const parsed = parseDocument({ ...raw, markdown });
     return {
       id: raw.id || createId(),
@@ -942,7 +1384,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   function parseDocument(doc) {
     const { props, body } = splitMarkdown(doc.markdown);
     const title = firstHeading(body) || props.title || "Sans titre";
-    const type = TYPES.includes(props.type) ? props.type : "task";
+    const rawType = props.type === "note" ? "divers" : props.type === "followup" ? "task" : props.type;
+    const type = TYPES.includes(rawType) ? rawType : "task";
     const status = STATUSES.includes(props.status) ? props.status : "active";
     const priority = PRIORITIES.includes(props.priority) ? props.priority : "medium";
     const parsed = {
@@ -957,6 +1400,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       priority,
       project: props.project || "",
       parent: props.parent || "",
+      date: props.date || "",
       dueDate: props.dueDate || "",
       followupDate: props.followupDate || "",
       reviewDate: props.reviewDate || "",
@@ -965,7 +1409,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
-    parsed.searchText = [parsed.title, parsed.body, parsed.type, parsed.status, parsed.priority, parsed.project, parsed.parent, parsed.tags.join(" ")]
+    parsed.searchText = [parsed.title, parsed.body, parsed.type, parsed.status, parsed.priority, parsed.project, parsed.parent, parsed.date, parsed.tags.join(" ")]
       .join(" ")
       .toLowerCase();
     return parsed;
@@ -973,17 +1417,72 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function updateDocumentProps(doc, patch) {
     const split = splitMarkdown(doc.markdown);
-    const props = { ...split.props, ...patch };
+    const props = propsForType({ ...split.props, ...patch });
     if (props.tags !== undefined) props.tags = normalizeTags(props.tags);
+    let body = split.body;
+    if (patch.type === "project" && !/^#\s+Info\s*$/im.test(body)) {
+      const title = firstHeading(body) || "Nouveau projet";
+      const existing = body.replace(/^#\s+.+$/m, "").trim();
+      body = completeProjectBody(`# ${title}\n\n# Contexte\n\n${existing || "Projet cree automatiquement depuis une capture."}`);
+    }
     return normalizeDocument({
       ...doc,
-      markdown: composeMarkdown(props, split.body),
+      markdown: composeMarkdown(props, body),
       updatedAt: isoNow(),
     });
   }
 
   function updateDocumentMarkdown(doc, markdown) {
     return normalizeDocument({ ...doc, markdown, updatedAt: isoNow() });
+  }
+
+  function parseHeadingDate(value) {
+    const text = String(value || "").trim();
+    let match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (match) return `${match[1]}-${match[2]}-${match[3]}`;
+    match = text.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
+    if (!match) return "";
+    return `${match[3]}-${match[2].padStart(2, "0")}-${match[1].padStart(2, "0")}`;
+  }
+
+  function extractLatestProgress(markdown) {
+    const body = splitMarkdown(markdown).body;
+    const startMatch = /^#\s+Avancement\s*$/im.exec(body);
+    if (!startMatch) return { date: "", context: "", days: null };
+    const sectionStart = startMatch.index + startMatch[0].length;
+    const remainder = body.slice(sectionStart);
+    const nextSection = /^#\s+/m.exec(remainder);
+    const section = nextSection ? remainder.slice(0, nextSection.index) : remainder;
+    const headingPattern = /^##\s+(.+?)\s*$/gm;
+    const entries = [];
+    let match;
+    while ((match = headingPattern.exec(section))) {
+      const date = parseHeadingDate(match[1]);
+      if (!date) continue;
+      entries.push({ date, contentStart: headingPattern.lastIndex, headingStart: match.index });
+    }
+    if (!entries.length) return { date: "", context: "", days: null };
+    entries.forEach((entry, index) => {
+      const end = index + 1 < entries.length ? entries[index + 1].headingStart : section.length;
+      const content = section.slice(entry.contentStart, end).trim();
+      entry.context = content
+        .split(/\r?\n/)
+        .map((line) => line.replace(/^[-*]\s+/, "").trim())
+        .filter(Boolean)
+        .slice(0, 2)
+        .join(" ");
+    });
+    entries.sort((a, b) => b.date.localeCompare(a.date));
+    const latest = entries[0];
+    const today = new Date(`${todayIsoDate()}T12:00:00`);
+    const update = new Date(`${latest.date}T12:00:00`);
+    const days = Math.max(0, Math.floor((today - update) / 86400000));
+    return { date: latest.date, context: latest.context, days };
+  }
+
+  function journalDate(item) {
+    const match = item.title.match(/^(\d{4}-\d{2}-\d{2})(?:\s|$)/);
+    return match ? match[1] : "";
   }
 
   function pageTemplate(fields = {}) {
@@ -999,7 +1498,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       reviewDate: fields.reviewDate || "",
       tags: normalizeTags(fields.tags),
     };
-    const body = fields.body || "Capture libre. Clarifier ensuite.\n\n## Prochaine action\n\n- [ ] ";
+    let body = fields.body || "";
+    if (!body && fields.type === "project") {
+      body = "# Info\n\n# Contexte\n\nProjet cree automatiquement depuis une capture.\n\n# Avancement\n\n# Questions ouvertes\n\n# Decisions";
+    }
+    if (!body && fields.type === "journal") body = "## Notes\n\n";
+    if (!body && fields.type === "divers") body = "## Notes\n\n";
+    if (!body) body = "";
     return composeMarkdown(props, `# ${title}\n\n${body}`);
   }
 
@@ -1020,14 +1525,14 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       status: "active",
       priority: "high",
       tags: ["prototype", "local"],
-      body: "## Intention\n\nConstruire un espace local proche de Notion : pages Markdown, proprietes YAML, vues Tabulator.\n\n## Decisions\n\n- Le Markdown est la source de verite.\n- Les tables sont des projections.",
+      body: "# Info\n\n# Contexte\n\nProjet cree automatiquement depuis une capture.\n\n# Avancement\n\n## 24.05.2026\n- J'ai ecrit a Jean pour lui demander de verifier le projet.\n\n## 22.04.2026\nLancement du projet.\n\n# Questions ouvertes\n\n# Decisions",
     });
     const task = createItem({
       type: "task",
       title: "Tester la page Markdown avec YAML",
       status: "next",
       priority: "high",
-      project: project.slug,
+      project: project.id,
       dueDate: todayIsoDate(),
       tags: ["test"],
       body: "## Checklist\n\n- [ ] Modifier une propriete YAML\n- [ ] Ecrire dans OverType\n- [ ] Revenir a la vue table",
@@ -1037,7 +1542,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       title: "Relancer la revue du cockpit",
       status: "waiting",
       priority: "medium",
-      project: project.slug,
+      project: project.id,
       followupDate: todayIsoDate(),
       tags: ["revue"],
       body: "Attendre quelques minutes d'utilisation reelle, puis noter ce qui manque.",
@@ -1047,7 +1552,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       title: "Principe de capture",
       status: "active",
       priority: "low",
-      project: project.slug,
+      project: project.id,
       tags: ["idee"],
       body: "Capturer d'abord. Le YAML peut rester imparfait. Les vues aident ensuite a clarifier.",
     });
@@ -1066,7 +1571,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     composeMarkdown,
     updateDocumentProps,
     updateDocumentMarkdown,
+    extractLatestProgress,
+    journalDate,
     normalizeTags,
+    parseCaptureLine,
     seedItems,
     todayIsoDate,
     isoNow,
@@ -1202,25 +1710,37 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return dateValue <= window.CockpitModels.todayIsoDate();
   }
 
-  function projectMatches(item, project) {
-    return item.project === project.slug || item.project === project.id || item.project === project.title;
+  function resolveProject(items, item) {
+    const relation = String(item?.project || "").trim();
+    if (!relation) return null;
+    const projects = items.filter((candidate) => candidate.type === "project");
+    return (
+      projects.find((project) => project.id === relation) ||
+      projects.find((project) => project.slug === relation) ||
+      projects.find((project) => project.title === relation) ||
+      null
+    );
+  }
+
+  function projectMatches(items, item, project) {
+    return resolveProject(items, item)?.id === project.id;
   }
 
   function projectName(items, item) {
-    const project = items.find((candidate) => candidate.type === "project" && projectMatches(item, candidate));
+    const project = resolveProject(items, item);
     return project ? project.title : item.project || "";
   }
 
   function hasOpenTask(items, project) {
-    return items.some((item) => item.type === "task" && isOpen(item) && projectMatches(item, project));
+    return items.some((item) => item.type === "task" && isOpen(item) && projectMatches(items, item, project));
   }
 
   function hasNextTask(items, project) {
-    return items.some((item) => item.type === "task" && isOpen(item) && projectMatches(item, project) && item.status === "next");
+    return items.some((item) => item.type === "task" && isOpen(item) && projectMatches(items, item, project) && item.status === "next");
   }
 
   function taskHasIntention(item) {
-    return Boolean(item.status === "next" || item.dueDate || item.followupDate || item.status === "waiting" || item.status === "blocked" || item.project || item.parent);
+    return Boolean(item.status === "inbox" || item.status === "next" || item.dueDate || item.followupDate || item.status === "waiting" || item.status === "blocked" || item.project || item.parent);
   }
 
   function getIssues(rawItems) {
@@ -1250,6 +1770,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const items = parsedItems(rawItems);
     return items.map((item) => ({
       ...item,
+      projectId: resolveProject(items, item)?.id || "",
       projectTitle: projectName(items, item),
       tagsText: item.tags.join(", "),
     }));
@@ -1269,6 +1790,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     parsedItems,
     isOpen,
     isDueOrPast,
+    resolveProject,
+    projectMatches,
     getIssues,
     decorateItems,
     backlinks,
@@ -1277,39 +1800,49 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
-  function bindMarkdownEditor(textarea, value, onChange) {
-    textarea.value = value || "";
+  function bindMarkdownEditor(host, value, onChange) {
+    host.innerHTML = "";
     let editor = null;
 
     try {
-      if (window.OverType && typeof window.OverType.init === "function") {
-        editor = window.OverType.init(textarea, { value: textarea.value });
-      } else if (window.OverType && typeof window.OverType === "function") {
-        editor = new window.OverType(textarea, { value: textarea.value });
-      } else if (window.overtype && typeof window.overtype.init === "function") {
-        editor = window.overtype.init(textarea, { value: textarea.value });
+      if (window.OverType) {
+        const instances = new window.OverType(host, {
+          value: value || "",
+          theme: "solar",
+          toolbar: true,
+          smartLists: true,
+          spellcheck: true,
+          fontSize: "14px",
+          lineHeight: 1.62,
+          padding: "18px",
+          onChange,
+        });
+        editor = Array.isArray(instances) ? instances[0] : instances;
       }
     } catch (error) {
-      console.warn("OverType charge mais non initialise, fallback textarea.", error);
+      console.warn("OverType non initialise, fallback textarea.", error);
     }
 
-    const readValue = () => {
-      if (editor && typeof editor.getValue === "function") return editor.getValue();
-      if (editor && typeof editor.value === "string") return editor.value;
-      return textarea.value;
-    };
-
-    textarea.addEventListener("input", () => onChange(readValue()));
-
-    if (editor && typeof editor.on === "function") {
-      editor.on("change", () => onChange(readValue()));
+    if (!editor) {
+      const textarea = document.createElement("textarea");
+      textarea.className = "markdown-fallback";
+      textarea.value = value || "";
+      textarea.spellcheck = true;
+      textarea.addEventListener("input", () => onChange(textarea.value));
+      host.append(textarea);
+      return {
+        destroy() {},
+        getValue: () => textarea.value,
+      };
     }
 
     return {
       destroy() {
-        if (editor && typeof editor.destroy === "function") editor.destroy();
+        if (typeof editor.destroy === "function") editor.destroy();
       },
-      getValue: readValue,
+      getValue() {
+        return typeof editor.getValue === "function" ? editor.getValue() : value || "";
+      },
     };
   }
 
@@ -1326,7 +1859,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     review: ["A revoir", "Dormants, relances et zones incoherentes."],
     projects: ["Projets", "Pages projet et contenu rattache."],
     tasks: ["Taches", "Toutes les pages task filtrables."],
-    notes: ["Notes / Journal", "Notes longues, journal et decisions."],
+    journal: ["Journal", "Faits du jour, seances passees et preparations futures."],
+    divers: ["Divers", "Informations et notes qui ne sont ni des taches ni des projets."],
+    calendar: ["Calendrier", "Elements lies a la date selectionnee."],
     control: ["Controle", "Ce que les proprietes YAML signalent comme fragile."],
   };
 
@@ -1346,18 +1881,135 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return Array.isArray(value) ? value.join(", ") : value || "";
   }
 
-  function baseColumns() {
+  function projectEditorValues(app) {
+    const values = { "": "Sans projet" };
+    window.CockpitRules
+      .decorateItems(app.items)
+      .filter((item) => item.type === "project" && window.CockpitRules.isOpen(item))
+      .forEach((project) => {
+        values[project.id] = project.title;
+      });
+    return values;
+  }
+
+  function projectFormatter(cell) {
+    return cell.getRow().getData().projectTitle || "";
+  }
+
+  function baseColumns(app) {
     return [
       { title: "Type", field: "type", width: 92, responsive: 3, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
       { title: "Titre", field: "title", minWidth: 260, formatter: titleFormatter },
       { title: "Statut", field: "status", width: 104, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.STATUSES } },
       { title: "Priorite", field: "priority", width: 96, responsive: 2, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.PRIORITIES } },
-      { title: "Projet", field: "projectTitle", minWidth: 140, responsive: 1 },
+      {
+        title: "Projet",
+        field: "project",
+        minWidth: 140,
+        responsive: 1,
+        formatter: projectFormatter,
+        editor: "list",
+        editorParams: { values: projectEditorValues(app), autocomplete: true, clearable: true },
+      },
       { title: "Echeance", field: "dueDate", width: 108, sorter: "date", editor: "date" },
       { title: "Relance", field: "followupDate", width: 108, sorter: "date", editor: "date" },
       { title: "Revue", field: "reviewDate", width: 108, responsive: 2, sorter: "date", editor: "date" },
       { title: "Tags", field: "tags", minWidth: 120, responsive: 3, formatter: tagFormatter, editor: "input" },
     ];
+  }
+
+  function progressAgeFormatter(cell) {
+    if (cell.getRow().getData().type !== "project") return "";
+    const days = cell.getValue();
+    if (days == null) {
+      cell.getElement().style.background = "#7f1d1d";
+      cell.getElement().style.color = "#fff";
+      return "Jamais";
+    }
+    const ratio = Math.min(days, 120) / 120;
+    const lightness = Math.round(96 - ratio * 58);
+    cell.getElement().style.background = `hsl(4 68% ${lightness}%)`;
+    cell.getElement().style.color = lightness < 58 ? "#fff" : "#5b1d18";
+    return `${days} j`;
+  }
+
+  function projectTitleFormatter(cell) {
+    const data = cell.getRow().getData();
+    const title = data.title || "Sans titre";
+    const prefix = data.type === "project" ? "" : `<span class="tree-child-type">${data.type}</span>`;
+    return `${prefix}<a href="#" class="title-link" data-open-id="${data.id}">${title}</a>`;
+  }
+
+  function projectOnlyFormatter(cell) {
+    return cell.getRow().getData().type === "project" ? cell.getValue() ?? "" : "";
+  }
+
+  function childStatusFormatter(cell) {
+    const value = cell.getValue() || "";
+    return value ? pillFormatter(cell) : "";
+  }
+
+  function projectColumns() {
+    return [
+      { title: "Projet / element lie", field: "title", minWidth: 310, formatter: projectTitleFormatter },
+      {
+        title: "Statut",
+        field: "status",
+        width: 106,
+        formatter: childStatusFormatter,
+        editor: "list",
+        editorParams: (cell) => ({
+          values:
+            cell.getRow().getData().type === "project"
+              ? ["active", "waiting", "blocked", "someday", "dormant", "done", "archived"]
+              : window.CockpitModels.STATUSES,
+        }),
+      },
+      { title: "Todos", field: "openTaskCount", width: 78, hozAlign: "center", formatter: projectOnlyFormatter },
+      { title: "Dernier avancement", field: "lastProgressDate", width: 132, formatter: projectOnlyFormatter },
+      { title: "Depuis", field: "progressAgeDays", width: 82, hozAlign: "center", formatter: progressAgeFormatter },
+      { title: "Contexte recent", field: "lastProgressContext", minWidth: 300, formatter: projectOnlyFormatter },
+      { title: "Tags", field: "tags", minWidth: 140, responsive: 2, formatter: tagFormatter, editor: "input" },
+    ];
+  }
+
+  function journalColumns(app) {
+    return [
+      { title: "Date", field: "journalDate", width: 118, sorter: "date" },
+      { title: "Titre", field: "title", minWidth: 320, formatter: titleFormatter },
+      {
+        title: "Projet",
+        field: "project",
+        minWidth: 180,
+        formatter: projectFormatter,
+        editor: "list",
+        editorParams: { values: projectEditorValues(app), autocomplete: true, clearable: true },
+      },
+      { title: "Statut", field: "status", width: 106, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.STATUSES } },
+      { title: "Tags", field: "tags", minWidth: 160, formatter: tagFormatter, editor: "input" },
+    ];
+  }
+
+  function journalGroupInfo(dateValue) {
+    const todayKey = window.CockpitModels.todayIsoDate();
+    const today = new Date(`${todayKey}T12:00:00`);
+    const date = new Date(`${dateValue || todayKey}T12:00:00`);
+    const days = Math.round((date - today) / 86400000);
+    const mondayOffset = (today.getDay() + 6) % 7;
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - mondayOffset);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 7);
+    const inCurrentWeek = date >= weekStart && date < weekEnd;
+    const month = date.toLocaleDateString("fr-CH", { month: "long", year: "numeric" });
+
+    if (days === 1) return { key: "01", label: "Demain" };
+    if (days > 1 && inCurrentWeek) return { key: "02", label: "A venir cette semaine" };
+    if (days > 0) return { key: `03-${dateValue.slice(0, 7)}`, label: `A venir - ${month}` };
+    if (days === 0) return { key: "04", label: "Aujourd'hui" };
+    if (days === -1) return { key: "05", label: "Hier" };
+    if (inCurrentWeek) return { key: "06", label: "Cette semaine" };
+    return { key: `07-${dateValue.slice(0, 7)}`, label: month };
   }
 
   function controlColumns() {
@@ -1387,7 +2039,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       );
     }
     if (view === "inbox") {
-      return open.filter((item) => !item.project && !item.dueDate && !item.followupDate && ["active", "someday"].includes(item.status));
+      return open.filter((item) => item.status === "inbox");
     }
     if (view === "review") {
       const issueIds = new Set(window.CockpitRules.getIssues(rawItems).map((issue) => issue.item.id));
@@ -1396,13 +2048,40 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (view === "projects") {
       return open
         .filter((item) => item.type === "project")
-        .map((project) => ({
-          ...project,
-          _children: open.filter((item) => item.project === project.slug || item.project === project.id || item.project === project.title),
-        }));
+        .map((project) => {
+          const children = open.filter((item) => item.projectId === project.id);
+          const progress = window.CockpitModels.extractLatestProgress(project.markdown);
+          return {
+            ...project,
+            openTaskCount: children.filter((item) => item.type === "task").length,
+            lastProgressDate: progress.date,
+            lastProgressContext: progress.context || "Aucun contexte d'avancement",
+            progressAgeDays: progress.days,
+            _children: children.sort((a, b) => {
+              const order = { task: 1, journal: 2, divers: 3 };
+              return (order[a.type] || 9) - (order[b.type] || 9) || a.title.localeCompare(b.title, "fr");
+            }),
+          };
+        });
     }
     if (view === "tasks") return open.filter((item) => item.type === "task");
-    if (view === "notes") return open.filter((item) => ["note", "journal"].includes(item.type));
+    if (view === "journal") {
+      return open
+        .filter((item) => item.type === "journal")
+        .map((item) => {
+          const journalDate = window.CockpitModels.journalDate(item);
+          const group = journalGroupInfo(journalDate);
+          return { ...item, journalDate, journalGroup: `${group.key}|${group.label}` };
+        })
+        .sort((a, b) => b.journalDate.localeCompare(a.journalDate));
+    }
+    if (view === "divers") return open.filter((item) => item.type === "divers");
+    if (view === "calendar") {
+      return open.filter((item) => {
+        if (item.type === "journal") return window.CockpitModels.journalDate(item) === window.CockpitApp.calendarDate;
+        return [item.dueDate, item.followupDate, item.reviewDate].includes(window.CockpitApp.calendarDate);
+      });
+    }
     return open;
   }
 
@@ -1435,9 +2114,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return applySearchAndFilters(app, sourceRows);
   }
 
-  function setViewText(view) {
+  function setViewText(view, app) {
     const [title, subtitle] = viewMeta[view];
-    document.getElementById("viewTitle").textContent = title;
+    document.getElementById("viewTitle").textContent = view === "calendar" ? app.calendarDate : title;
     document.getElementById("viewSubtitle").textContent = subtitle;
   }
 
@@ -1455,13 +2134,23 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       selectableRows: 1,
       dataTree: app.currentView === "projects",
       dataTreeStartExpanded: false,
-      columns: app.currentView === "control" ? controlColumns() : baseColumns(),
+      groupBy: app.currentView === "journal" ? "journalGroup" : false,
+      groupStartOpen: true,
+      groupHeader: (value, count) => `${String(value).split("|").slice(1).join("|")} · ${count}`,
+      columns:
+        app.currentView === "control"
+          ? controlColumns()
+          : app.currentView === "projects"
+            ? projectColumns()
+            : app.currentView === "journal"
+              ? journalColumns(app)
+              : baseColumns(app),
       data: buildView(app),
     });
 
     app.table.on("cellEdited", (cell) => {
       const field = cell.getField();
-      if (["title", "projectTitle"].includes(field)) return;
+      if (field === "title") return;
       const data = cell.getRow().getData();
       const doc = app.items.find((candidate) => candidate.id === data.id);
       if (!doc) return;
@@ -1478,7 +2167,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function refreshTable(app) {
-    setViewText(app.currentView);
+    setViewText(app.currentView, app);
     if (app.table) {
       app.table.destroy();
       app.table = null;
@@ -1496,42 +2185,157 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 (function () {
   let markdownBinding = null;
   let bodySaveTimer = null;
+  let globalCloseBound = false;
 
   function selectedParsed(app) {
     const doc = app.items.find((candidate) => candidate.id === app.selectedItemId);
     return doc ? window.CockpitModels.parseDocument(doc) : null;
   }
 
-  function renderProps(item) {
-    const keys = ["type", "status", "priority", "project", "parent", "dueDate", "followupDate", "reviewDate", "tags", "slug"];
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function propertyKeys(item) {
+    if (item.type === "project") return ["type", "status", "priority", "reviewDate", "tags", "slug"];
+    if (item.type === "journal") return ["type", "status", "project", "tags", "slug"];
+    if (item.type === "divers") return ["type", "status", "project", "parent", "tags", "slug"];
+    return ["type", "status", "priority", "project", "parent", "dueDate", "followupDate", "reviewDate", "tags", "slug"];
+  }
+
+  function propertyDisplayValue(app, item, key) {
+    if (key === "tags") return item.tags.join(", ");
+    if (key === "project" && item.project) {
+      const project = window.CockpitRules
+        .decorateItems(app.items)
+        .find((candidate) => candidate.type === "project" && [candidate.id, candidate.slug, candidate.title].includes(item.project));
+      return project?.title || item.project;
+    }
+    return item[key] || "";
+  }
+
+  function renderProps(app, item) {
+    const keys = propertyKeys(item);
     return `<div class="prop-list">${keys
       .map((key) => {
-        const value = key === "tags" ? item.tags.join(", ") : item[key] || "";
-        return `<div class="prop-row"><div class="prop-key">${key}</div><div class="prop-value">${value || "-"}</div></div>`;
+        const value = propertyDisplayValue(app, item, key);
+        const editable = key !== "slug";
+        return `<div class="prop-row">
+          <div class="prop-key">${key}</div>
+          ${
+            editable
+              ? `<button type="button" class="prop-value prop-edit-trigger" data-prop-key="${key}">${escapeHtml(value || "-")}</button>`
+              : `<div class="prop-value">${escapeHtml(value || "-")}</div>`
+          }
+        </div>`;
       })
       .join("")}</div>`;
   }
 
-  function renderBacklinks(app, item) {
-    const links = window.CockpitRules.backlinks(app.items, item);
-    if (!links.length) return "<div class='empty-linked'>Aucun lien detecte.</div>";
-    return `<div class="linked-list">${links
-      .map(
-        (link) => `
-          <div class="linked-item">
-            <button type="button" data-linked-id="${link.id}">${link.title}</button>
-            <div class="linked-meta">${link.type} · ${link.status}</div>
-          </div>
-        `
-      )
-      .join("")}</div>`;
+  function updateDetailHeading(item) {
+    const type = document.getElementById("detailType");
+    const title = document.getElementById("detailTitle");
+    if (type) type.textContent = `${item.type} · ${item.status} · ${item.priority}`;
+    if (title) title.textContent = item.title;
+  }
+
+  function syncSelectedRow(app) {
+    if (!app.table || !app.selectedItemId) return;
+    const parsed = window.CockpitRules.decorateItems(app.items).find((item) => item.id === app.selectedItemId);
+    const row = app.table.getRow(app.selectedItemId);
+    if (parsed && row) row.update(parsed);
+  }
+
+  function propertyChoices(app, key) {
+    if (key === "type") return window.CockpitModels.TYPES.map((value) => ({ value, label: value }));
+    if (key === "status") {
+      const item = selectedParsed(app);
+      const values =
+        item?.type === "project"
+          ? ["active", "waiting", "blocked", "someday", "dormant", "done", "archived"]
+          : item?.type === "journal"
+            ? ["active", "done", "archived"]
+            : item?.type === "divers"
+              ? ["active", "archived"]
+              : window.CockpitModels.STATUSES;
+      return values.map((value) => ({ value, label: value }));
+    }
+    if (key === "priority") return window.CockpitModels.PRIORITIES.map((value) => ({ value, label: value }));
+    if (key === "project") {
+      return [
+        { value: "", label: "Sans projet" },
+        ...window.CockpitRules
+          .decorateItems(app.items)
+          .filter((item) => item.type === "project" && window.CockpitRules.isOpen(item) && item.id !== app.selectedItemId)
+          .map((item) => ({ value: item.id, label: item.title })),
+      ];
+    }
+    return null;
+  }
+
+  function startPropertyEdit(app, button) {
+    const key = button.dataset.propKey;
+    const item = selectedParsed(app);
+    if (!item) return;
+    const choices = propertyChoices(app, key);
+    const editor = choices ? document.createElement("select") : document.createElement("input");
+    editor.className = "prop-editor";
+
+    if (choices) {
+      choices.forEach((choice) => editor.append(new Option(choice.label, choice.value)));
+    } else if (["date", "dueDate", "followupDate", "reviewDate"].includes(key)) {
+      editor.type = "date";
+    } else {
+      editor.type = "text";
+    }
+
+    const current = key === "tags" ? item.tags.join(", ") : item[key] || "";
+    editor.value = current;
+    button.replaceWith(editor);
+    editor.focus();
+    if (editor.select) editor.select();
+
+    let committed = false;
+    let cancelled = false;
+    const commit = async () => {
+      if (committed || cancelled) return;
+      committed = true;
+      const value = key === "tags" ? window.CockpitModels.normalizeTags(editor.value) : editor.value;
+      await app.updateProps(item.id, { [key]: value }, { quiet: true });
+      if (key === "type") {
+        renderDetail(app);
+        return;
+      }
+      const updated = selectedParsed(app);
+      updateDetailHeading(updated);
+      renderInspector(app);
+      syncSelectedRow(app);
+    };
+
+    editor.addEventListener("change", commit);
+    if (!choices) editor.addEventListener("blur", commit);
+    editor.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        commit();
+      }
+      if (event.key === "Escape") {
+        cancelled = true;
+        renderInspector(app);
+      }
+    });
   }
 
   function renderRelated(app, item) {
     const items = window.CockpitRules.decorateItems(app.items);
     const related = items.filter((candidate) => {
       if (candidate.id === item.id) return false;
-      return candidate.project === item.slug || candidate.project === item.id || candidate.project === item.title || candidate.parent === item.slug || candidate.parent === item.id || candidate.parent === item.title;
+      return candidate.projectId === item.id || candidate.parent === item.id;
     });
     if (!related.length) return "<div class='empty-linked'>Aucun enfant lie par project/parent.</div>";
     return `<div class="linked-list">${related
@@ -1557,8 +2361,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const issues = window.CockpitRules.getIssues(app.items).filter((issue) => issue.item.id === item.id);
     pane.innerHTML = `
       <section class="inspector-section">
-        <h3>Proprietes YAML</h3>
-        ${renderProps(item)}
+        <h3>Proprietes</h3>
+        ${renderProps(app, item)}
       </section>
       <section class="inspector-section">
         <h3>Controles</h3>
@@ -1572,26 +2376,33 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         <h3>Pages liees</h3>
         ${renderRelated(app, item)}
       </section>
-      <section class="inspector-section">
-        <h3>Backlinks</h3>
-        ${renderBacklinks(app, item)}
-      </section>
     `;
     pane.querySelectorAll("[data-linked-id]").forEach((button) => {
       button.addEventListener("click", () => app.selectItem(button.dataset.linkedId));
+    });
+    pane.querySelectorAll("[data-prop-key]").forEach((button) => {
+      button.addEventListener("click", () => startPropertyEdit(app, button));
     });
   }
 
   function bindMarkdown(app, doc) {
     if (markdownBinding) markdownBinding.destroy();
-    const textarea = document.getElementById("markdownEditor");
+    const host = document.getElementById("markdownEditor");
     const status = document.getElementById("markdownStatus");
-    markdownBinding = window.CockpitMarkdown.bindMarkdownEditor(textarea, doc.markdown, (value) => {
+    const parsed = window.CockpitModels.parseDocument(doc);
+    markdownBinding = window.CockpitMarkdown.bindMarkdownEditor(host, parsed.body, (value) => {
       clearTimeout(bodySaveTimer);
       status.textContent = "Sauvegarde...";
       bodySaveTimer = setTimeout(async () => {
-        await app.updateMarkdown(doc.id, value, { quiet: true });
+        const current = app.items.find((item) => item.id === doc.id);
+        if (!current) return;
+        const split = window.CockpitModels.splitMarkdown(current.markdown);
+        const markdown = window.CockpitModels.composeMarkdown(split.props, value);
+        await app.updateMarkdown(doc.id, markdown, { quiet: true });
+        const updated = selectedParsed(app);
+        updateDetailHeading(updated);
         renderInspector(app);
+        syncSelectedRow(app);
         status.textContent = "Sauvegarde locale";
       }, 350);
     });
@@ -1614,20 +2425,47 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     });
   }
 
+  function closeDetail(app) {
+    if (!app.selectedItemId) return;
+    app.selectedItemId = null;
+    if (app.table) app.table.deselectRow();
+    renderDetail(app);
+  }
+
+  function bindGlobalClose(app) {
+    if (globalCloseBound) return;
+    globalCloseBound = true;
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && document.getElementById("detailPane")?.classList.contains("open")) {
+        event.preventDefault();
+        closeDetail(app);
+      }
+    });
+
+    document.addEventListener("pointerdown", (event) => {
+      const pane = document.getElementById("detailPane");
+      if (!pane?.classList.contains("open")) return;
+      if (event.target.closest("#detailPane")) return;
+      if (event.target.closest(".tabulator-popup-container")) return;
+      closeDetail(app);
+    });
+  }
+
   function renderDetail(app) {
+    bindGlobalClose(app);
     const doc = app.items.find((candidate) => candidate.id === app.selectedItemId);
     const pane = document.getElementById("detailPane");
     if (!doc) {
       pane.classList.remove("open");
-      pane.innerHTML = "<div class='empty-detail'><h2>Selectionne une page</h2><p>Le grand editeur Markdown/YAML s'ouvrira ici.</p></div>";
+      pane.innerHTML = "<div class='empty-detail'><h2>Selectionne une page</h2><p>Le grand editeur Markdown s'ouvrira ici.</p></div>";
       return;
     }
     const template = document.getElementById("pageTemplate");
     pane.innerHTML = "";
     pane.append(template.content.cloneNode(true));
     const parsed = window.CockpitModels.parseDocument(doc);
-    document.getElementById("detailType").textContent = `${parsed.type} · ${parsed.status} · ${parsed.priority}`;
-    document.getElementById("detailTitle").textContent = parsed.title;
+    updateDetailHeading(parsed);
     pane.classList.add("open");
     bindMarkdown(app, doc);
     bindActions(app, doc);
@@ -1696,6 +2534,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     items: [],
     table: null,
     currentView: "today",
+    calendarDate: "",
     selectedItemId: null,
     filters: {
       search: "",
@@ -1703,11 +2542,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       status: "",
     },
 
-    async addItem(fields) {
+    async addItem(fields, options = {}) {
       const item = window.CockpitModels.createItem(fields);
       const saved = await window.CockpitStorage.saveItem(item);
       this.items = [saved, ...this.items.filter((candidate) => candidate.id !== saved.id)];
-      this.selectedItemId = saved.id;
+      if (options.open !== false) this.selectedItemId = saved.id;
       this.refresh();
       return saved;
     },
@@ -1752,6 +2591,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       window.CockpitViews.refreshTable(this);
       window.CockpitDetail.renderDetail(this);
       updateStorageStatus();
+      renderMiniCalendar();
     },
   };
 
@@ -1791,14 +2631,103 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function bindActions() {
-    document.getElementById("quickCaptureButton").addEventListener("click", () => {
-      app.addItem({
-        type: "task",
-        title: "Nouvelle capture",
-        status: "active",
-        priority: "medium",
-        tags: ["inbox"],
+    const captureDialog = document.getElementById("captureDialog");
+    const captureInput = document.getElementById("captureInput");
+    const captureCount = document.getElementById("captureCount");
+    const sidebarMenus = [...document.querySelectorAll(".sidebar-menu")];
+
+    function closeSidebarMenus(except = null) {
+      sidebarMenus.forEach((menu) => {
+        if (menu !== except) menu.removeAttribute("open");
       });
+    }
+
+    sidebarMenus.forEach((menu) => {
+      menu.addEventListener("toggle", () => {
+        if (menu.open) closeSidebarMenus(menu);
+      });
+      menu.querySelectorAll("button, .import-label").forEach((action) => {
+        action.addEventListener("click", () => menu.removeAttribute("open"));
+      });
+    });
+
+    document.addEventListener("pointerdown", (event) => {
+      if (!event.target.closest(".sidebar-menu")) closeSidebarMenus();
+    });
+
+    function captureLines() {
+      return captureInput.value
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    }
+
+    document.getElementById("quickCaptureButton").addEventListener("click", () => {
+      captureInput.value = "";
+      captureCount.textContent = "0 ligne";
+      captureDialog.showModal();
+      setTimeout(() => captureInput.focus(), 0);
+    });
+
+    captureInput.addEventListener("input", () => {
+      const count = captureLines().length;
+      captureCount.textContent = `${count} ligne${count > 1 ? "s" : ""}`;
+    });
+
+    async function submitCapture() {
+      const lines = captureLines();
+      if (!lines.length) return;
+      const items = [];
+      const existing = window.CockpitRules.decorateItems(app.items);
+      const newProjects = [];
+      for (const line of lines) {
+        const capture = window.CockpitModels.parseCaptureLine(line);
+        let project = null;
+        if (capture.projectName) {
+          const wanted = capture.projectName.toLowerCase();
+          project = [...existing, ...newProjects].find(
+            (item) => item.type === "project" && [item.title, item.slug].some((value) => String(value || "").toLowerCase() === wanted)
+          );
+          if (!project) {
+            const projectDoc = window.CockpitModels.createItem({
+              type: "project",
+              title: capture.projectName,
+              status: "active",
+              priority: "medium",
+            });
+            const savedProject = await window.CockpitStorage.saveItem(projectDoc);
+            project = window.CockpitModels.parseDocument(savedProject);
+            newProjects.push(project);
+            items.push(savedProject);
+          }
+        }
+        const item = window.CockpitModels.createItem({
+          type: "task",
+          title: capture.title,
+          status: capture.status,
+          priority: capture.priority,
+          project: project ? project.id : "",
+          dueDate: capture.dueDate,
+          followupDate: capture.followupDate,
+          reviewDate: capture.reviewDate,
+          tags: capture.tags,
+        });
+        items.push(await window.CockpitStorage.saveItem(item));
+      }
+      app.items = [...items.reverse(), ...app.items];
+      app.currentView = "inbox";
+      app.selectedItemId = null;
+      document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === "inbox"));
+      captureDialog.close();
+      app.refresh();
+    }
+
+    document.getElementById("captureSubmitButton").addEventListener("click", submitCapture);
+    captureInput.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+        event.preventDefault();
+        submitCapture();
+      }
     });
 
     document.getElementById("newProjectButton").addEventListener("click", () => {
@@ -1807,14 +2736,31 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         title: "Nouveau projet",
         status: "active",
         priority: "medium",
-        tags: ["projet"],
-        body: "## Vision\n\n\n## Prochaine action\n\n- [ ] ",
+      });
+    });
+
+    document.getElementById("newJournalButton").addEventListener("click", () => {
+      const date = window.CockpitModels.todayIsoDate();
+      app.addItem({
+        type: "journal",
+        title: `${date} - Journal`,
+        status: "active",
+        priority: "medium",
+      });
+    });
+
+    document.getElementById("newDiversButton").addEventListener("click", () => {
+      app.addItem({
+        type: "divers",
+        title: "Nouvelle note",
+        status: "active",
+        priority: "medium",
       });
     });
 
     document.getElementById("newFollowupButton").addEventListener("click", () => {
       app.addItem({
-        type: "followup",
+        type: "task",
         title: "Nouvelle relance",
         status: "waiting",
         priority: "medium",
@@ -1838,6 +2784,60 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     });
   }
 
+  function dateKey(date) {
+    return date.toISOString().slice(0, 10);
+  }
+
+  function renderMiniCalendar() {
+    const grid = document.getElementById("miniCalendarGrid");
+    const label = document.getElementById("miniCalendarLabel");
+    if (!grid || !label) return;
+    const todayKey = window.CockpitModels.todayIsoDate();
+    const today = new Date(`${todayKey}T12:00:00`);
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7) - 14);
+    const end = new Date(monday);
+    end.setDate(monday.getDate() + 34);
+    label.textContent = `${dateKey(monday).slice(5)} → ${dateKey(end).slice(5)}`;
+
+    const parsed = window.CockpitRules.decorateItems(app.items);
+    const dueDates = new Set();
+    const followupDates = new Set();
+    const journalDates = new Set();
+    parsed.forEach((item) => {
+      if (item.type === "task" && window.CockpitRules.isOpen(item)) {
+        [item.dueDate, item.reviewDate].filter(Boolean).forEach((date) => dueDates.add(date));
+        if (item.followupDate) followupDates.add(item.followupDate);
+      }
+      if (item.type === "journal") {
+        const date = window.CockpitModels.journalDate(item);
+        if (date) journalDates.add(date);
+      }
+    });
+
+    grid.innerHTML = "";
+    for (let offset = 0; offset < 35; offset += 1) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + offset);
+      const key = dateKey(date);
+      const day = document.createElement("div");
+      day.className = "mini-calendar-day";
+      day.tabIndex = 0;
+      if (key === todayKey) day.classList.add("today");
+      if (date.getMonth() !== today.getMonth()) day.classList.add("other-month");
+      day.title = key;
+      day.innerHTML = `<span>${date.getDate()}</span><span class="calendar-dots">${dueDates.has(key) ? '<i class="calendar-dot due"></i>' : ""}${followupDates.has(key) ? '<i class="calendar-dot followup"></i>' : ""}${journalDates.has(key) ? '<i class="calendar-dot journal"></i>' : ""}</span>`;
+      day.addEventListener("click", () => {
+        app.calendarDate = key;
+        app.currentView = "calendar";
+        app.selectedItemId = null;
+        document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
+        app.refresh();
+      });
+      grid.append(day);
+    }
+  }
+
   function bindResize() {
     let resizeTimer = null;
     window.addEventListener("resize", () => {
@@ -1846,6 +2846,23 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         if (app.table && typeof app.table.redraw === "function") app.table.redraw(true);
       }, 120);
     });
+  }
+
+  async function canonicalizeProjectRelations(items) {
+    const parsed = window.CockpitRules.parsedItems(items);
+    const updates = [];
+    for (const item of parsed) {
+      if (!item.project || item.type === "project") continue;
+      const project = window.CockpitRules.resolveProject(parsed, item);
+      if (!project || item.project === project.id) continue;
+      const document = items.find((candidate) => candidate.id === item.id);
+      if (!document) continue;
+      updates.push(window.CockpitStorage.saveItem(window.CockpitModels.updateDocumentProps(document, { project: project.id })));
+    }
+    if (!updates.length) return items;
+    const saved = await Promise.all(updates);
+    const savedById = new Map(saved.map((item) => [item.id, item]));
+    return items.map((item) => savedById.get(item.id) || item);
   }
 
   async function init() {
@@ -1857,6 +2874,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (!app.items.length) {
       app.items = await window.CockpitStorage.replaceAllItems(window.CockpitModels.seedItems());
     }
+    app.items = await canonicalizeProjectRelations(app.items);
     app.selectedItemId = null;
     app.refresh();
   }
