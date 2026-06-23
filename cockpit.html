@@ -71,6 +71,7 @@ button {
   padding: 18px;
   border-right: 1px solid var(--line);
   background: var(--sidebar);
+  font-size: 13px;
   overflow: hidden;
 }
 
@@ -132,18 +133,37 @@ button {
   font-weight: 750;
 }
 
+.quick-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(72px, 0.68fr);
+  gap: 8px;
+}
+
+.quick-actions .capture-button {
+  width: 100%;
+  min-width: 0;
+  padding: 0 10px;
+}
+
+.capture-button.secondary {
+  border-color: var(--line-strong);
+  background: var(--panel);
+  color: var(--accent-dark);
+}
+
 .nav-list {
   display: grid;
-  gap: 6px;
+  gap: 5px;
 }
 
 .nav-item {
   width: 100%;
-  padding: 9px 10px;
+  padding: 8px 9px;
   border: 1px solid transparent;
   border-radius: 7px;
   background: transparent;
   color: var(--text);
+  font-size: 12.5px;
   text-align: left;
 }
 
@@ -183,7 +203,7 @@ button {
   border-radius: 7px;
   background: var(--panel);
   color: var(--text);
-  font-size: 13px;
+  font-size: 12.5px;
   cursor: pointer;
   list-style: none;
 }
@@ -233,7 +253,7 @@ button {
   color: var(--text);
   padding: 7px 8px;
   text-align: left;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .sidebar-popover button:hover,
@@ -387,6 +407,11 @@ button {
   font-size: 12px;
 }
 
+.capture-input-wrap {
+  position: relative;
+  min-width: 0;
+}
+
 #captureInput {
   width: 100%;
   min-height: 220px;
@@ -402,6 +427,56 @@ button {
   border-color: var(--accent);
 }
 
+.project-suggest {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+  max-height: 210px;
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--panel);
+  box-shadow: 0 12px 28px rgba(30, 37, 34, 0.14);
+}
+
+.project-suggest.hidden {
+  display: none;
+}
+
+.project-suggest button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+
+.project-suggest button.active,
+.project-suggest button:hover {
+  background: #dcebe7;
+}
+
+.project-suggest strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+
+.project-suggest span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .capture-form-actions {
   align-items: center;
 }
@@ -412,9 +487,82 @@ button {
 
 .database-pane {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   min-width: 0;
   overflow: hidden;
+}
+
+.favorite-tabs {
+  display: flex;
+  align-items: end;
+  gap: 6px;
+  min-width: 0;
+  min-height: 39px;
+  padding: 8px 14px 0;
+  border-bottom: 1px solid var(--line);
+  background: rgba(244, 245, 242, 0.92);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.favorite-tabs.empty {
+  align-items: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.favorite-tab {
+  display: inline-grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  max-width: 230px;
+  min-width: 96px;
+  height: 31px;
+  padding: 0 7px 0 10px;
+  border: 1px solid var(--line-strong);
+  border-bottom-color: var(--line);
+  border-radius: 7px 7px 0 0;
+  background: var(--panel-soft);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.favorite-tab.active {
+  border-color: var(--accent);
+  border-bottom-color: var(--panel);
+  background: var(--panel);
+  color: var(--accent-dark);
+  font-weight: 750;
+}
+
+.favorite-tab.dragging {
+  opacity: 0.45;
+}
+
+.favorite-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.favorite-tab-close {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.favorite-tab-close:hover {
+  background: #e7ece7;
+  color: var(--danger);
 }
 
 .topbar {
@@ -489,6 +637,24 @@ button {
 
 .title-link:hover {
   text-decoration: underline;
+}
+
+.row-done-button {
+  display: inline-grid;
+  place-items: center;
+  width: 27px;
+  height: 23px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: #edf5f1;
+  color: var(--accent-dark);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.row-done-button:hover {
+  border-color: var(--accent);
+  background: #dcebe7;
 }
 
 .tree-child-type {
@@ -619,6 +785,12 @@ button {
 
 .ghost-button.danger {
   color: var(--danger);
+}
+
+.ghost-button.active {
+  border-color: var(--accent);
+  background: #dcebe7;
+  color: var(--accent-dark);
 }
 
 .detail-content {
@@ -881,11 +1053,14 @@ button {
           <div class="brand-mark">C</div>
           <div>
             <h1>Cockpit</h1>
-            <p>Pages Markdown + YAML</p>
+            <p>Pages Markdown + YAML · <span id="appVersion">v0.4.0</span></p>
           </div>
         </div>
 
-        <button class="capture-button" id="quickCaptureButton" type="button">+ Capture</button>
+        <div class="quick-actions" aria-label="Actions rapides">
+          <button class="capture-button" id="quickCaptureButton" type="button">Capture</button>
+          <button class="capture-button secondary" id="quickTaskButton" type="button">Tache</button>
+        </div>
 
         <div class="sidebar-scroll">
           <nav class="nav-list" aria-label="Vues">
@@ -894,6 +1069,7 @@ button {
             <button class="nav-item" type="button" data-view="review">A revoir</button>
             <button class="nav-item" type="button" data-view="projects">Projets</button>
             <button class="nav-item" type="button" data-view="tasks">Taches</button>
+            <button class="nav-item" type="button" data-view="completed">Terminees</button>
             <button class="nav-item" type="button" data-view="journal">Journal</button>
             <button class="nav-item" type="button" data-view="divers">Divers</button>
             <button class="nav-item" type="button" data-view="control">Controle</button>
@@ -925,7 +1101,6 @@ button {
               <summary>Donnees ···</summary>
               <div class="sidebar-popover">
                 <button type="button" id="exportButton">Exporter JSON</button>
-                <button type="button" id="exportMarkdownButton">Exporter Markdown</button>
                 <label class="import-label">
                   Importer JSON
                   <input id="importInput" type="file" accept="application/json">
@@ -939,6 +1114,8 @@ button {
       </aside>
 
       <main class="database-pane">
+        <div class="favorite-tabs" id="favoriteTabs" aria-label="Pages favorites"></div>
+
         <header class="topbar">
           <div>
             <h2 id="viewTitle">Aujourd'hui</h2>
@@ -981,7 +1158,10 @@ button {
           </div>
           <button type="submit" class="icon-button" value="cancel">Fermer</button>
         </div>
-        <textarea id="captureInput" placeholder="Relancer Xavier sur KPI&#10;Regarder fichier Excel ATM&#10;Idee amelioration reco bancomat"></textarea>
+        <div class="capture-input-wrap">
+          <textarea id="captureInput" placeholder="Relancer Xavier sur KPI +[Projet] @chef rel:2026-06-28&#10;Regarder fichier Excel ATM&#10;Idee amelioration reco bancomat"></textarea>
+          <div class="project-suggest hidden" id="projectSuggest" role="listbox"></div>
+        </div>
         <div class="capture-form-actions">
           <span id="captureCount">0 ligne</span>
           <button type="button" class="capture-button" id="captureSubmitButton">Capturer</button>
@@ -998,6 +1178,7 @@ button {
         <button class="icon-button" type="button" data-action="close">Fermer</button>
       </header>
       <div class="page-toolbar">
+        <button class="ghost-button" type="button" data-action="favorite">Epingler</button>
         <button class="ghost-button" type="button" data-action="duplicate">Dupliquer</button>
         <button class="ghost-button danger" type="button" data-action="archive">Archiver</button>
         <span id="markdownStatus">Sauvegarde locale</span>
@@ -1176,20 +1357,25 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function parseCaptureLine(source) {
     const raw = String(source || "").trim();
-    const tokens = raw.split(/\s+/).filter(Boolean);
+    const withoutPriority = raw.replace(/^\(([A-D])\)\s+/i, "");
+    const tokens = withoutPriority.match(/\+\[[^\]]+\]|\+[\p{L}\p{N}_.-]+|@[\p{L}\p{N}_.-]+|[A-Za-z][A-Za-z0-9_-]*:\S+|\S+/gu) || [];
     const projects = [];
     const contexts = [];
     const values = {};
     const text = [];
+    let explicitStatus = "";
     let priority = "medium";
 
     const priorityMatch = raw.match(/^\(([A-D])\)\s+/i);
     if (priorityMatch) {
       priority = { A: "urgent", B: "high", C: "medium", D: "low" }[priorityMatch[1].toUpperCase()];
-      tokens.splice(0, 1);
     }
 
     tokens.forEach((token) => {
+      if (/^\+\[[^\]]+\]$/u.test(token)) {
+        projects.push(token.slice(2, -1).trim());
+        return;
+      }
       if (/^\+[\p{L}\p{N}_.-]+$/u.test(token)) {
         projects.push(token.slice(1));
         return;
@@ -1203,6 +1389,18 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         values[valueMatch[1]] = valueMatch[2];
         return;
       }
+      if (["inbox", "active", "next", "waiting", "blocked", "someday", "dormant"].includes(token.toLowerCase())) {
+        explicitStatus = token.toLowerCase();
+        return;
+      }
+      if (token.toLowerCase() === "wait") {
+        explicitStatus = "waiting";
+        return;
+      }
+      if (token.toLowerCase() === "block") {
+        explicitStatus = "blocked";
+        return;
+      }
       text.push(token);
     });
 
@@ -1212,10 +1410,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       projectName: projects[0] || "",
       tags: contexts,
       priority,
-      status: values.status || (values.waiting || values.followup ? "waiting" : values.blocked ? "blocked" : "inbox"),
+      status: values.status || explicitStatus || (values.waiting || values.followup || values.rel ? "waiting" : values.blocked ? "blocked" : "inbox"),
       dueDate: values.due || "",
-      followupDate: values.followup || "",
-      reviewDate: values.review || "",
+      followupDate: values.followup || values.rel || "",
+      reviewDate: values.review || values.rev || "",
     };
   }
 
@@ -1859,6 +2057,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     review: ["A revoir", "Dormants, relances et zones incoherentes."],
     projects: ["Projets", "Pages projet et contenu rattache."],
     tasks: ["Taches", "Toutes les pages task filtrables."],
+    completed: ["Terminees", "Taches terminees ou archivees."],
     journal: ["Journal", "Faits du jour, seances passees et preparations futures."],
     divers: ["Divers", "Informations et notes qui ne sont ni des taches ni des projets."],
     calendar: ["Calendrier", "Elements lies a la date selectionnee."],
@@ -1896,8 +2095,15 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return cell.getRow().getData().projectTitle || "";
   }
 
+  function doneActionFormatter(cell) {
+    const data = cell.getRow().getData();
+    if (data.type !== "task" || !window.CockpitRules.isOpen(data)) return "";
+    return `<button class="row-done-button" type="button" data-done-id="${data.id}" title="Marquer terminee">OK</button>`;
+  }
+
   function baseColumns(app) {
     return [
+      { title: "", field: "_done", width: 42, hozAlign: "center", headerSort: false, formatter: doneActionFormatter },
       { title: "Type", field: "type", width: 92, responsive: 3, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
       { title: "Titre", field: "title", minWidth: 260, formatter: titleFormatter },
       { title: "Statut", field: "status", width: 104, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.STATUSES } },
@@ -2065,6 +2271,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         });
     }
     if (view === "tasks") return open.filter((item) => item.type === "task");
+    if (view === "completed") {
+      return items
+        .filter((item) => item.type === "task" && (item.status === "done" || item.status === "archived" || item.archivedAt))
+        .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+    }
     if (view === "journal") {
       return open
         .filter((item) => item.type === "journal")
@@ -2159,6 +2370,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     });
 
     document.getElementById("mainTable").onclick = (event) => {
+      const doneButton = event.target.closest("[data-done-id]");
+      if (doneButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        app.updateProps(doneButton.dataset.doneId, { status: "done" });
+        return;
+      }
       const link = event.target.closest("[data-open-id]");
       if (!link) return;
       event.preventDefault();
@@ -2409,6 +2627,20 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function bindActions(app, doc) {
+    const favoriteButton = document.querySelector("[data-action='favorite']");
+    if (favoriteButton) {
+      const syncFavoriteButton = () => {
+        const isFavorite = app.favoriteIds?.includes(doc.id);
+        favoriteButton.classList.toggle("active", Boolean(isFavorite));
+        favoriteButton.textContent = isFavorite ? "Epingle" : "Epingler";
+      };
+      syncFavoriteButton();
+      favoriteButton.addEventListener("click", () => {
+        app.toggleFavorite(doc.id);
+        syncFavoriteButton();
+      });
+    }
+
     document.querySelector("[data-action='close']").addEventListener("click", () => {
       app.selectedItemId = null;
       if (app.table) app.table.deselectRow();
@@ -2501,16 +2733,6 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     download(`cockpit-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(payload, null, 2), "application/json");
   }
 
-  function exportMarkdown(app) {
-    const content = app.items
-      .map((doc) => {
-        const parsed = window.CockpitModels.parseDocument(doc);
-        return `<!-- ${parsed.id} | ${parsed.slug} -->\n${doc.markdown}`;
-      })
-      .join("\n\n---\n\n");
-    download(`cockpit-pages-${new Date().toISOString().slice(0, 10)}.md`, content, "text/markdown");
-  }
-
   async function importJson(app, file) {
     const text = await file.text();
     const payload = JSON.parse(text);
@@ -2523,19 +2745,22 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   window.CockpitImportExport = {
     exportJson,
-    exportMarkdown,
     importJson,
   };
 })();
 
 
 (function () {
+  const APP_VERSION = "0.4.0";
+  const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
+
   const app = {
     items: [],
     table: null,
     currentView: "today",
     calendarDate: "",
     selectedItemId: null,
+    favoriteIds: [],
     filters: {
       search: "",
       type: "",
@@ -2577,6 +2802,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       if (!id) return;
       this.selectedItemId = id;
       window.CockpitDetail.renderDetail(this);
+      renderFavoriteTabs();
       if (this.table) {
         this.table.deselectRow();
         const row = this.table.getRows().find((candidate) => {
@@ -2592,21 +2818,130 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       window.CockpitDetail.renderDetail(this);
       updateStorageStatus();
       renderMiniCalendar();
+      renderFavoriteTabs();
+    },
+
+    toggleFavorite(id) {
+      const exists = this.favoriteIds.includes(id);
+      this.favoriteIds = exists ? this.favoriteIds.filter((candidate) => candidate !== id) : [...this.favoriteIds, id];
+      saveFavoriteIds(this.favoriteIds);
+      renderFavoriteTabs();
+      return !exists;
+    },
+
+    removeFavorite(id) {
+      this.favoriteIds = this.favoriteIds.filter((candidate) => candidate !== id);
+      saveFavoriteIds(this.favoriteIds);
+      renderFavoriteTabs();
     },
   };
+
+  function loadFavoriteIds() {
+    try {
+      const ids = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
+      return Array.isArray(ids) ? ids.filter((id) => typeof id === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveFavoriteIds(ids) {
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids));
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
 
   function updateStorageStatus() {
     const issues = window.CockpitRules.getIssues(app.items).length;
     const mode = window.CockpitStorage.storageMode();
-    document.getElementById("storageStatus").textContent = `${app.items.length} pages · ${issues} controles · ${mode}`;
+    document.getElementById("storageStatus").textContent = `${app.items.length} pages · ${issues} controles · ${mode} · v${APP_VERSION}`;
+  }
+
+  function setAppVersion() {
+    const version = document.getElementById("appVersion");
+    if (version) version.textContent = `v${APP_VERSION}`;
+  }
+
+  function favoriteItems() {
+    const byId = new Map(window.CockpitRules.decorateItems(app.items).map((item) => [item.id, item]));
+    const validIds = app.favoriteIds.filter((id) => byId.has(id));
+    if (validIds.length !== app.favoriteIds.length) {
+      app.favoriteIds = validIds;
+      saveFavoriteIds(app.favoriteIds);
+    }
+    return validIds.map((id) => byId.get(id));
+  }
+
+  function moveFavorite(fromId, toId) {
+    if (!fromId || !toId || fromId === toId) return;
+    const ids = app.favoriteIds.filter((id) => id !== fromId);
+    const targetIndex = ids.indexOf(toId);
+    ids.splice(targetIndex < 0 ? ids.length : targetIndex, 0, fromId);
+    app.favoriteIds = ids;
+    saveFavoriteIds(app.favoriteIds);
+    renderFavoriteTabs();
+  }
+
+  function renderFavoriteTabs() {
+    const bar = document.getElementById("favoriteTabs");
+    if (!bar) return;
+    const items = favoriteItems();
+    bar.innerHTML = "";
+    bar.classList.toggle("empty", !items.length);
+    if (!items.length) {
+      bar.textContent = "Aucun onglet epingle";
+      return;
+    }
+    items.forEach((item) => {
+      const tab = document.createElement("button");
+      tab.className = `favorite-tab${item.id === app.selectedItemId ? " active" : ""}`;
+      tab.type = "button";
+      tab.draggable = true;
+      tab.dataset.id = item.id;
+      tab.title = `${item.type} · ${item.title}`;
+      tab.innerHTML = `<span class="favorite-tab-title">${escapeHtml(item.title)}</span><span class="favorite-tab-close" title="Retirer" aria-label="Retirer">x</span>`;
+      tab.addEventListener("click", (event) => {
+        if (event.target.closest(".favorite-tab-close")) {
+          event.stopPropagation();
+          app.removeFavorite(item.id);
+          return;
+        }
+        app.selectItem(item.id);
+      });
+      tab.addEventListener("dragstart", (event) => {
+        tab.classList.add("dragging");
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", item.id);
+      });
+      tab.addEventListener("dragend", () => tab.classList.remove("dragging"));
+      tab.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+      });
+      tab.addEventListener("drop", (event) => {
+        event.preventDefault();
+        moveFavorite(event.dataTransfer.getData("text/plain"), item.id);
+      });
+      bar.append(tab);
+    });
+  }
+
+  function setActiveView(view) {
+    app.currentView = view;
+    document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === view));
   }
 
   function bindNav() {
     document.querySelectorAll(".nav-item").forEach((button) => {
       button.addEventListener("click", () => {
-        document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
-        button.classList.add("active");
-        app.currentView = button.dataset.view;
+        setActiveView(button.dataset.view);
         app.refresh();
       });
     });
@@ -2634,6 +2969,15 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const captureDialog = document.getElementById("captureDialog");
     const captureInput = document.getElementById("captureInput");
     const captureCount = document.getElementById("captureCount");
+    const projectSuggest = document.getElementById("projectSuggest");
+    let projectSuggestState = {
+      open: false,
+      start: -1,
+      end: -1,
+      query: "",
+      selected: 0,
+      projects: [],
+    };
     const sidebarMenus = [...document.querySelectorAll(".sidebar-menu")];
 
     function closeSidebarMenus(except = null) {
@@ -2662,16 +3006,130 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         .filter(Boolean);
     }
 
+    function projectOptions(query) {
+      const needle = query.toLowerCase();
+      return window.CockpitRules
+        .decorateItems(app.items)
+        .filter((item) => item.type === "project" && window.CockpitRules.isOpen(item))
+        .filter((item) => {
+          const title = item.title.toLowerCase();
+          const slug = String(item.slug || "").toLowerCase();
+          return !needle || title.includes(needle) || slug.includes(needle);
+        })
+        .sort((a, b) => a.title.localeCompare(b.title, "fr"))
+        .slice(0, 8);
+    }
+
+    function currentProjectTrigger() {
+      const end = captureInput.selectionStart;
+      if (end !== captureInput.selectionEnd) return null;
+      const value = captureInput.value;
+      const lineStart = value.lastIndexOf("\n", end - 1) + 1;
+      const before = value.slice(lineStart, end);
+      const bracketMatch = before.match(/(?:^|\s)\+\[([^\]\n]*)$/);
+      if (bracketMatch) {
+        return {
+          start: lineStart + before.length - bracketMatch[0].trimStart().length,
+          end,
+          query: bracketMatch[1],
+        };
+      }
+      const simpleMatch = before.match(/(?:^|\s)\+([^\s\[\]\n]*)$/);
+      if (!simpleMatch) return null;
+      return {
+        start: lineStart + before.length - simpleMatch[0].trimStart().length,
+        end,
+        query: simpleMatch[1],
+      };
+    }
+
+    function closeProjectSuggest() {
+      projectSuggestState.open = false;
+      projectSuggest.classList.add("hidden");
+      projectSuggest.innerHTML = "";
+    }
+
+    function renderProjectSuggest() {
+      if (!projectSuggestState.open) return;
+      projectSuggest.innerHTML = "";
+      if (!projectSuggestState.projects.length) {
+        projectSuggest.classList.remove("hidden");
+        projectSuggest.innerHTML = "<button type='button' disabled><strong>Aucun projet trouve</strong><span>Continue sans projet ou cree-le avec le menu +</span></button>";
+        return;
+      }
+      projectSuggestState.projects.forEach((project, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = index === projectSuggestState.selected ? "active" : "";
+        button.innerHTML = `<strong>${escapeHtml(project.title)}</strong><span>${escapeHtml(project.status)} · ${escapeHtml(project.slug || project.id)}</span>`;
+        button.addEventListener("mousedown", (event) => {
+          event.preventDefault();
+          insertProjectToken(project);
+        });
+        projectSuggest.append(button);
+      });
+      projectSuggest.classList.remove("hidden");
+    }
+
+    function updateProjectSuggest() {
+      const trigger = currentProjectTrigger();
+      if (!trigger) {
+        closeProjectSuggest();
+        return;
+      }
+      const projects = projectOptions(trigger.query);
+      projectSuggestState = {
+        open: true,
+        start: trigger.start,
+        end: trigger.end,
+        query: trigger.query,
+        selected: Math.min(projectSuggestState.selected, Math.max(0, projects.length - 1)),
+        projects,
+      };
+      renderProjectSuggest();
+    }
+
+    function insertProjectToken(project) {
+      const before = captureInput.value.slice(0, projectSuggestState.start);
+      const after = captureInput.value.slice(projectSuggestState.end);
+      const token = `+[${project.title}] `;
+      captureInput.value = `${before}${token}${after}`;
+      const caret = before.length + token.length;
+      captureInput.setSelectionRange(caret, caret);
+      captureInput.focus();
+      closeProjectSuggest();
+      const count = captureLines().length;
+      captureCount.textContent = `${count} ligne${count > 1 ? "s" : ""}`;
+    }
+
     document.getElementById("quickCaptureButton").addEventListener("click", () => {
       captureInput.value = "";
       captureCount.textContent = "0 ligne";
+      closeProjectSuggest();
       captureDialog.showModal();
       setTimeout(() => captureInput.focus(), 0);
+    });
+
+    document.getElementById("quickTaskButton").addEventListener("click", async () => {
+      setActiveView("inbox");
+      await app.addItem({
+        type: "task",
+        title: "Nouvelle tache",
+        status: "inbox",
+        priority: "medium",
+      });
     });
 
     captureInput.addEventListener("input", () => {
       const count = captureLines().length;
       captureCount.textContent = `${count} ligne${count > 1 ? "s" : ""}`;
+      updateProjectSuggest();
+    });
+
+    captureInput.addEventListener("click", updateProjectSuggest);
+    captureInput.addEventListener("keyup", (event) => {
+      if (["ArrowUp", "ArrowDown", "Enter", "Tab", "Escape"].includes(event.key)) return;
+      updateProjectSuggest();
     });
 
     async function submitCapture() {
@@ -2715,15 +3173,39 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         items.push(await window.CockpitStorage.saveItem(item));
       }
       app.items = [...items.reverse(), ...app.items];
-      app.currentView = "inbox";
+      setActiveView("inbox");
       app.selectedItemId = null;
-      document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === "inbox"));
       captureDialog.close();
+      closeProjectSuggest();
       app.refresh();
     }
 
     document.getElementById("captureSubmitButton").addEventListener("click", submitCapture);
     captureInput.addEventListener("keydown", (event) => {
+      if (projectSuggestState.open && !projectSuggest.classList.contains("hidden")) {
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          projectSuggestState.selected = Math.min(projectSuggestState.selected + 1, projectSuggestState.projects.length - 1);
+          renderProjectSuggest();
+          return;
+        }
+        if (event.key === "ArrowUp") {
+          event.preventDefault();
+          projectSuggestState.selected = Math.max(projectSuggestState.selected - 1, 0);
+          renderProjectSuggest();
+          return;
+        }
+        if ((event.key === "Enter" || event.key === "Tab") && projectSuggestState.projects.length) {
+          event.preventDefault();
+          insertProjectToken(projectSuggestState.projects[projectSuggestState.selected]);
+          return;
+        }
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeProjectSuggest();
+          return;
+        }
+      }
       if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
         event.preventDefault();
         submitCapture();
@@ -2770,7 +3252,6 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     });
 
     document.getElementById("exportButton").addEventListener("click", () => window.CockpitImportExport.exportJson(app));
-    document.getElementById("exportMarkdownButton").addEventListener("click", () => window.CockpitImportExport.exportMarkdown(app));
     document.getElementById("importInput").addEventListener("change", async (event) => {
       const [file] = event.target.files;
       if (!file) return;
@@ -2829,9 +3310,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       day.innerHTML = `<span>${date.getDate()}</span><span class="calendar-dots">${dueDates.has(key) ? '<i class="calendar-dot due"></i>' : ""}${followupDates.has(key) ? '<i class="calendar-dot followup"></i>' : ""}${journalDates.has(key) ? '<i class="calendar-dot journal"></i>' : ""}</span>`;
       day.addEventListener("click", () => {
         app.calendarDate = key;
-        app.currentView = "calendar";
+        setActiveView("calendar");
         app.selectedItemId = null;
-        document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
         app.refresh();
       });
       grid.append(day);
@@ -2866,6 +3346,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   async function init() {
+    setAppVersion();
+    app.favoriteIds = loadFavoriteIds();
     bindNav();
     bindFilters();
     bindActions();
