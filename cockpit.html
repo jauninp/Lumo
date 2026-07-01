@@ -41,6 +41,14 @@ body {
   color: var(--text);
 }
 
+body.focus-mode {
+  overflow: hidden;
+}
+
+body.focus-mode .app-shell {
+  display: none;
+}
+
 button,
 input,
 select,
@@ -583,19 +591,104 @@ button {
 
 .topbar-tools {
   display: grid;
-  grid-template-columns: minmax(180px, 300px) 112px 112px;
+  grid-template-columns: minmax(180px, 300px) 112px 112px 118px;
   gap: 8px;
   min-width: 0;
 }
 
+.topbar-tools.tasks-view {
+  grid-template-columns: minmax(180px, 300px) 112px 138px 118px;
+}
+
 .topbar-tools input,
-.topbar-tools select {
+.topbar-tools select,
+.topbar-check,
+.column-menu summary {
   height: 34px;
   min-width: 0;
   border: 1px solid var(--line-strong);
   border-radius: 7px;
   background: white;
   padding: 0 9px;
+  font-size: 13px;
+}
+
+.topbar-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.topbar-check input {
+  width: 13px;
+  height: 13px;
+}
+
+.topbar-check.hidden {
+  display: none;
+}
+
+.topbar-tools .hidden {
+  display: none;
+}
+
+.column-menu {
+  position: relative;
+  min-width: 0;
+}
+
+.column-menu summary {
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  list-style: none;
+}
+
+.column-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.column-menu[open] summary {
+  border-color: var(--accent);
+}
+
+.column-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 12;
+  display: grid;
+  gap: 2px;
+  width: 230px;
+  max-height: 360px;
+  overflow: auto;
+  padding: 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--panel);
+  box-shadow: 0 12px 28px rgba(30, 37, 34, 0.14);
+}
+
+.column-popover label {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  padding: 6px;
+  border-radius: 5px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.column-popover label:hover {
+  background: #eef3f0;
+}
+
+.column-popover input:disabled + span {
+  color: var(--muted);
 }
 
 .table-wrap {
@@ -629,6 +722,34 @@ button {
   background: #dcebe7;
 }
 
+.tabulator-row.row-color-yellow {
+  background: #fff7d8;
+}
+
+.tabulator-row.row-color-green {
+  background: #e4f3df;
+}
+
+.tabulator-row.row-color-blue {
+  background: #dfeefb;
+}
+
+.tabulator-row.row-color-red {
+  background: #f9e1dd;
+}
+
+.tabulator-row.row-color-violet {
+  background: #eee4fb;
+}
+
+.tabulator-row.row-color-yellow:hover,
+.tabulator-row.row-color-green:hover,
+.tabulator-row.row-color-blue:hover,
+.tabulator-row.row-color-red:hover,
+.tabulator-row.row-color-violet:hover {
+  filter: saturate(1.08);
+}
+
 .title-link {
   color: var(--accent-dark);
   font-weight: 750;
@@ -655,6 +776,103 @@ button {
 .row-done-button:hover {
   border-color: var(--accent);
   background: #dcebe7;
+}
+
+.drag-handle {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 22px;
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: grab;
+  user-select: none;
+}
+
+.drag-handle:hover {
+  background: #eef3f0;
+  color: var(--accent-dark);
+}
+
+.manual-order-button {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.manual-order-button:hover {
+  background: #dcebe7;
+  color: var(--accent-dark);
+}
+
+.short-id {
+  display: inline-grid;
+  place-items: center;
+  max-width: 76px;
+  padding: 2px 5px;
+  border: 1px solid #d7caee;
+  border-radius: 5px;
+  background: #f3eefb;
+  color: #5a3a8d;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.short-id.copied {
+  border-color: var(--accent);
+  background: #dcebe7;
+  color: var(--accent-dark);
+}
+
+.parent-link {
+  display: inline-grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  color: var(--text);
+}
+
+.parent-link .short-id {
+  max-width: none;
+}
+
+.parent-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.parent-state {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: #f5ead7;
+  color: var(--warn);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.parent-state.ready {
+  background: #dcebe7;
+  color: var(--accent-dark);
+}
+
+.parent-state.missing {
+  background: #f6ddd9;
+  color: var(--danger);
 }
 
 .tree-child-type {
@@ -889,6 +1107,49 @@ button {
   outline: none;
 }
 
+.row-color-prop {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.row-color-swatch {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  color: transparent;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.row-color-swatch.none {
+  color: var(--muted);
+  background: white;
+}
+
+.row-color-swatch.yellow {
+  background: #f3c94b;
+}
+
+.row-color-swatch.green {
+  background: #62a95f;
+}
+
+.row-color-swatch.blue {
+  background: #5c9fd8;
+}
+
+.row-color-swatch.red {
+  background: #d86b5f;
+}
+
+.row-color-swatch.violet {
+  background: #9270d8;
+}
+
 .prop-editor {
   width: 100%;
   min-width: 0;
@@ -943,6 +1204,81 @@ button {
   font-weight: 750;
 }
 
+.focus-page {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  min-height: 0;
+  background: var(--bg);
+}
+
+.focus-page[hidden] {
+  display: none;
+}
+
+.focus-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 0;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.focus-title {
+  min-width: 0;
+}
+
+.focus-title p,
+.focus-title h1 {
+  margin: 0;
+}
+
+.focus-title p {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.focus-title h1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 22px;
+}
+
+.focus-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.focus-status {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.focus-editor-shell {
+  min-height: 0;
+  padding: 18px;
+  overflow: hidden;
+}
+
+#focusMarkdownEditor {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  overflow: hidden;
+}
+
 @media (max-width: 1320px) {
   :root {
     --sidebar-width: 210px;
@@ -953,7 +1289,11 @@ button {
   }
 
   .topbar-tools {
-    grid-template-columns: minmax(170px, 260px) 104px 104px;
+    grid-template-columns: minmax(170px, 260px) 104px 104px 104px;
+  }
+
+  .topbar-tools.tasks-view {
+    grid-template-columns: minmax(170px, 260px) 104px 132px 104px;
   }
 
   .detail-pane {
@@ -1008,7 +1348,11 @@ button {
 
   .topbar-tools {
     width: 100%;
-    grid-template-columns: minmax(180px, 1fr) 104px 104px;
+    grid-template-columns: minmax(180px, 1fr) 104px 104px 104px;
+  }
+
+  .topbar-tools.tasks-view {
+    grid-template-columns: minmax(180px, 1fr) 104px 132px 104px;
   }
 
   .table-wrap {
@@ -1053,7 +1397,7 @@ button {
           <div class="brand-mark">C</div>
           <div>
             <h1>Cockpit</h1>
-            <p>Pages Markdown + YAML · <span id="appVersion">v0.4.0</span></p>
+            <p>Pages Markdown + YAML · <span id="appVersion">v0.5.0</span></p>
           </div>
         </div>
 
@@ -1133,6 +1477,14 @@ button {
             <select id="statusFilter" aria-label="Filtre statut">
               <option value="">Statuts</option>
             </select>
+            <label class="topbar-check" title="Masquer les taches qui dependent d'une tache encore ouverte">
+              <input id="hideBlockedChildren" type="checkbox">
+              <span>Masquer apres</span>
+            </label>
+            <details class="column-menu" id="columnMenu">
+              <summary>Colonnes</summary>
+              <div class="column-popover" id="columnPopover"></div>
+            </details>
           </div>
         </header>
 
@@ -1148,6 +1500,8 @@ button {
         </div>
       </aside>
     </div>
+
+    <main class="focus-page" id="focusPage" hidden></main>
 
     <dialog class="capture-dialog" id="captureDialog">
       <form method="dialog" class="capture-form">
@@ -1180,6 +1534,7 @@ button {
       <div class="page-toolbar">
         <button class="ghost-button" type="button" data-action="favorite">Epingler</button>
         <button class="ghost-button" type="button" data-action="duplicate">Dupliquer</button>
+        <button class="ghost-button" type="button" data-action="focus">Plein ecran</button>
         <button class="ghost-button danger" type="button" data-action="archive">Archiver</button>
         <span id="markdownStatus">Sauvegarde locale</span>
       </div>
@@ -1319,6 +1674,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   const TYPES = ["project", "task", "journal", "divers"];
   const LEGACY_TYPES = ["followup", "note"];
   const PRIORITIES = ["low", "medium", "high", "urgent"];
+  const ROW_COLORS = ["", "yellow", "green", "blue", "red", "violet"];
 
   function isoNow() {
     return new Date().toISOString();
@@ -1330,9 +1686,22 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return date.toISOString().slice(0, 10);
   }
 
-  function createId() {
-    if (crypto && crypto.randomUUID) return crypto.randomUUID();
-    return `page_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  function toBase36(value) {
+    return Number(value).toString(36).toUpperCase();
+  }
+
+  function createId(date = new Date()) {
+    const parts = [
+      toBase36(date.getMonth() + 1),
+      toBase36(date.getDate()),
+      toBase36(date.getHours()),
+      toBase36(date.getMinutes()),
+      toBase36(Math.floor(date.getSeconds() / 10)),
+    ];
+    for (let index = 0; index < 3; index += 1) {
+      parts.push(Math.floor(Math.random() * 36).toString(36).toUpperCase());
+    }
+    return parts.join("");
   }
 
   function slugify(value) {
@@ -1455,6 +1824,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       type: TYPES.includes(type) ? type : "task",
       status: validStatus,
       priority: props.priority || "medium",
+      sortOrder: props.sortOrder || "",
+      rowColor: ROW_COLORS.includes(props.rowColor) ? props.rowColor : "",
     };
 
     if (common.type === "project") {
@@ -1499,7 +1870,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function stringifyYaml(props) {
     const cleanProps = propsForType(props);
-    const order = ["type", "status", "priority", "project", "parent", "date", "dueDate", "followupDate", "reviewDate", "tags", "archivedAt"];
+    const order = ["type", "status", "priority", "sortOrder", "rowColor", "project", "parent", "date", "dueDate", "followupDate", "reviewDate", "tags", "archivedAt"];
     const keys = order.concat(Object.keys(cleanProps).filter((key) => !order.includes(key)).sort());
     return keys
       .filter((key) => cleanProps[key] !== undefined && cleanProps[key] !== "" && !(Array.isArray(cleanProps[key]) && cleanProps[key].length === 0))
@@ -1596,6 +1967,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       type,
       status,
       priority,
+      sortOrder: Number(props.sortOrder) || 0,
+      rowColor: ROW_COLORS.includes(props.rowColor) ? props.rowColor : "",
       project: props.project || "",
       parent: props.parent || "",
       date: props.date || "",
@@ -1761,6 +2134,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     STATUSES,
     TYPES,
     PRIORITIES,
+    ROW_COLORS,
+    createId,
     createItem,
     normalizeItem: normalizeDocument,
     normalizeDocument,
@@ -2051,6 +2426,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
+  const COLUMN_PREFS_KEY = "tabulator-cockpit-column-visibility";
+
   const viewMeta = {
     today: ["Aujourd'hui", "Pages dont les proprietes demandent une action."],
     inbox: ["Inbox", "Captures brutes et pages encore peu clarifiees."],
@@ -2095,19 +2472,50 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return cell.getRow().getData().projectTitle || "";
   }
 
+  function parentInfoFormatter(cell) {
+    const data = cell.getRow().getData();
+    if (data.type !== "task" || !data.parent) return "";
+    const parent = data.parentItem;
+    if (!parent) {
+      return `<span class="parent-state missing">Parent introuvable</span> <button class="short-id" type="button" data-copy-id="${data.parent}" title="Copier l'ID">${data.parent}</button>`;
+    }
+    const ready = parent.status === "done" || parent.status === "archived" || parent.archivedAt;
+    const label = ready ? "OK" : "Bloquee";
+    return `<span class="parent-link">
+      <button class="short-id" type="button" data-copy-id="${parent.id}" title="Copier l'ID">${parent.id}</button>
+      <a href="#" class="title-link parent-title" data-open-id="${parent.id}">${parent.title}</a>
+    </span><span class="parent-state${ready ? " ready" : ""}">${label}</span>`;
+  }
+
+  function idFormatter(cell) {
+    const value = cell.getValue() || "";
+    return `<button class="short-id" type="button" data-copy-id="${value}" title="Copier l'ID">${value}</button>`;
+  }
+
   function doneActionFormatter(cell) {
     const data = cell.getRow().getData();
     if (data.type !== "task" || !window.CockpitRules.isOpen(data)) return "";
     return `<button class="row-done-button" type="button" data-done-id="${data.id}" title="Marquer terminee">OK</button>`;
   }
 
-  function baseColumns(app) {
-    return [
+  function dragFormatter() {
+    return "<span class='drag-handle' title='Deplacer'>::</span>";
+  }
+
+  function manualOrderHeaderFormatter() {
+    return "<button class='manual-order-button' type='button' data-action='manual-order' title='Revenir a l ordre perso'>::</button>";
+  }
+
+  function baseColumns(app, options = {}) {
+    const columns = [
+      { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
       { title: "", field: "_done", width: 42, hozAlign: "center", headerSort: false, formatter: doneActionFormatter },
-      { title: "Type", field: "type", width: 92, responsive: 3, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
+      { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
+      options.showType === false ? null : { title: "Type", field: "type", width: 92, responsive: 3, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
       { title: "Titre", field: "title", minWidth: 260, formatter: titleFormatter },
       { title: "Statut", field: "status", width: 104, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.STATUSES } },
       { title: "Priorite", field: "priority", width: 96, responsive: 2, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.PRIORITIES } },
+      { title: "Apres", field: "parentInfo", minWidth: 210, responsive: 1, formatter: parentInfoFormatter },
       {
         title: "Projet",
         field: "project",
@@ -2122,6 +2530,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       { title: "Revue", field: "reviewDate", width: 108, responsive: 2, sorter: "date", editor: "date" },
       { title: "Tags", field: "tags", minWidth: 120, responsive: 3, formatter: tagFormatter, editor: "input" },
     ];
+    return columns.filter(Boolean);
   }
 
   function progressAgeFormatter(cell) {
@@ -2157,6 +2566,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function projectColumns() {
     return [
+      { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
+      { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
       { title: "Projet / element lie", field: "title", minWidth: 310, formatter: projectTitleFormatter },
       {
         title: "Statut",
@@ -2181,6 +2592,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function journalColumns(app) {
     return [
+      { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
+      { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
       { title: "Date", field: "journalDate", width: 118, sorter: "date" },
       { title: "Titre", field: "title", minWidth: 320, formatter: titleFormatter },
       {
@@ -2232,8 +2645,35 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return items.filter(window.CockpitRules.isOpen);
   }
 
+  function decorateParentInfo(items) {
+    const byId = new Map(items.map((item) => [item.id, item]));
+    return items.map((item) => {
+      if (!item.parent) return item;
+      const parentItem = byId.get(item.parent) || null;
+      return {
+        ...item,
+        parentItem,
+        parentInfo: parentItem ? `${parentItem.id} ${parentItem.title} ${parentItem.status}` : item.parent,
+      };
+    });
+  }
+
+  function manualOrderSort(rows) {
+    return [...rows].sort((a, b) => {
+      const aOrder = Number(a.sortOrder) || Number.MAX_SAFE_INTEGER;
+      const bOrder = Number(b.sortOrder) || Number.MAX_SAFE_INTEGER;
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+    });
+  }
+
+  function parentIsBlocking(item) {
+    if (!item.parent || !item.parentItem) return false;
+    return window.CockpitRules.isOpen(item.parentItem);
+  }
+
   function filterForView(view, rawItems) {
-    const items = window.CockpitRules.decorateItems(rawItems);
+    const items = decorateParentInfo(window.CockpitRules.decorateItems(rawItems));
     const open = openItems(items);
     if (view === "today") {
       return open.filter(
@@ -2252,7 +2692,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return open.filter((item) => issueIds.has(item.id) || item.status === "dormant" || window.CockpitRules.isDueOrPast(item.followupDate));
     }
     if (view === "projects") {
-      return open
+      return manualOrderSort(
+        open
         .filter((item) => item.type === "project")
         .map((project) => {
           const children = open.filter((item) => item.projectId === project.id);
@@ -2263,18 +2704,19 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
             lastProgressDate: progress.date,
             lastProgressContext: progress.context || "Aucun contexte d'avancement",
             progressAgeDays: progress.days,
-            _children: children.sort((a, b) => {
+            _children: manualOrderSort(children).sort((a, b) => {
               const order = { task: 1, journal: 2, divers: 3 };
               return (order[a.type] || 9) - (order[b.type] || 9) || a.title.localeCompare(b.title, "fr");
             }),
           };
-        });
+        })
+      );
     }
-    if (view === "tasks") return open.filter((item) => item.type === "task");
+    if (view === "tasks") {
+      return manualOrderSort(open.filter((item) => item.type === "task" && (!window.CockpitApp.filters.hideBlockedChildren || !parentIsBlocking(item))));
+    }
     if (view === "completed") {
-      return items
-        .filter((item) => item.type === "task" && (item.status === "done" || item.status === "archived" || item.archivedAt))
-        .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+      return manualOrderSort(items.filter((item) => item.type === "task" && (item.status === "done" || item.status === "archived" || item.archivedAt)));
     }
     if (view === "journal") {
       return open
@@ -2286,14 +2728,14 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         })
         .sort((a, b) => b.journalDate.localeCompare(a.journalDate));
     }
-    if (view === "divers") return open.filter((item) => item.type === "divers");
+    if (view === "divers") return manualOrderSort(open.filter((item) => item.type === "divers"));
     if (view === "calendar") {
       return open.filter((item) => {
         if (item.type === "journal") return window.CockpitModels.journalDate(item) === window.CockpitApp.calendarDate;
         return [item.dueDate, item.followupDate, item.reviewDate].includes(window.CockpitApp.calendarDate);
       });
     }
-    return open;
+    return manualOrderSort(open);
   }
 
   function controlData(items) {
@@ -2311,9 +2753,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function applySearchAndFilters(app, rows) {
     const search = app.filters.search.trim().toLowerCase();
+    const typeFilterApplies = !["tasks", "completed"].includes(app.currentView);
     return rows.filter((row) => {
       const item = row.itemId ? window.CockpitModels.parseDocument(app.items.find((candidate) => candidate.id === row.itemId) || row) : row;
-      if (app.filters.type && item.type !== app.filters.type) return false;
+      if (typeFilterApplies && app.filters.type && item.type !== app.filters.type) return false;
       if (app.filters.status && item.status !== app.filters.status) return false;
       if (!search) return true;
       return [item.searchText, row.reason, row.action].join(" ").toLowerCase().includes(search);
@@ -2329,6 +2772,97 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const [title, subtitle] = viewMeta[view];
     document.getElementById("viewTitle").textContent = view === "calendar" ? app.calendarDate : title;
     document.getElementById("viewSubtitle").textContent = subtitle;
+    document.getElementById("typeFilter")?.classList.toggle("hidden", ["tasks", "completed"].includes(view));
+    document.querySelector(".topbar-check")?.classList.toggle("hidden", view !== "tasks");
+    document.querySelector(".topbar-tools")?.classList.toggle("tasks-view", view === "tasks");
+  }
+
+  function loadColumnPrefs() {
+    try {
+      const prefs = JSON.parse(localStorage.getItem(COLUMN_PREFS_KEY) || "{}");
+      return prefs && typeof prefs === "object" ? prefs : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveColumnPrefs(prefs) {
+    localStorage.setItem(COLUMN_PREFS_KEY, JSON.stringify(prefs));
+  }
+
+  function hiddenColumns(view) {
+    const prefs = loadColumnPrefs();
+    return new Set(Array.isArray(prefs[view]) ? prefs[view] : []);
+  }
+
+  function setColumnHidden(view, field, hidden) {
+    const prefs = loadColumnPrefs();
+    const fields = new Set(Array.isArray(prefs[view]) ? prefs[view] : []);
+    if (hidden) fields.add(field);
+    else fields.delete(field);
+    prefs[view] = [...fields];
+    saveColumnPrefs(prefs);
+  }
+
+  function applyColumnVisibility(view, columns) {
+    const hidden = hiddenColumns(view);
+    return columns.map((column) => ({
+      ...column,
+      visible: column.field && column.field !== "title" ? !hidden.has(column.field) : column.visible,
+    }));
+  }
+
+  function renderColumnMenu(app, columns) {
+    const popover = document.getElementById("columnPopover");
+    if (!popover) return;
+    const hidden = hiddenColumns(app.currentView);
+    const seen = new Set();
+    popover.innerHTML = "";
+    columns.forEach((column) => {
+      if (!column.field || seen.has(column.field)) return;
+      seen.add(column.field);
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = column.field === "title" || !hidden.has(column.field);
+      input.disabled = column.field === "title";
+      input.addEventListener("change", () => {
+        setColumnHidden(app.currentView, column.field, !input.checked);
+        app.refresh();
+      });
+      const text = document.createElement("span");
+      text.textContent = column.title || column.field;
+      label.append(input, text);
+      popover.append(label);
+    });
+  }
+
+  function columnsForView(app) {
+    if (app.currentView === "control") return controlColumns();
+    if (app.currentView === "projects") return projectColumns();
+    if (app.currentView === "journal") return journalColumns(app);
+    return baseColumns(app, { showType: !["tasks", "completed"].includes(app.currentView) });
+  }
+
+  function viewAllowsManualOrder(view) {
+    return !["control", "calendar", "journal"].includes(view);
+  }
+
+  async function persistVisibleOrder(app) {
+    if (!app.table) return;
+    const rows = app.table
+      .getRows()
+      .map((row) => row.getData())
+      .filter((row) => row.id && app.items.some((item) => item.id === row.id));
+    const updates = rows.map((row, index) => app.updateProps(row.id, { sortOrder: String(index + 1) }, { quiet: true }));
+    await Promise.all(updates);
+    app.refresh();
+  }
+
+  function restoreManualOrder(app) {
+    if (!app.table) return;
+    if (typeof app.table.clearSort === "function") app.table.clearSort();
+    app.table.replaceData(buildView(app));
   }
 
   function configureTable(app) {
@@ -2337,25 +2871,28 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return;
     }
 
+    const rawColumns = columnsForView(app);
+    renderColumnMenu(app, rawColumns);
+
     app.table = new window.Tabulator("#mainTable", {
       layout: "fitColumns",
       responsiveLayout: "hide",
       height: "100%",
       placeholder: "Aucune page pour cette vue",
       selectableRows: 1,
+      movableRows: viewAllowsManualOrder(app.currentView),
       dataTree: app.currentView === "projects",
       dataTreeStartExpanded: false,
       groupBy: app.currentView === "journal" ? "journalGroup" : false,
       groupStartOpen: true,
       groupHeader: (value, count) => `${String(value).split("|").slice(1).join("|")} · ${count}`,
-      columns:
-        app.currentView === "control"
-          ? controlColumns()
-          : app.currentView === "projects"
-            ? projectColumns()
-            : app.currentView === "journal"
-              ? journalColumns(app)
-              : baseColumns(app),
+      rowFormatter: (row) => {
+        const color = row.getData().rowColor || "";
+        const element = row.getElement();
+        element.classList.remove("row-color-yellow", "row-color-green", "row-color-blue", "row-color-red", "row-color-violet");
+        if (color) element.classList.add(`row-color-${color}`);
+      },
+      columns: applyColumnVisibility(app.currentView, rawColumns),
       data: buildView(app),
     });
 
@@ -2369,7 +2906,27 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       app.updateProps(doc.id, { [field]: value });
     });
 
+    app.table.on("rowMoved", () => {
+      persistVisibleOrder(app);
+    });
+
     document.getElementById("mainTable").onclick = (event) => {
+      const manualOrderButton = event.target.closest("[data-action='manual-order']");
+      if (manualOrderButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        restoreManualOrder(app);
+        return;
+      }
+      const copyButton = event.target.closest("[data-copy-id]");
+      if (copyButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        navigator.clipboard?.writeText(copyButton.dataset.copyId);
+        copyButton.classList.add("copied");
+        setTimeout(() => copyButton.classList.remove("copied"), 650);
+        return;
+      }
       const doneButton = event.target.closest("[data-done-id]");
       if (doneButton) {
         event.preventDefault();
@@ -2419,11 +2976,24 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       .replaceAll("'", "&#039;");
   }
 
+  function rowColorMeta(value) {
+    return (
+      {
+        "": { label: "Aucune", swatch: "□", className: "none" },
+        yellow: { label: "Jaune", swatch: "■", className: "yellow" },
+        green: { label: "Vert", swatch: "■", className: "green" },
+        blue: { label: "Bleu", swatch: "■", className: "blue" },
+        red: { label: "Rouge", swatch: "■", className: "red" },
+        violet: { label: "Violet", swatch: "■", className: "violet" },
+      }[value || ""] || { label: value || "Aucune", swatch: "□", className: "none" }
+    );
+  }
+
   function propertyKeys(item) {
-    if (item.type === "project") return ["type", "status", "priority", "reviewDate", "tags", "slug"];
-    if (item.type === "journal") return ["type", "status", "project", "tags", "slug"];
-    if (item.type === "divers") return ["type", "status", "project", "parent", "tags", "slug"];
-    return ["type", "status", "priority", "project", "parent", "dueDate", "followupDate", "reviewDate", "tags", "slug"];
+    if (item.type === "project") return ["id", "type", "status", "priority", "rowColor", "reviewDate", "tags", "slug"];
+    if (item.type === "journal") return ["id", "type", "status", "rowColor", "project", "tags", "slug"];
+    if (item.type === "divers") return ["id", "type", "status", "rowColor", "project", "parent", "tags", "slug"];
+    return ["id", "type", "status", "priority", "rowColor", "project", "parent", "dueDate", "followupDate", "reviewDate", "tags", "slug"];
   }
 
   function propertyDisplayValue(app, item, key) {
@@ -2442,13 +3012,20 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return `<div class="prop-list">${keys
       .map((key) => {
         const value = propertyDisplayValue(app, item, key);
-        const editable = key !== "slug";
+        const editable = !["id", "slug"].includes(key);
+        const display =
+          key === "rowColor"
+            ? (() => {
+                const meta = rowColorMeta(value);
+                return `<span class="row-color-prop"><span class="row-color-swatch ${meta.className}">${meta.swatch}</span><span>${escapeHtml(meta.label)}</span></span>`;
+              })()
+            : escapeHtml(value || "-");
         return `<div class="prop-row">
           <div class="prop-key">${key}</div>
           ${
             editable
-              ? `<button type="button" class="prop-value prop-edit-trigger" data-prop-key="${key}">${escapeHtml(value || "-")}</button>`
-              : `<div class="prop-value">${escapeHtml(value || "-")}</div>`
+              ? `<button type="button" class="prop-value prop-edit-trigger" data-prop-key="${key}">${display}</button>`
+              : `<div class="prop-value">${display}</div>`
           }
         </div>`;
       })
@@ -2484,6 +3061,15 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return values.map((value) => ({ value, label: value }));
     }
     if (key === "priority") return window.CockpitModels.PRIORITIES.map((value) => ({ value, label: value }));
+    if (key === "rowColor") {
+      return [
+        { value: "", label: `${rowColorMeta("").swatch} ${rowColorMeta("").label}` },
+        ...window.CockpitModels.ROW_COLORS.filter(Boolean).map((value) => {
+          const meta = rowColorMeta(value);
+          return { value, label: `${meta.swatch} ${meta.label}` };
+        }),
+      ];
+    }
     if (key === "project") {
       return [
         { value: "", label: "Sans projet" },
@@ -2627,6 +3213,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function bindActions(app, doc) {
+    const parsedDoc = window.CockpitModels.parseDocument(doc);
     const favoriteButton = document.querySelector("[data-action='favorite']");
     if (favoriteButton) {
       const syncFavoriteButton = () => {
@@ -2647,11 +3234,17 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       renderDetail(app);
     });
     document.querySelector("[data-action='duplicate']").addEventListener("click", () => {
-      const parsed = window.CockpitModels.parseDocument(doc);
       app.addItem({
-        markdown: doc.markdown.replace(/^#\s+(.+)$/m, `# Copie - ${parsed.title}`),
+        markdown: doc.markdown.replace(/^#\s+(.+)$/m, `# Copie - ${parsedDoc.title}`),
       });
     });
+    const focusButton = document.querySelector("[data-action='focus']");
+    if (focusButton) {
+      focusButton.hidden = parsedDoc.type !== "project";
+      focusButton.addEventListener("click", () => {
+        window.open(window.CockpitFocus.focusUrlFor(doc.id), "_blank", "noopener");
+      });
+    }
     document.querySelector("[data-action='archive']").addEventListener("click", () => {
       app.updateProps(doc.id, { status: "archived", archivedAt: window.CockpitModels.isoNow().slice(0, 10) });
     });
@@ -2712,6 +3305,113 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
+  let focusBinding = null;
+  let focusSaveTimer = null;
+
+  function focusUrlFor(id) {
+    const url = new URL(window.location.href);
+    url.search = "";
+    url.hash = "";
+    url.searchParams.set("project", id);
+    return url.toString();
+  }
+
+  function requestedFocusId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("project") || params.get("page") || "";
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function renderMissingFocus(id) {
+    document.body.classList.add("focus-mode");
+    const page = document.getElementById("focusPage");
+    page.hidden = false;
+    page.innerHTML = `
+      <header class="focus-header">
+        <div class="focus-title">
+          <p>Focus</p>
+          <h1>Page introuvable</h1>
+        </div>
+        <div class="focus-actions">
+          <span class="focus-status">${escapeHtml(id)}</span>
+          <button class="ghost-button" type="button" data-focus-close>Retour cockpit</button>
+        </div>
+      </header>
+      <section class="focus-editor-shell">
+        <div class="empty-linked">Cette page n'existe plus dans la base locale.</div>
+      </section>
+    `;
+    page.querySelector("[data-focus-close]").addEventListener("click", () => {
+      window.location.href = window.location.pathname;
+    });
+  }
+
+  function render(app, id) {
+    const doc = app.items.find((item) => item.id === id);
+    if (!doc) {
+      renderMissingFocus(id);
+      return true;
+    }
+    const parsed = window.CockpitModels.parseDocument(doc);
+    document.title = `${parsed.title} - Focus`;
+    document.body.classList.add("focus-mode");
+    const page = document.getElementById("focusPage");
+    page.hidden = false;
+    page.innerHTML = `
+      <header class="focus-header">
+        <div class="focus-title">
+          <p>${escapeHtml(parsed.type)} · ${escapeHtml(parsed.status)} · ${escapeHtml(parsed.id)}</p>
+          <h1>${escapeHtml(parsed.title)}</h1>
+        </div>
+        <div class="focus-actions">
+          <span class="focus-status" id="focusStatus">Sauvegarde locale</span>
+          <button class="ghost-button" type="button" data-focus-close>Retour cockpit</button>
+        </div>
+      </header>
+      <section class="focus-editor-shell">
+        <div id="focusMarkdownEditor"></div>
+      </section>
+    `;
+
+    page.querySelector("[data-focus-close]").addEventListener("click", () => {
+      window.location.href = window.location.pathname;
+    });
+
+    if (focusBinding) focusBinding.destroy();
+    const host = document.getElementById("focusMarkdownEditor");
+    const status = document.getElementById("focusStatus");
+    focusBinding = window.CockpitMarkdown.bindMarkdownEditor(host, parsed.body, (value) => {
+      clearTimeout(focusSaveTimer);
+      status.textContent = "Sauvegarde...";
+      focusSaveTimer = setTimeout(async () => {
+        const current = app.items.find((item) => item.id === doc.id);
+        if (!current) return;
+        const split = window.CockpitModels.splitMarkdown(current.markdown);
+        const markdown = window.CockpitModels.composeMarkdown(split.props, value);
+        await app.updateMarkdown(doc.id, markdown, { quiet: true });
+        status.textContent = "Sauvegarde locale";
+      }, 350);
+    });
+    return true;
+  }
+
+  window.CockpitFocus = {
+    focusUrlFor,
+    requestedFocusId,
+    render,
+  };
+})();
+
+
+(function () {
   function download(filename, content, type) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
@@ -2751,8 +3451,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
-  const APP_VERSION = "0.4.0";
+  const APP_VERSION = "0.5.0";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
+  const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
 
   const app = {
     items: [],
@@ -2765,6 +3466,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       search: "",
       type: "",
       status: "",
+      hideBlockedChildren: true,
     },
 
     async addItem(fields, options = {}) {
@@ -2961,6 +3663,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     });
     statusFilter.addEventListener("change", (event) => {
       app.filters.status = event.target.value;
+      app.refresh();
+    });
+    const hideBlockedChildren = document.getElementById("hideBlockedChildren");
+    hideBlockedChildren.checked = app.filters.hideBlockedChildren;
+    hideBlockedChildren.addEventListener("change", (event) => {
+      app.filters.hideBlockedChildren = event.target.checked;
+      localStorage.setItem(HIDE_BLOCKED_CHILDREN_KEY, event.target.checked ? "1" : "0");
       app.refresh();
     });
   }
@@ -3345,9 +4054,57 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return items.map((item) => savedById.get(item.id) || item);
   }
 
+  function hasShortId(id) {
+    return /^[0-9A-Z]{8,9}$/.test(String(id || ""));
+  }
+
+  function rewriteRelationId(value, idMap) {
+    return idMap.get(value) || value || "";
+  }
+
+  async function migrateAllIdsToShortIds(items) {
+    const idMap = new Map();
+    const used = new Set();
+    let changed = false;
+
+    items.forEach((item) => {
+      if (hasShortId(item.id) && !used.has(item.id)) {
+        idMap.set(item.id, item.id);
+        used.add(item.id);
+        return;
+      }
+      let nextId = window.CockpitModels.createId();
+      while (used.has(nextId)) nextId = window.CockpitModels.createId();
+      idMap.set(item.id, nextId);
+      used.add(nextId);
+      changed = true;
+    });
+
+    if (!changed) return items;
+
+    const migrated = items.map((item) => {
+      const parsed = window.CockpitModels.parseDocument(item);
+      const patch = {};
+      const nextProject = rewriteRelationId(parsed.project, idMap);
+      const nextParent = rewriteRelationId(parsed.parent, idMap);
+      if (nextProject !== parsed.project) patch.project = nextProject;
+      if (nextParent !== parsed.parent) patch.parent = nextParent;
+      const next = Object.keys(patch).length ? window.CockpitModels.updateDocumentProps(item, patch) : item;
+      return {
+        ...next,
+        id: idMap.get(item.id),
+      };
+    });
+
+    app.favoriteIds = [...new Set(app.favoriteIds.map((id) => rewriteRelationId(id, idMap)).filter(Boolean))];
+    saveFavoriteIds(app.favoriteIds);
+    return window.CockpitStorage.replaceAllItems(migrated);
+  }
+
   async function init() {
     setAppVersion();
     app.favoriteIds = loadFavoriteIds();
+    app.filters.hideBlockedChildren = localStorage.getItem(HIDE_BLOCKED_CHILDREN_KEY) !== "0";
     bindNav();
     bindFilters();
     bindActions();
@@ -3356,7 +4113,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (!app.items.length) {
       app.items = await window.CockpitStorage.replaceAllItems(window.CockpitModels.seedItems());
     }
+    app.items = await migrateAllIdsToShortIds(app.items);
     app.items = await canonicalizeProjectRelations(app.items);
+    const focusId = window.CockpitFocus?.requestedFocusId();
+    if (focusId) {
+      window.CockpitFocus.render(app, focusId);
+      return;
+    }
     app.selectedItemId = null;
     app.refresh();
   }
