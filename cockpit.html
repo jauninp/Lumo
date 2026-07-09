@@ -165,6 +165,10 @@ button {
 }
 
 .nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   width: 100%;
   padding: 8px 9px;
   border: 1px solid transparent;
@@ -173,6 +177,24 @@ button {
   color: var(--text);
   font-size: 12.5px;
   text-align: left;
+}
+
+.nav-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #f6ddd9;
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.nav-count.empty {
+  background: #e7e9ec;
+  color: var(--muted);
 }
 
 .nav-item.active {
@@ -591,13 +613,13 @@ button {
 
 .topbar-tools {
   display: grid;
-  grid-template-columns: minmax(180px, 300px) 112px 112px 118px;
+  grid-template-columns: minmax(180px, 300px) 112px 112px auto 138px 118px;
   gap: 8px;
   min-width: 0;
 }
 
 .topbar-tools.tasks-view {
-  grid-template-columns: minmax(180px, 300px) 112px 138px 118px;
+  grid-template-columns: minmax(180px, 300px) 112px auto 138px 118px;
 }
 
 .topbar-tools input,
@@ -625,6 +647,31 @@ button {
 .topbar-check input {
   width: 13px;
   height: 13px;
+}
+
+.quick-task-filters {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  height: 34px;
+}
+
+.quick-filter-button {
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: white;
+  color: var(--text);
+  padding: 0 10px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.quick-filter-button.active {
+  border-color: var(--accent);
+  background: #e5f0ed;
+  color: var(--accent-dark);
+  font-weight: 750;
 }
 
 .topbar-check.hidden {
@@ -819,12 +866,12 @@ button {
   place-items: center;
   max-width: 76px;
   padding: 2px 5px;
-  border: 1px solid #d7caee;
+  border: 1px solid #d7ddd8;
   border-radius: 5px;
-  background: #f3eefb;
-  color: #5a3a8d;
+  background: #f5f7f5;
+  color: var(--muted);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.2;
 }
 
@@ -883,6 +930,40 @@ button {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.page-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #eef3f0;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.page-type.project {
+  background: #dcebe7;
+  color: var(--accent-dark);
+}
+
+.page-type.task {
+  background: #f5ead7;
+  color: var(--warn);
+}
+
+.page-type.journal {
+  background: #e7e9ec;
+  color: #45505a;
+}
+
+.page-type.divers {
+  background: #edf0ed;
+  color: var(--muted);
 }
 
 .pill {
@@ -984,6 +1065,7 @@ button {
 .page-toolbar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 10px 20px;
   border-bottom: 1px solid var(--line);
@@ -1105,6 +1187,29 @@ button {
   border-color: var(--line);
   background: white;
   outline: none;
+}
+
+.quick-date-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quick-date-buttons button {
+  min-height: 28px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: white;
+  color: var(--text);
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.quick-date-buttons button:hover {
+  border-color: var(--accent);
+  background: #e5f0ed;
+  color: var(--accent-dark);
 }
 
 .row-color-prop {
@@ -1254,6 +1359,8 @@ button {
 .focus-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
   white-space: nowrap;
 }
@@ -1279,6 +1386,126 @@ button {
   overflow: hidden;
 }
 
+.undo-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 260px;
+  max-width: min(420px, calc(100vw - 36px));
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #1d2522;
+  color: white;
+  box-shadow: var(--shadow);
+  font-size: 13px;
+}
+
+.undo-toast[hidden] {
+  display: none;
+}
+
+.undo-toast span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.undo-toast button {
+  margin-left: auto;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.plan-next-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: rgba(29, 37, 34, 0.24);
+}
+
+.plan-next-dialog {
+  display: grid;
+  gap: 14px;
+  width: min(520px, calc(100vw - 48px));
+  padding: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.plan-next-head,
+.plan-next-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.plan-next-head strong,
+.plan-next-head span,
+.plan-next-label,
+.plan-next-dialog label span {
+  display: block;
+}
+
+.plan-next-head span,
+.plan-next-label,
+.plan-next-dialog label span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.plan-next-intents {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.plan-next-intents button {
+  min-height: 32px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: white;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.plan-next-intents button.active,
+.quick-date-buttons button.active {
+  border-color: var(--accent);
+  background: #e5f0ed;
+  color: var(--accent-dark);
+}
+
+.plan-next-dialog label {
+  display: grid;
+  gap: 5px;
+}
+
+.plan-next-dialog input {
+  height: 34px;
+  min-width: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: white;
+  padding: 0 9px;
+}
+
 @media (max-width: 1320px) {
   :root {
     --sidebar-width: 210px;
@@ -1289,11 +1516,11 @@ button {
   }
 
   .topbar-tools {
-    grid-template-columns: minmax(170px, 260px) 104px 104px 104px;
+    grid-template-columns: minmax(170px, 260px) 104px 104px auto 132px 104px;
   }
 
   .topbar-tools.tasks-view {
-    grid-template-columns: minmax(170px, 260px) 104px 132px 104px;
+    grid-template-columns: minmax(170px, 260px) 104px auto 132px 104px;
   }
 
   .detail-pane {
@@ -1348,11 +1575,11 @@ button {
 
   .topbar-tools {
     width: 100%;
-    grid-template-columns: minmax(180px, 1fr) 104px 104px 104px;
+    grid-template-columns: minmax(180px, 1fr) 104px 104px auto 132px 104px;
   }
 
   .topbar-tools.tasks-view {
-    grid-template-columns: minmax(180px, 1fr) 104px 132px 104px;
+    grid-template-columns: minmax(180px, 1fr) 104px auto 132px 104px;
   }
 
   .table-wrap {
@@ -1397,7 +1624,7 @@ button {
           <div class="brand-mark">C</div>
           <div>
             <h1>Cockpit</h1>
-            <p>Pages Markdown + YAML · <span id="appVersion">v0.5.0</span></p>
+            <p>Pages Markdown + YAML · <span id="appVersion">v0.5.6</span></p>
           </div>
         </div>
 
@@ -1408,9 +1635,9 @@ button {
 
         <div class="sidebar-scroll">
           <nav class="nav-list" aria-label="Vues">
-            <button class="nav-item active" type="button" data-view="today">Aujourd'hui</button>
+            <button class="nav-item" type="button" data-view="today">Aujourd'hui</button>
             <button class="nav-item" type="button" data-view="inbox">Inbox</button>
-            <button class="nav-item" type="button" data-view="review">A revoir</button>
+            <button class="nav-item active" type="button" data-view="review"><span>A revoir</span><span class="nav-count" id="reviewCount">0</span></button>
             <button class="nav-item" type="button" data-view="projects">Projets</button>
             <button class="nav-item" type="button" data-view="tasks">Taches</button>
             <button class="nav-item" type="button" data-view="completed">Terminees</button>
@@ -1462,8 +1689,8 @@ button {
 
         <header class="topbar">
           <div>
-            <h2 id="viewTitle">Aujourd'hui</h2>
-            <p id="viewSubtitle">Pages dont les proprietes demandent une action.</p>
+            <h2 id="viewTitle">A revoir</h2>
+            <p id="viewSubtitle">Ce qui doit revenir maintenant, etre clarifie ou ne pas etre oublie.</p>
           </div>
           <div class="topbar-tools">
             <input id="searchInput" type="search" placeholder="Rechercher...">
@@ -1477,6 +1704,10 @@ button {
             <select id="statusFilter" aria-label="Filtre statut">
               <option value="">Statuts</option>
             </select>
+            <div class="quick-task-filters hidden" id="quickTaskFilters" aria-label="Filtres rapides taches">
+              <button class="quick-filter-button" type="button" data-task-filter="past">Passees</button>
+              <button class="quick-filter-button" type="button" data-task-filter="next">Next</button>
+            </div>
             <label class="topbar-check" title="Masquer les taches qui dependent d'une tache encore ouverte">
               <input id="hideBlockedChildren" type="checkbox">
               <span>Masquer apres</span>
@@ -1534,8 +1765,11 @@ button {
       <div class="page-toolbar">
         <button class="ghost-button" type="button" data-action="favorite">Epingler</button>
         <button class="ghost-button" type="button" data-action="duplicate">Dupliquer</button>
+        <button class="ghost-button" type="button" data-action="insert-date">Date du jour</button>
+        <button class="ghost-button" type="button" data-action="plan-next">Planifier la suite</button>
         <button class="ghost-button" type="button" data-action="focus">Plein ecran</button>
         <button class="ghost-button danger" type="button" data-action="archive">Archiver</button>
+        <button class="ghost-button danger" type="button" data-action="delete">Supprimer</button>
         <span id="markdownStatus">Sauvegarde locale</span>
       </div>
       <div class="detail-content">
@@ -1686,6 +1920,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return date.toISOString().slice(0, 10);
   }
 
+  function todayDisplayDate(offsetDays = 0) {
+    const [year, month, day] = todayIsoDate(offsetDays).split("-");
+    return `${day}.${month}.${year}`;
+  }
+
   function toBase36(value) {
     return Number(value).toString(36).toUpperCase();
   }
@@ -1779,10 +2018,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       projectName: projects[0] || "",
       tags: contexts,
       priority,
-      status: values.status || explicitStatus || (values.waiting || values.followup || values.rel ? "waiting" : values.blocked ? "blocked" : "inbox"),
+      status: values.status || explicitStatus || (values.waiting || values.rel || values.relance || values.followup ? "waiting" : values.blocked ? "blocked" : "inbox"),
       dueDate: values.due || "",
-      followupDate: values.followup || values.rel || "",
-      reviewDate: values.review || values.rev || "",
+      followupDate: values.rel || values.relance || values.followup || "",
+      waiting: values.waiting || "",
     };
   }
 
@@ -1820,6 +2059,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   function propsForType(props) {
     const type = props.type === "note" ? "divers" : props.type === "followup" ? "task" : props.type;
     const validStatus = STATUSES.includes(props.status) ? props.status : "active";
+    const due = props.due || props.dueDate || "";
+    const rel = props.rel || props.relance || props.followup || props.followupDate || "";
+    const waiting = props.waiting || "";
     const common = {
       type: TYPES.includes(type) ? type : "task",
       status: validStatus,
@@ -1832,7 +2074,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       if (["inbox", "next"].includes(common.status)) common.status = "active";
       return {
         ...common,
-        reviewDate: props.reviewDate || "",
+        rel,
         tags: normalizeTags(props.tags),
         archivedAt: props.archivedAt || "",
       };
@@ -1860,9 +2102,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       ...common,
       project: props.project || "",
       parent: props.parent || "",
-      dueDate: props.dueDate || "",
-      followupDate: props.followupDate || "",
-      reviewDate: props.reviewDate || "",
+      due,
+      rel,
+      waiting,
       tags: normalizeTags(props.tags),
       archivedAt: props.archivedAt || "",
     };
@@ -1870,7 +2112,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function stringifyYaml(props) {
     const cleanProps = propsForType(props);
-    const order = ["type", "status", "priority", "sortOrder", "rowColor", "project", "parent", "date", "dueDate", "followupDate", "reviewDate", "tags", "archivedAt"];
+    const order = ["type", "status", "priority", "sortOrder", "rowColor", "project", "parent", "date", "due", "rel", "waiting", "tags", "archivedAt"];
     const keys = order.concat(Object.keys(cleanProps).filter((key) => !order.includes(key)).sort());
     return keys
       .filter((key) => cleanProps[key] !== undefined && cleanProps[key] !== "" && !(Array.isArray(cleanProps[key]) && cleanProps[key].length === 0))
@@ -1924,9 +2166,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       project: raw.project || raw.projectId || "",
       parent: raw.parent || raw.parentId || "",
       date: raw.date || "",
-      dueDate: raw.dueDate || "",
-      followupDate: raw.followupDate || "",
-      reviewDate: raw.reviewDate || "",
+      due: raw.due || raw.dueDate || "",
+      rel: raw.rel || raw.relance || raw.followup || raw.followupDate || "",
+      waiting: raw.waiting || "",
       tags: normalizeTags(raw.tags),
       archivedAt: raw.archivedAt || "",
     };
@@ -1972,15 +2214,15 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       project: props.project || "",
       parent: props.parent || "",
       date: props.date || "",
-      dueDate: props.dueDate || "",
-      followupDate: props.followupDate || "",
-      reviewDate: props.reviewDate || "",
+      dueDate: props.due || props.dueDate || "",
+      followupDate: props.rel || props.relance || props.followup || props.followupDate || "",
+      waiting: props.waiting || "",
       tags: normalizeTags(props.tags),
       archivedAt: props.archivedAt || "",
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
-    parsed.searchText = [parsed.title, parsed.body, parsed.type, parsed.status, parsed.priority, parsed.project, parsed.parent, parsed.date, parsed.tags.join(" ")]
+    parsed.searchText = [parsed.title, parsed.body, parsed.type, parsed.status, parsed.priority, parsed.project, parsed.parent, parsed.date, parsed.waiting, parsed.tags.join(" ")]
       .join(" ")
       .toLowerCase();
     return parsed;
@@ -2065,8 +2307,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       project: fields.project || "",
       parent: fields.parent || "",
       dueDate: fields.dueDate || "",
-      followupDate: fields.followupDate || "",
-      reviewDate: fields.reviewDate || "",
+      followupDate: fields.followupDate || fields.rel || "",
+      waiting: fields.waiting || "",
       tags: normalizeTags(fields.tags),
     };
     let body = fields.body || "";
@@ -2150,6 +2392,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     parseCaptureLine,
     seedItems,
     todayIsoDate,
+    todayDisplayDate,
     isoNow,
   };
 })();
@@ -2223,6 +2466,12 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       ...item,
       updatedAt: window.CockpitModels.isoNow(),
     });
+    await putItem(normalized);
+    return normalized;
+  }
+
+  async function putItem(item) {
+    const normalized = window.CockpitModels.normalizeItem(item);
     try {
       const store = await tx("readwrite");
       await requestToPromise(store.put(normalized));
@@ -2234,6 +2483,17 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       writeFallback(items);
     }
     return normalized;
+  }
+
+  async function deleteItem(id) {
+    try {
+      const store = await tx("readwrite");
+      await requestToPromise(store.delete(id));
+      mode = "indexeddb";
+    } catch {
+      mode = "localStorage";
+      writeFallback(readFallback().filter((candidate) => candidate.id !== id));
+    }
   }
 
   async function replaceAllItems(items) {
@@ -2263,6 +2523,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   window.CockpitStorage = {
     getAllItems,
     saveItem,
+    putItem,
+    deleteItem,
     replaceAllItems,
     storageMode,
   };
@@ -2326,11 +2588,20 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       if (item.type === "project" && ["active", "waiting", "blocked"].includes(item.status) && !hasNextTask(items, item)) {
         issues.push({ item, reason: "Projet actif sans prochaine action", severity: "warning", action: "Definir une task en status: next" });
       }
-      if ((item.type === "followup" || item.status === "waiting") && !item.followupDate) {
-        issues.push({ item, reason: "Attente ou relance sans followupDate", severity: "issue", action: "Ajouter followupDate dans le YAML" });
+      if (item.type === "project" && ["active", "waiting", "blocked"].includes(item.status) && !window.CockpitModels.extractLatestProgress(item.markdown).date) {
+        issues.push({ item, reason: "Projet sans date d'avancement", severity: "warning", action: "Ajouter ## jj.mm.aaaa dans # Avancement" });
       }
-      if (item.status === "blocked" && !item.reviewDate && !item.followupDate) {
-        issues.push({ item, reason: "Blocage sans date de reexamen", severity: "issue", action: "Ajouter reviewDate ou followupDate" });
+      if (item.type === "journal" && !window.CockpitModels.journalDate(item)) {
+        issues.push({ item, reason: "Journal sans date dans le titre", severity: "warning", action: "Renommer en YYYY-MM-DD - titre" });
+      }
+      if (item.status === "waiting" && !item.followupDate) {
+        issues.push({ item, reason: "Attente sans date rel", severity: "issue", action: "Ajouter rel dans les proprietes" });
+      }
+      if (item.status === "waiting" && !item.waiting) {
+        issues.push({ item, reason: "Attente sans personne/source", severity: "warning", action: "Ajouter waiting:nom" });
+      }
+      if (item.status === "blocked" && !item.followupDate) {
+        issues.push({ item, reason: "Blocage sans date rel", severity: "issue", action: "Ajouter rel dans les proprietes" });
       }
       if (item.type === "task" && !taskHasIntention(item)) {
         issues.push({ item, reason: "Tache sans intention claire", severity: "warning", action: "Ajouter next, date, attente, blocage ou projet" });
@@ -2406,6 +2677,14 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return {
         destroy() {},
         getValue: () => textarea.value,
+        insertText(text) {
+          const start = textarea.selectionStart || 0;
+          const end = textarea.selectionEnd || start;
+          textarea.value = `${textarea.value.slice(0, start)}${text}${textarea.value.slice(end)}`;
+          textarea.selectionStart = textarea.selectionEnd = start + text.length;
+          textarea.focus();
+          onChange(textarea.value);
+        },
       };
     }
 
@@ -2415,6 +2694,16 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       },
       getValue() {
         return typeof editor.getValue === "function" ? editor.getValue() : value || "";
+      },
+      insertText(text) {
+        const textarea = editor.textarea || host.querySelector("textarea");
+        if (!textarea) return;
+        const start = textarea.selectionStart || 0;
+        const end = textarea.selectionEnd || start;
+        textarea.value = `${textarea.value.slice(0, start)}${text}${textarea.value.slice(end)}`;
+        textarea.selectionStart = textarea.selectionEnd = start + text.length;
+        textarea.focus();
+        textarea.dispatchEvent(new Event("input", { bubbles: true }));
       },
     };
   }
@@ -2431,10 +2720,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   const viewMeta = {
     today: ["Aujourd'hui", "Pages dont les proprietes demandent une action."],
     inbox: ["Inbox", "Captures brutes et pages encore peu clarifiees."],
-    review: ["A revoir", "Dormants, relances et zones incoherentes."],
+    review: ["A revoir", "Ce qui doit revenir maintenant, etre clarifie ou ne pas etre oublie."],
     projects: ["Projets", "Pages projet et contenu rattache."],
     tasks: ["Taches", "Toutes les pages task filtrables."],
-    completed: ["Terminees", "Taches terminees ou archivees."],
+    completed: ["Terminees", "Elements termines ou archives."],
     journal: ["Journal", "Faits du jour, seances passees et preparations futures."],
     divers: ["Divers", "Informations et notes qui ne sont ni des taches ni des projets."],
     calendar: ["Calendrier", "Elements lies a la date selectionnee."],
@@ -2470,6 +2759,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function projectFormatter(cell) {
     return cell.getRow().getData().projectTitle || "";
+  }
+
+  function typeFormatter(cell) {
+    const value = cell.getValue() || "";
+    return value ? `<span class="page-type ${String(value).toLowerCase()}">${value}</span>` : "";
   }
 
   function parentInfoFormatter(cell) {
@@ -2511,7 +2805,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
       { title: "", field: "_done", width: 42, hozAlign: "center", headerSort: false, formatter: doneActionFormatter },
       { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
-      options.showType === false ? null : { title: "Type", field: "type", width: 92, responsive: 3, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
+      options.showType === false ? null : { title: "Type", field: "type", width: 96, responsive: 3, formatter: typeFormatter, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
       { title: "Titre", field: "title", minWidth: 260, formatter: titleFormatter },
       { title: "Statut", field: "status", width: 104, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.STATUSES } },
       { title: "Priorite", field: "priority", width: 96, responsive: 2, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.PRIORITIES } },
@@ -2525,9 +2819,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         editor: "list",
         editorParams: { values: projectEditorValues(app), autocomplete: true, clearable: true },
       },
-      { title: "Echeance", field: "dueDate", width: 108, sorter: "date", editor: "date" },
-      { title: "Relance", field: "followupDate", width: 108, sorter: "date", editor: "date" },
-      { title: "Revue", field: "reviewDate", width: 108, responsive: 2, sorter: "date", editor: "date" },
+      { title: "due", field: "dueDate", width: 108, sorter: "date", editor: "date" },
+      { title: "rel", field: "followupDate", width: 108, sorter: "date", editor: "date" },
+      { title: "waiting", field: "waiting", width: 120, responsive: 2, editor: "input" },
       { title: "Tags", field: "tags", minWidth: 120, responsive: 3, formatter: tagFormatter, editor: "input" },
     ];
     return columns.filter(Boolean);
@@ -2636,7 +2930,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       { title: "Gravite", field: "severity", width: 88, formatter: pillFormatter },
       { title: "Probleme", field: "reason", minWidth: 230, formatter: (cell) => `<span class="control-reason">${cell.getValue()}</span>` },
       { title: "Page", field: "itemTitle", minWidth: 220, formatter: titleFormatter },
-      { title: "Type", field: "type", width: 82 },
+      { title: "Type", field: "type", width: 96, formatter: typeFormatter },
       { title: "Action", field: "action", minWidth: 190 },
     ];
   }
@@ -2672,6 +2966,30 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return window.CockpitRules.isOpen(item.parentItem);
   }
 
+  function isTaskOnlyView(view) {
+    return ["tasks"].includes(view);
+  }
+
+  function hasArrivedDate(item) {
+    return (
+      window.CockpitRules.isDueOrPast(item.dueDate) ||
+      window.CockpitRules.isDueOrPast(item.followupDate)
+    );
+  }
+
+  function reviewRank(item, issueIds) {
+    if (issueIds.has(item.id)) return 0;
+    if (window.CockpitRules.isDueOrPast(item.dueDate)) return 1;
+    if (window.CockpitRules.isDueOrPast(item.followupDate)) return 2;
+    if (item.type === "project" && item.progressAgeDays != null && item.progressAgeDays >= (window.CockpitApp.config?.staleAfterDays || 14)) return 3;
+    if (item.status === "next") return 4;
+    if (item.status === "inbox") return 5;
+    if (item.status === "blocked") return 6;
+    if (item.status === "waiting") return 7;
+    if (item.status === "dormant") return 8;
+    return 9;
+  }
+
   function filterForView(view, rawItems) {
     const items = decorateParentInfo(window.CockpitRules.decorateItems(rawItems));
     const open = openItems(items);
@@ -2680,8 +2998,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         (item) =>
           item.status === "next" ||
           window.CockpitRules.isDueOrPast(item.dueDate) ||
-          window.CockpitRules.isDueOrPast(item.followupDate) ||
-          window.CockpitRules.isDueOrPast(item.reviewDate)
+          window.CockpitRules.isDueOrPast(item.followupDate)
       );
     }
     if (view === "inbox") {
@@ -2689,7 +3006,24 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     }
     if (view === "review") {
       const issueIds = new Set(window.CockpitRules.getIssues(rawItems).map((issue) => issue.item.id));
-      return open.filter((item) => issueIds.has(item.id) || item.status === "dormant" || window.CockpitRules.isDueOrPast(item.followupDate));
+      const staleAfterDays = window.CockpitApp.config?.staleAfterDays || 14;
+      return open
+        .map((item) => {
+          if (item.type !== "project") return item;
+          const progress = window.CockpitModels.extractLatestProgress(item.markdown);
+          return { ...item, progressAgeDays: progress.days, lastProgressDate: progress.date };
+        })
+        .filter(
+          (item) =>
+            issueIds.has(item.id) ||
+            item.status === "inbox" ||
+            item.status === "next" ||
+            item.status === "blocked" ||
+            item.status === "dormant" ||
+            (item.type === "project" && item.progressAgeDays != null && item.progressAgeDays >= staleAfterDays) ||
+            hasArrivedDate(item)
+        )
+        .sort((a, b) => reviewRank(a, issueIds) - reviewRank(b, issueIds) || String(a.dueDate || a.followupDate || "").localeCompare(String(b.dueDate || b.followupDate || "")) || a.title.localeCompare(b.title, "fr"));
     }
     if (view === "projects") {
       return manualOrderSort(
@@ -2716,7 +3050,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return manualOrderSort(open.filter((item) => item.type === "task" && (!window.CockpitApp.filters.hideBlockedChildren || !parentIsBlocking(item))));
     }
     if (view === "completed") {
-      return manualOrderSort(items.filter((item) => item.type === "task" && (item.status === "done" || item.status === "archived" || item.archivedAt)));
+      return manualOrderSort(items.filter((item) => item.status === "done" || item.status === "archived" || item.archivedAt));
     }
     if (view === "journal") {
       return open
@@ -2732,7 +3066,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (view === "calendar") {
       return open.filter((item) => {
         if (item.type === "journal") return window.CockpitModels.journalDate(item) === window.CockpitApp.calendarDate;
-        return [item.dueDate, item.followupDate, item.reviewDate].includes(window.CockpitApp.calendarDate);
+        return [item.dueDate, item.followupDate].includes(window.CockpitApp.calendarDate);
       });
     }
     return manualOrderSort(open);
@@ -2753,11 +3087,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function applySearchAndFilters(app, rows) {
     const search = app.filters.search.trim().toLowerCase();
-    const typeFilterApplies = !["tasks", "completed"].includes(app.currentView);
+    const typeFilterApplies = !isTaskOnlyView(app.currentView);
     return rows.filter((row) => {
       const item = row.itemId ? window.CockpitModels.parseDocument(app.items.find((candidate) => candidate.id === row.itemId) || row) : row;
       if (typeFilterApplies && app.filters.type && item.type !== app.filters.type) return false;
       if (app.filters.status && item.status !== app.filters.status) return false;
+      if (app.currentView === "tasks" && app.filters.taskQuick === "past" && !hasArrivedDate(item)) return false;
+      if (app.currentView === "tasks" && app.filters.taskQuick === "next" && item.status !== "next") return false;
       if (!search) return true;
       return [item.searchText, row.reason, row.action].join(" ").toLowerCase().includes(search);
     });
@@ -2768,11 +3104,19 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return applySearchAndFilters(app, sourceRows);
   }
 
+  function reviewCount(items) {
+    return filterForView("review", items).length;
+  }
+
   function setViewText(view, app) {
     const [title, subtitle] = viewMeta[view];
     document.getElementById("viewTitle").textContent = view === "calendar" ? app.calendarDate : title;
     document.getElementById("viewSubtitle").textContent = subtitle;
-    document.getElementById("typeFilter")?.classList.toggle("hidden", ["tasks", "completed"].includes(view));
+    document.getElementById("typeFilter")?.classList.toggle("hidden", isTaskOnlyView(view));
+    document.getElementById("quickTaskFilters")?.classList.toggle("hidden", view !== "tasks");
+    document.querySelectorAll("[data-task-filter]").forEach((button) => {
+      button.classList.toggle("active", app.filters.taskQuick === button.dataset.taskFilter);
+    });
     document.querySelector(".topbar-check")?.classList.toggle("hidden", view !== "tasks");
     document.querySelector(".topbar-tools")?.classList.toggle("tasks-view", view === "tasks");
   }
@@ -2790,24 +3134,58 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     localStorage.setItem(COLUMN_PREFS_KEY, JSON.stringify(prefs));
   }
 
+  function prefsForView(prefs, view) {
+    const value = prefs[view];
+    if (Array.isArray(value)) return { hidden: value, widths: {} };
+    if (value && typeof value === "object") {
+      return {
+        hidden: Array.isArray(value.hidden) ? value.hidden : [],
+        widths: value.widths && typeof value.widths === "object" ? value.widths : {},
+      };
+    }
+    return { hidden: [], widths: {} };
+  }
+
   function hiddenColumns(view) {
     const prefs = loadColumnPrefs();
-    return new Set(Array.isArray(prefs[view]) ? prefs[view] : []);
+    return new Set(prefsForView(prefs, view).hidden);
+  }
+
+  function columnWidths(view) {
+    const prefs = loadColumnPrefs();
+    return prefsForView(prefs, view).widths;
   }
 
   function setColumnHidden(view, field, hidden) {
     const prefs = loadColumnPrefs();
-    const fields = new Set(Array.isArray(prefs[view]) ? prefs[view] : []);
+    const viewPrefs = prefsForView(prefs, view);
+    const fields = new Set(viewPrefs.hidden);
     if (hidden) fields.add(field);
     else fields.delete(field);
-    prefs[view] = [...fields];
+    prefs[view] = { ...viewPrefs, hidden: [...fields] };
+    saveColumnPrefs(prefs);
+  }
+
+  function setColumnWidth(view, field, width) {
+    if (!field || !width) return;
+    const prefs = loadColumnPrefs();
+    const viewPrefs = prefsForView(prefs, view);
+    prefs[view] = {
+      ...viewPrefs,
+      widths: {
+        ...viewPrefs.widths,
+        [field]: Math.round(width),
+      },
+    };
     saveColumnPrefs(prefs);
   }
 
   function applyColumnVisibility(view, columns) {
     const hidden = hiddenColumns(view);
+    const widths = columnWidths(view);
     return columns.map((column) => ({
       ...column,
+      width: column.field && widths[column.field] ? widths[column.field] : column.width,
       visible: column.field && column.field !== "title" ? !hidden.has(column.field) : column.visible,
     }));
   }
@@ -2841,7 +3219,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (app.currentView === "control") return controlColumns();
     if (app.currentView === "projects") return projectColumns();
     if (app.currentView === "journal") return journalColumns(app);
-    return baseColumns(app, { showType: !["tasks", "completed"].includes(app.currentView) });
+    return baseColumns(app, { showType: !isTaskOnlyView(app.currentView) });
   }
 
   function viewAllowsManualOrder(view) {
@@ -2910,6 +3288,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       persistVisibleOrder(app);
     });
 
+    app.table.on("columnResized", (column) => {
+      setColumnWidth(app.currentView, column.getField(), column.getWidth());
+    });
+
     document.getElementById("mainTable").onclick = (event) => {
       const manualOrderButton = event.target.closest("[data-action='manual-order']");
       if (manualOrderButton) {
@@ -2953,6 +3335,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   window.CockpitViews = {
     refreshTable,
+    reviewCount,
   };
 })();
 
@@ -2990,10 +3373,34 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function propertyKeys(item) {
-    if (item.type === "project") return ["id", "type", "status", "priority", "rowColor", "reviewDate", "tags", "slug"];
+    if (item.type === "project") return ["id", "type", "status", "priority", "rowColor", "rel", "tags", "slug"];
     if (item.type === "journal") return ["id", "type", "status", "rowColor", "project", "tags", "slug"];
     if (item.type === "divers") return ["id", "type", "status", "rowColor", "project", "parent", "tags", "slug"];
-    return ["id", "type", "status", "priority", "rowColor", "project", "parent", "dueDate", "followupDate", "reviewDate", "tags", "slug"];
+    return ["id", "type", "status", "priority", "rowColor", "project", "parent", "due", "rel", "waiting", "tags", "slug"];
+  }
+
+  function propertyValue(item, key) {
+    if (key === "due") return item.dueDate || "";
+    if (key === "rel") return item.followupDate || "";
+    return item[key] || "";
+  }
+
+  function addDaysIso(days) {
+    return window.CockpitModels.todayIsoDate(Number(days) || 0);
+  }
+
+  function offsetLabel(days) {
+    const labels = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+    const date = new Date(`${addDaysIso(days)}T12:00:00`);
+    return `+${days}j ${labels[date.getDay()]}`;
+  }
+
+  function reminderField(item) {
+    return "rel";
+  }
+
+  function reminderFieldLabel(field) {
+    return "rel";
   }
 
   function propertyDisplayValue(app, item, key) {
@@ -3004,7 +3411,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         .find((candidate) => candidate.type === "project" && [candidate.id, candidate.slug, candidate.title].includes(item.project));
       return project?.title || item.project;
     }
-    return item[key] || "";
+    return propertyValue(item, key);
   }
 
   function renderProps(app, item) {
@@ -3044,6 +3451,134 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const parsed = window.CockpitRules.decorateItems(app.items).find((item) => item.id === app.selectedItemId);
     const row = app.table.getRow(app.selectedItemId);
     if (parsed && row) row.update(parsed);
+  }
+
+  function insertTodayHeading() {
+    markdownBinding?.insertText(`\n\n## ${window.CockpitModels.todayDisplayDate()}\n`);
+  }
+
+  function closePlanNextModal() {
+    document.querySelector(".plan-next-modal")?.remove();
+  }
+
+  function defaultPlanText(intent, projectTitle, source = "") {
+    if (intent === "reminder") return `Reprendre ${projectTitle}`;
+    if (intent === "waiting") return source.trim() ? `Relancer ${source.trim()}` : `Relancer pour ${projectTitle}`;
+    return `Prochaine action pour ${projectTitle}`;
+  }
+
+  function openPlanNextModal(app, doc) {
+    const project = window.CockpitModels.parseDocument(doc);
+    const offsets = app.config?.relOffsets || [1, 2, 3, 5, 7];
+    closePlanNextModal();
+
+    const overlay = document.createElement("div");
+    overlay.className = "plan-next-modal";
+    overlay.innerHTML = `
+      <div class="plan-next-dialog" role="dialog" aria-modal="true" aria-label="Planifier la suite">
+        <header class="plan-next-head">
+          <div>
+            <strong>Planifier la suite</strong>
+            <span>${escapeHtml(project.title)}</span>
+          </div>
+          <button type="button" class="icon-button" data-plan-close>Fermer</button>
+        </header>
+        <div class="plan-next-intents">
+          <button type="button" class="active" data-plan-intent="reminder">Me le rappeler</button>
+          <button type="button" data-plan-intent="waiting">Attendre / relancer</button>
+          <button type="button" data-plan-intent="action">Prochaine action</button>
+        </div>
+        <label class="plan-next-source hidden">
+          <span>J'attends une reponse de</span>
+          <input type="text" data-plan-source placeholder="Personne, equipe, fournisseur">
+        </label>
+        <label>
+          <span>Que faudra-t-il faire ?</span>
+          <input type="text" data-plan-text>
+        </label>
+        <div>
+          <span class="plan-next-label">Quand le cockpit doit-il le remontrer ?</span>
+          <div class="quick-date-buttons">
+            ${offsets.map((days) => `<button type="button" data-plan-days="${days}">${offsetLabel(days)}</button>`).join("")}
+          </div>
+        </div>
+        <label>
+          <span>Date</span>
+          <input type="date" data-plan-date>
+        </label>
+        <footer class="plan-next-actions">
+          <button type="button" class="ghost-button" data-plan-cancel>Annuler</button>
+          <button type="button" class="capture-button" data-plan-save>Planifier</button>
+        </footer>
+      </div>
+    `;
+
+    let intent = "reminder";
+    let generatedText = defaultPlanText(intent, project.title);
+    const textInput = overlay.querySelector("[data-plan-text]");
+    const sourceInput = overlay.querySelector("[data-plan-source]");
+    const sourceLabel = overlay.querySelector(".plan-next-source");
+    const dateInput = overlay.querySelector("[data-plan-date]");
+    textInput.value = generatedText;
+
+    const setDate = (days) => {
+      dateInput.value = addDaysIso(days);
+      overlay.querySelectorAll("[data-plan-days]").forEach((button) => {
+        button.classList.toggle("active", Number(button.dataset.planDays) === Number(days));
+      });
+    };
+
+    const applyIntent = (nextIntent) => {
+      const canReplaceText = !textInput.value.trim() || textInput.value === generatedText;
+      intent = nextIntent;
+      overlay.querySelectorAll("[data-plan-intent]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.planIntent === intent);
+      });
+      sourceLabel.classList.toggle("hidden", intent !== "waiting");
+      generatedText = defaultPlanText(intent, project.title, sourceInput.value);
+      if (canReplaceText) textInput.value = generatedText;
+      (intent === "waiting" ? sourceInput : textInput).focus();
+    };
+
+    const save = async () => {
+      const title = textInput.value.trim();
+      const date = dateInput.value;
+      if (!title || !date) return;
+      await app.addItem({
+        type: "task",
+        title,
+        status: intent === "waiting" ? "waiting" : intent === "action" && date <= window.CockpitModels.todayIsoDate() ? "next" : "active",
+        priority: "medium",
+        project: doc.id,
+        followupDate: date,
+        waiting: intent === "waiting" ? sourceInput.value.trim() : "",
+        tags: intent === "waiting" ? ["relance"] : [],
+      });
+      closePlanNextModal();
+    };
+
+    document.body.append(overlay);
+    setDate(offsets.includes(3) ? 3 : offsets[0]);
+    requestAnimationFrame(() => textInput.focus());
+    overlay.querySelectorAll("[data-plan-intent]").forEach((button) => button.addEventListener("click", () => applyIntent(button.dataset.planIntent)));
+    overlay.querySelectorAll("[data-plan-days]").forEach((button) => button.addEventListener("click", () => setDate(button.dataset.planDays)));
+    sourceInput.addEventListener("input", () => {
+      if (!textInput.value.trim() || textInput.value === generatedText) {
+        generatedText = defaultPlanText(intent, project.title, sourceInput.value);
+        textInput.value = generatedText;
+      }
+    });
+    dateInput.addEventListener("input", () => overlay.querySelectorAll("[data-plan-days]").forEach((button) => button.classList.remove("active")));
+    overlay.querySelector("[data-plan-save]").addEventListener("click", save);
+    overlay.querySelector("[data-plan-close]").addEventListener("click", closePlanNextModal);
+    overlay.querySelector("[data-plan-cancel]").addEventListener("click", closePlanNextModal);
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) closePlanNextModal();
+    });
+    overlay.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closePlanNextModal();
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") save();
+    });
   }
 
   function propertyChoices(app, key) {
@@ -3092,13 +3627,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
     if (choices) {
       choices.forEach((choice) => editor.append(new Option(choice.label, choice.value)));
-    } else if (["date", "dueDate", "followupDate", "reviewDate"].includes(key)) {
+    } else if (["date", "due", "rel"].includes(key)) {
       editor.type = "date";
     } else {
       editor.type = "text";
     }
 
-    const current = key === "tags" ? item.tags.join(", ") : item[key] || "";
+    const current = key === "tags" ? item.tags.join(", ") : propertyValue(item, key);
     editor.value = current;
     button.replaceWith(editor);
     editor.focus();
@@ -3163,10 +3698,19 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return;
     }
     const issues = window.CockpitRules.getIssues(app.items).filter((issue) => issue.item.id === item.id);
+    const offsets = app.config?.relOffsets || [1, 2, 3, 5, 7];
+    const reminderKey = reminderField(item);
     pane.innerHTML = `
       <section class="inspector-section">
         <h3>Proprietes</h3>
         ${renderProps(app, item)}
+      </section>
+      <section class="inspector-section">
+        <h3>Retour rapide</h3>
+        <div class="quick-date-buttons" data-reminder-field="${reminderKey}">
+          ${offsets.map((days) => `<button type="button" data-reminder-days="${days}">${offsetLabel(days)}</button>`).join("")}
+        </div>
+        <div class="empty-linked">Met a jour ${reminderFieldLabel(reminderKey)}.</div>
       </section>
       <section class="inspector-section">
         <h3>Controles</h3>
@@ -3186,6 +3730,14 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     });
     pane.querySelectorAll("[data-prop-key]").forEach((button) => {
       button.addEventListener("click", () => startPropertyEdit(app, button));
+    });
+    pane.querySelectorAll("[data-reminder-days]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const field = button.closest("[data-reminder-field]")?.dataset.reminderField || "rel";
+        await app.updateProps(item.id, { [field]: addDaysIso(button.dataset.reminderDays) }, { quiet: true });
+        renderInspector(app);
+        syncSelectedRow(app);
+      });
     });
   }
 
@@ -3240,13 +3792,23 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     });
     const focusButton = document.querySelector("[data-action='focus']");
     if (focusButton) {
-      focusButton.hidden = parsedDoc.type !== "project";
       focusButton.addEventListener("click", () => {
         window.open(window.CockpitFocus.focusUrlFor(doc.id), "_blank", "noopener");
       });
     }
+    const insertDateButton = document.querySelector("[data-action='insert-date']");
+    if (insertDateButton) insertDateButton.addEventListener("click", insertTodayHeading);
+
+    const planNextButton = document.querySelector("[data-action='plan-next']");
+    if (planNextButton) {
+      planNextButton.hidden = parsedDoc.type !== "project";
+      planNextButton.addEventListener("click", () => openPlanNextModal(app, doc));
+    }
     document.querySelector("[data-action='archive']").addEventListener("click", () => {
       app.updateProps(doc.id, { status: "archived", archivedAt: window.CockpitModels.isoNow().slice(0, 10) });
+    });
+    document.querySelector("[data-action='delete']").addEventListener("click", () => {
+      app.deleteItem(doc.id);
     });
   }
 
@@ -3312,7 +3874,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const url = new URL(window.location.href);
     url.search = "";
     url.hash = "";
-    url.searchParams.set("project", id);
+    url.searchParams.set("page", id);
     return url.toString();
   }
 
@@ -3373,6 +3935,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         </div>
         <div class="focus-actions">
           <span class="focus-status" id="focusStatus">Sauvegarde locale</span>
+          <button class="ghost-button" type="button" data-focus-date>Date du jour</button>
           <button class="ghost-button" type="button" data-focus-close>Retour cockpit</button>
         </div>
       </header>
@@ -3383,6 +3946,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
     page.querySelector("[data-focus-close]").addEventListener("click", () => {
       window.location.href = window.location.pathname;
+    });
+    page.querySelector("[data-focus-date]").addEventListener("click", () => {
+      const date = window.CockpitModels.todayDisplayDate?.() || new Date().toLocaleDateString("fr-CH");
+      focusBinding?.insertText(`\n\n## ${date}\n`);
     });
 
     if (focusBinding) focusBinding.destroy();
@@ -3412,6 +3979,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
+  const COLUMN_PREFS_KEY = "tabulator-cockpit-column-visibility";
+  const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
+
   function download(filename, content, type) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
@@ -3422,14 +3992,50 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     URL.revokeObjectURL(url);
   }
 
-  function exportJson(app) {
-    const payload = {
+  function readJsonStorage(key, fallback) {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || "null");
+      return value == null ? fallback : value;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function exportPayload(app) {
+    return {
       app: "tabulator-cockpit",
-      version: 2,
+      version: 3,
       format: "markdown-frontmatter",
       exportedAt: new Date().toISOString(),
       items: app.items,
+      ui: {
+        favoriteIds: app.favoriteIds || [],
+        columnVisibility: readJsonStorage(COLUMN_PREFS_KEY, {}),
+        hideBlockedChildren: localStorage.getItem(HIDE_BLOCKED_CHILDREN_KEY) !== "0",
+        config: app.config || window.CockpitConfig?.load?.() || {},
+      },
     };
+  }
+
+  function restoreUi(app, ui) {
+    if (!ui || typeof ui !== "object") return;
+    if (ui.columnVisibility && typeof ui.columnVisibility === "object") {
+      localStorage.setItem(COLUMN_PREFS_KEY, JSON.stringify(ui.columnVisibility));
+    }
+    if (typeof ui.hideBlockedChildren === "boolean") {
+      localStorage.setItem(HIDE_BLOCKED_CHILDREN_KEY, ui.hideBlockedChildren ? "1" : "0");
+      if (app.filters) app.filters.hideBlockedChildren = ui.hideBlockedChildren;
+      const checkbox = document.getElementById("hideBlockedChildren");
+      if (checkbox) checkbox.checked = ui.hideBlockedChildren;
+    }
+    if (ui.config && typeof ui.config === "object" && window.CockpitConfig?.save) {
+      window.CockpitConfig.save(ui.config);
+      app.config = window.CockpitConfig.load();
+    }
+  }
+
+  function exportJson(app) {
+    const payload = exportPayload(app);
     download(`cockpit-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(payload, null, 2), "application/json");
   }
 
@@ -3438,12 +4044,23 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const payload = JSON.parse(text);
     const items = Array.isArray(payload) ? payload : payload.items;
     if (!Array.isArray(items)) throw new Error("Le JSON ne contient pas de tableau items.");
+    restoreUi(app, payload.ui);
+    if (typeof app.replaceAllItems === "function") {
+      await app.replaceAllItems(items);
+      if (Array.isArray(payload.ui?.favoriteIds) && typeof app.setFavoriteIds === "function") {
+        app.setFavoriteIds(payload.ui.favoriteIds);
+        app.refresh();
+      }
+      return;
+    }
     app.items = await window.CockpitStorage.replaceAllItems(items);
-    app.selectedItemId = app.items[0] ? app.items[0].id : null;
+    app.selectedItemId = app.items[0]?.id || null;
+    if (Array.isArray(payload.ui?.favoriteIds) && typeof app.setFavoriteIds === "function") app.setFavoriteIds(payload.ui.favoriteIds);
     app.refresh();
   }
 
   window.CockpitImportExport = {
+    exportPayload,
     exportJson,
     importJson,
   };
@@ -3451,14 +4068,21 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
-  const APP_VERSION = "0.5.0";
+  const APP_VERSION = "0.5.6";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
+  const CONFIG_KEY = "tabulator-cockpit-config";
+  const DEFAULT_CONFIG = {
+    relOffsets: [1, 2, 3, 5, 7],
+    staleAfterDays: 14,
+  };
+  let undoTimer = null;
 
   const app = {
     items: [],
     table: null,
-    currentView: "today",
+    config: { ...DEFAULT_CONFIG },
+    currentView: "review",
     calendarDate: "",
     selectedItemId: null,
     favoriteIds: [],
@@ -3466,6 +4090,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       search: "",
       type: "",
       status: "",
+      taskQuick: "",
       hideBlockedChildren: true,
     },
 
@@ -3498,6 +4123,30 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
     async updateItem(id, patch, options = {}) {
       return this.updateProps(id, patch, options);
+    },
+
+    async deleteItem(id) {
+      const doc = this.items.find((item) => item.id === id);
+      if (!doc) return null;
+      const wasFavorite = this.favoriteIds.includes(id);
+      await window.CockpitStorage.deleteItem(id);
+      const parsed = window.CockpitModels.parseDocument(doc);
+      this.items = this.items.filter((item) => item.id !== id);
+      this.favoriteIds = this.favoriteIds.filter((candidate) => candidate !== id);
+      saveFavoriteIds(this.favoriteIds);
+      if (this.selectedItemId === id) this.selectedItemId = null;
+      this.refresh();
+      showUndo(`${parsed.title} supprime`, async () => {
+        const restored = await window.CockpitStorage.putItem(doc);
+        this.items = [restored, ...this.items.filter((item) => item.id !== restored.id)];
+        if (wasFavorite) {
+          this.favoriteIds = [...new Set([...this.favoriteIds, restored.id])];
+          saveFavoriteIds(this.favoriteIds);
+        }
+        this.selectedItemId = restored.id;
+        this.refresh();
+      });
+      return doc;
     },
 
     selectItem(id) {
@@ -3536,6 +4185,22 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       saveFavoriteIds(this.favoriteIds);
       renderFavoriteTabs();
     },
+
+    setFavoriteIds(ids) {
+      this.favoriteIds = [...new Set((Array.isArray(ids) ? ids : []).filter((id) => typeof id === "string" && id))];
+      saveFavoriteIds(this.favoriteIds);
+      renderFavoriteTabs();
+    },
+
+    async replaceAllItems(items, options = {}) {
+      let loaded = await window.CockpitStorage.replaceAllItems(items);
+      loaded = await migrateAllIdsToShortIds(loaded);
+      loaded = await canonicalizeProjectRelations(loaded);
+      this.items = loaded;
+      this.selectedItemId = options.selectFirst === false ? null : loaded[0]?.id || null;
+      this.refresh();
+      return loaded;
+    },
   };
 
   function loadFavoriteIds() {
@@ -3551,6 +4216,28 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids));
   }
 
+  function normalizeConfig(raw = {}) {
+    const offsets = Array.isArray(raw.relOffsets) ? raw.relOffsets : Array.isArray(raw.followupOffsets) ? raw.followupOffsets : DEFAULT_CONFIG.relOffsets;
+    const relOffsets = [...new Set(offsets.map((value) => Number(value)).filter((value) => Number.isInteger(value) && value > 0))].slice(0, 10);
+    return {
+      relOffsets: relOffsets.length ? relOffsets : [...DEFAULT_CONFIG.relOffsets],
+      staleAfterDays: Number(raw.staleAfterDays) > 0 ? Number(raw.staleAfterDays) : DEFAULT_CONFIG.staleAfterDays,
+    };
+  }
+
+  function loadConfig() {
+    try {
+      return normalizeConfig(JSON.parse(localStorage.getItem(CONFIG_KEY) || "{}"));
+    } catch {
+      return normalizeConfig();
+    }
+  }
+
+  function saveConfig(config) {
+    app.config = normalizeConfig(config);
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(app.config));
+  }
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -3564,11 +4251,46 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const issues = window.CockpitRules.getIssues(app.items).length;
     const mode = window.CockpitStorage.storageMode();
     document.getElementById("storageStatus").textContent = `${app.items.length} pages · ${issues} controles · ${mode} · v${APP_VERSION}`;
+    updateReviewCount();
+  }
+
+  function updateReviewCount() {
+    const badge = document.getElementById("reviewCount");
+    if (!badge) return;
+    const count = window.CockpitViews?.reviewCount ? window.CockpitViews.reviewCount(app.items) : 0;
+    badge.textContent = String(count);
+    badge.classList.toggle("empty", count === 0);
   }
 
   function setAppVersion() {
     const version = document.getElementById("appVersion");
     if (version) version.textContent = `v${APP_VERSION}`;
+  }
+
+  function hideUndo() {
+    const toast = document.getElementById("undoToast");
+    if (!toast) return;
+    toast.hidden = true;
+    const button = document.getElementById("undoButton");
+    if (button) button.replaceWith(button.cloneNode(true));
+  }
+
+  function showUndo(message, onUndo) {
+    const toast = document.getElementById("undoToast");
+    const label = document.getElementById("undoMessage");
+    const button = document.getElementById("undoButton");
+    if (!toast || !label || !button) return;
+    clearTimeout(undoTimer);
+    label.textContent = message;
+    toast.hidden = false;
+    const nextButton = button.cloneNode(true);
+    button.replaceWith(nextButton);
+    nextButton.addEventListener("click", async () => {
+      clearTimeout(undoTimer);
+      hideUndo();
+      await onUndo();
+    });
+    undoTimer = setTimeout(hideUndo, 8000);
   }
 
   function favoriteItems() {
@@ -3664,6 +4386,12 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     statusFilter.addEventListener("change", (event) => {
       app.filters.status = event.target.value;
       app.refresh();
+    });
+    document.querySelectorAll("[data-task-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        app.filters.taskQuick = app.filters.taskQuick === button.dataset.taskFilter ? "" : button.dataset.taskFilter;
+        app.refresh();
+      });
     });
     const hideBlockedChildren = document.getElementById("hideBlockedChildren");
     hideBlockedChildren.checked = app.filters.hideBlockedChildren;
@@ -3876,7 +4604,6 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
           project: project ? project.id : "",
           dueDate: capture.dueDate,
           followupDate: capture.followupDate,
-          reviewDate: capture.reviewDate,
           tags: capture.tags,
         });
         items.push(await window.CockpitStorage.saveItem(item));
@@ -3996,7 +4723,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const journalDates = new Set();
     parsed.forEach((item) => {
       if (item.type === "task" && window.CockpitRules.isOpen(item)) {
-        [item.dueDate, item.reviewDate].filter(Boolean).forEach((date) => dueDates.add(date));
+        [item.dueDate].filter(Boolean).forEach((date) => dueDates.add(date));
         if (item.followupDate) followupDates.add(item.followupDate);
       }
       if (item.type === "journal") {
@@ -4103,6 +4830,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   async function init() {
     setAppVersion();
+    app.config = loadConfig();
     app.favoriteIds = loadFavoriteIds();
     app.filters.hideBlockedChildren = localStorage.getItem(HIDE_BLOCKED_CHILDREN_KEY) !== "0";
     bindNav();
@@ -4125,9 +4853,20 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   window.addEventListener("DOMContentLoaded", init);
+  window.CockpitDefaultConfig = DEFAULT_CONFIG;
+  window.CockpitConfig = {
+    load: loadConfig,
+    save: saveConfig,
+    normalize: normalizeConfig,
+    key: CONFIG_KEY,
+  };
   window.CockpitApp = app;
 })();
 
     </script>
+    <div class="undo-toast" id="undoToast" hidden>
+      <span id="undoMessage">Element supprime</span>
+      <button type="button" id="undoButton">Annuler</button>
+    </div>
   </body>
 </html>
