@@ -189,7 +189,7 @@ button {
   background: #f6ddd9;
   color: var(--danger);
   font-size: 11px;
-  font-weight: 850;
+  font-weight: 650;
 }
 
 .nav-count.empty {
@@ -305,6 +305,17 @@ button {
   line-height: 1.35;
 }
 
+.backup-status {
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.backup-status.warning {
+  color: var(--danger);
+  font-weight: 600;
+}
+
 .mini-calendar {
   padding-top: 12px;
   border-top: 1px solid var(--line);
@@ -394,7 +405,8 @@ button {
   background: var(--accent);
 }
 
-.capture-dialog {
+.capture-dialog,
+.settings-dialog {
   width: min(660px, calc(100vw - 48px));
   padding: 0;
   border: 1px solid var(--line-strong);
@@ -404,14 +416,46 @@ button {
   box-shadow: var(--shadow);
 }
 
-.capture-dialog::backdrop {
+.capture-dialog::backdrop,
+.settings-dialog::backdrop {
   background: rgba(22, 29, 26, 0.34);
+}
+
+.settings-dialog {
+  width: min(460px, calc(100vw - 48px));
 }
 
 .capture-form {
   display: grid;
   gap: 14px;
   padding: 18px;
+}
+
+.settings-form {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.settings-form label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 86px 42px;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.settings-form input {
+  width: 100%;
+  min-height: 32px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 5px 7px;
+}
+
+.settings-form small {
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .capture-form-header,
@@ -756,7 +800,13 @@ button {
 }
 
 .tabulator {
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.tabulator .tabulator-row,
+.tabulator .tabulator-row .tabulator-cell {
+  font-weight: 400;
 }
 
 .tabulator .tabulator-header {
@@ -799,7 +849,7 @@ button {
 
 .title-link {
   color: var(--accent-dark);
-  font-weight: 750;
+  font-weight: 500;
   text-decoration: none;
 }
 
@@ -823,6 +873,114 @@ button {
 .row-done-button:hover {
   border-color: var(--accent);
   background: #dcebe7;
+}
+
+.row-next-button {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 23px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.row-next-button:hover {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+.row-next-button.active {
+  border-color: var(--accent);
+  background: #dcebe7;
+  color: var(--accent-dark);
+}
+
+.row-workflow-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 25px;
+  white-space: nowrap;
+}
+
+.row-workflow-button {
+  min-width: 38px;
+  height: 23px;
+  padding: 0 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: #fff;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.row-workflow-button:hover,
+.row-workflow-button.active {
+  border-color: var(--accent);
+  background: #e5f0ed;
+  color: var(--accent-dark);
+}
+
+.row-workflow-button.done {
+  min-width: 34px;
+}
+
+.quick-waiting-editor {
+  position: fixed;
+  z-index: 120;
+  display: grid;
+  gap: 10px;
+  width: 300px;
+  padding: 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.quick-waiting-editor label {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.quick-waiting-editor input {
+  width: 100%;
+  min-height: 31px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 5px 7px;
+  color: var(--text);
+}
+
+.quick-waiting-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.quick-waiting-actions button {
+  min-height: 30px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: #fff;
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+.quick-waiting-actions button.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
 }
 
 .drag-handle {
@@ -942,7 +1100,7 @@ button {
   background: #eef3f0;
   color: var(--text);
   font-size: 11px;
-  font-weight: 850;
+  font-weight: 600;
   text-transform: uppercase;
 }
 
@@ -1624,7 +1782,7 @@ button {
           <div class="brand-mark">C</div>
           <div>
             <h1>Cockpit</h1>
-            <p>Pages Markdown + YAML · <span id="appVersion">v0.5.6</span></p>
+            <p>Pages Markdown + YAML · <span id="appVersion">v0.7.1</span></p>
           </div>
         </div>
 
@@ -1672,6 +1830,7 @@ button {
               <summary>Donnees ···</summary>
               <div class="sidebar-popover">
                 <button type="button" id="exportButton">Exporter JSON</button>
+                <button type="button" id="radarSettingsButton">Reglages radar</button>
                 <label class="import-label">
                   Importer JSON
                   <input id="importInput" type="file" accept="application/json">
@@ -1681,6 +1840,7 @@ button {
           </div>
 
           <div class="storage-status" id="storageStatus">Initialisation...</div>
+          <div class="backup-status" id="backupStatus">Aucun export JSON</div>
         </div>
       </aside>
 
@@ -1739,17 +1899,45 @@ button {
         <div class="capture-form-header">
           <div>
             <h2>Vider la tete</h2>
-            <p>Une ligne devient une tache Inbox. Tu classeras plus tard.</p>
+            <p>Une ligne par capture. Le tri viendra ensuite.</p>
           </div>
           <button type="submit" class="icon-button" value="cancel">Fermer</button>
         </div>
         <div class="capture-input-wrap">
-          <textarea id="captureInput" placeholder="Relancer Xavier sur KPI +[Projet] @chef rel:2026-06-28&#10;Regarder fichier Excel ATM&#10;Idee amelioration reco bancomat"></textarea>
+          <textarea id="captureInput" placeholder="Ecrire une capture..."></textarea>
           <div class="project-suggest hidden" id="projectSuggest" role="listbox"></div>
         </div>
         <div class="capture-form-actions">
           <span id="captureCount">0 ligne</span>
           <button type="button" class="capture-button" id="captureSubmitButton">Capturer</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="settings-dialog" id="radarSettingsDialog">
+      <form method="dialog" class="settings-form">
+        <div class="capture-form-header">
+          <h2>Reglages radar</h2>
+          <button type="submit" class="icon-button" value="cancel">Fermer</button>
+        </div>
+        <label>
+          <span>Projet sans avancement</span>
+          <input id="staleAfterDaysInput" type="number" min="1" max="365" step="1">
+          <small>jours</small>
+        </label>
+        <label>
+          <span>Revoir dormant</span>
+          <input id="dormantReviewDaysInput" type="number" min="1" max="365" step="1">
+          <small>jours</small>
+        </label>
+        <label>
+          <span>Revoir someday</span>
+          <input id="somedayReviewDaysInput" type="number" min="1" max="365" step="1">
+          <small>jours</small>
+        </label>
+        <div class="capture-form-actions">
+          <span></span>
+          <button type="button" class="capture-button" id="saveRadarSettingsButton">Enregistrer</button>
         </div>
       </form>
     </dialog>
@@ -1904,11 +2092,22 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     </script>
     <script>
 (function () {
-  const STATUSES = ["inbox", "active", "next", "waiting", "blocked", "someday", "dormant", "done", "archived"];
+  const STATUSES = ["inbox", "active", "waiting", "blocked", "someday", "dormant", "done", "archived"];
   const TYPES = ["project", "task", "journal", "divers"];
   const LEGACY_TYPES = ["followup", "note"];
   const PRIORITIES = ["low", "medium", "high", "urgent"];
   const ROW_COLORS = ["", "yellow", "green", "blue", "red", "violet"];
+
+  function statusesForType(type) {
+    if (type === "project") return ["active", "waiting", "blocked", "someday", "dormant", "done", "archived"];
+    if (type === "journal") return ["active", "done", "archived"];
+    if (type === "divers") return ["active", "archived"];
+    return STATUSES;
+  }
+
+  function isTrue(value) {
+    return value === true || String(value).toLowerCase() === "true" || value === 1 || value === "1";
+  }
 
   function isoNow() {
     return new Date().toISOString();
@@ -1997,7 +2196,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         values[valueMatch[1]] = valueMatch[2];
         return;
       }
-      if (["inbox", "active", "next", "waiting", "blocked", "someday", "dormant"].includes(token.toLowerCase())) {
+      if (token.toLowerCase() === "next") {
+        values.next = true;
+        return;
+      }
+      if (["inbox", "active", "waiting", "blocked", "someday", "dormant"].includes(token.toLowerCase())) {
         explicitStatus = token.toLowerCase();
         return;
       }
@@ -2019,6 +2222,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       tags: contexts,
       priority,
       status: values.status || explicitStatus || (values.waiting || values.rel || values.relance || values.followup ? "waiting" : values.blocked ? "blocked" : "inbox"),
+      next: isTrue(values.next),
       dueDate: values.due || "",
       followupDate: values.rel || values.relance || values.followup || "",
       waiting: values.waiting || "",
@@ -2058,6 +2262,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function propsForType(props) {
     const type = props.type === "note" ? "divers" : props.type === "followup" ? "task" : props.type;
+    const legacyNext = props.status === "next";
     const validStatus = STATUSES.includes(props.status) ? props.status : "active";
     const due = props.due || props.dueDate || "";
     const rel = props.rel || props.relance || props.followup || props.followupDate || "";
@@ -2065,16 +2270,18 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const common = {
       type: TYPES.includes(type) ? type : "task",
       status: validStatus,
+      next: isTrue(props.next) || legacyNext ? true : "",
       priority: props.priority || "medium",
       sortOrder: props.sortOrder || "",
       rowColor: ROW_COLORS.includes(props.rowColor) ? props.rowColor : "",
     };
 
     if (common.type === "project") {
-      if (["inbox", "next"].includes(common.status)) common.status = "active";
+      if (common.status === "inbox") common.status = "active";
       return {
         ...common,
         rel,
+        waiting,
         tags: normalizeTags(props.tags),
         archivedAt: props.archivedAt || "",
       };
@@ -2112,7 +2319,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function stringifyYaml(props) {
     const cleanProps = propsForType(props);
-    const order = ["type", "status", "priority", "sortOrder", "rowColor", "project", "parent", "date", "due", "rel", "waiting", "tags", "archivedAt"];
+    const order = ["type", "status", "next", "priority", "sortOrder", "rowColor", "project", "parent", "date", "due", "rel", "waiting", "tags", "archivedAt"];
     const keys = order.concat(Object.keys(cleanProps).filter((key) => !order.includes(key)).sort());
     return keys
       .filter((key) => cleanProps[key] !== undefined && cleanProps[key] !== "" && !(Array.isArray(cleanProps[key]) && cleanProps[key].length === 0))
@@ -2126,7 +2333,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (!match) return { props: {}, body: text };
     return {
       props: parseYaml(match[1]),
-      body: text.slice(match[0].length),
+      // Older documents were composed with two newlines after the YAML block.
+      // Consume that formatting newline so the editor starts on the title.
+      body: text.slice(match[0].length).replace(/^\r?\n/, ""),
     };
   }
 
@@ -2136,7 +2345,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function composeMarkdown(props, body) {
-    return `---\n${stringifyYaml(props)}\n---\n\n${String(body || "").replace(/^\s+/, "")}`;
+    return `---\n${stringifyYaml(props)}\n---\n${String(body || "").replace(/^\s+/, "")}`;
   }
 
   function completeProjectBody(body) {
@@ -2162,6 +2371,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const props = {
       type: TYPES.includes(raw.type) || LEGACY_TYPES.includes(raw.type) ? raw.type : "task",
       status: STATUSES.includes(raw.status) ? raw.status : "active",
+      next: isTrue(raw.next) || raw.status === "next",
       priority: PRIORITIES.includes(raw.priority) ? raw.priority : "medium",
       project: raw.project || raw.projectId || "",
       parent: raw.parent || raw.parentId || "",
@@ -2197,6 +2407,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const title = firstHeading(body) || props.title || "Sans titre";
     const rawType = props.type === "note" ? "divers" : props.type === "followup" ? "task" : props.type;
     const type = TYPES.includes(rawType) ? rawType : "task";
+    const legacyNext = props.status === "next";
     const status = STATUSES.includes(props.status) ? props.status : "active";
     const priority = PRIORITIES.includes(props.priority) ? props.priority : "medium";
     const parsed = {
@@ -2208,6 +2419,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       props,
       type,
       status,
+      next: isTrue(props.next) || legacyNext,
       priority,
       sortOrder: Number(props.sortOrder) || 0,
       rowColor: ROW_COLORS.includes(props.rowColor) ? props.rowColor : "",
@@ -2222,7 +2434,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
-    parsed.searchText = [parsed.title, parsed.body, parsed.type, parsed.status, parsed.priority, parsed.project, parsed.parent, parsed.date, parsed.waiting, parsed.tags.join(" ")]
+    parsed.searchText = [parsed.title, parsed.body, parsed.type, parsed.status, parsed.next ? "next" : "", parsed.priority, parsed.project, parsed.parent, parsed.date, parsed.waiting, parsed.tags.join(" ")]
       .join(" ")
       .toLowerCase();
     return parsed;
@@ -2246,7 +2458,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function updateDocumentMarkdown(doc, markdown) {
-    return normalizeDocument({ ...doc, markdown, updatedAt: isoNow() });
+    const normalized = normalizeDocument({ ...doc, markdown, updatedAt: isoNow() });
+    const type = parseDocument(normalized).type;
+    // A project slug is only a convenience label: keep it aligned with a renamed project.
+    if (type === "project") normalized.slug = slugify(parseDocument(normalized).title) || normalized.slug;
+    return normalized;
   }
 
   function parseHeadingDate(value) {
@@ -2303,6 +2519,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const props = {
       type: fields.type || "task",
       status: fields.status || "active",
+      next: isTrue(fields.next) || fields.status === "next",
       priority: fields.priority || "medium",
       project: fields.project || "",
       parent: fields.parent || "",
@@ -2343,7 +2560,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const task = createItem({
       type: "task",
       title: "Tester la page Markdown avec YAML",
-      status: "next",
+      status: "active",
+      next: true,
       priority: "high",
       project: project.id,
       dueDate: todayIsoDate(),
@@ -2374,6 +2592,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   window.CockpitModels = {
     STATUSES,
+    statusesForType,
     TYPES,
     PRIORITIES,
     ROW_COLORS,
@@ -2571,11 +2790,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function hasNextTask(items, project) {
-    return items.some((item) => item.type === "task" && isOpen(item) && projectMatches(items, item, project) && item.status === "next");
+    return project.next || items.some((item) => item.type === "task" && isOpen(item) && projectMatches(items, item, project) && item.next);
   }
 
   function taskHasIntention(item) {
-    return Boolean(item.status === "inbox" || item.status === "next" || item.dueDate || item.followupDate || item.status === "waiting" || item.status === "blocked" || item.project || item.parent);
+    return Boolean(item.status === "inbox" || item.next || item.dueDate || item.followupDate || item.status === "waiting" || item.status === "blocked" || item.project || item.parent);
   }
 
   function getIssues(rawItems) {
@@ -2586,7 +2805,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         issues.push({ item, reason: "Projet non archive sans tache ouverte", severity: "issue", action: "Ajouter une page task liee" });
       }
       if (item.type === "project" && ["active", "waiting", "blocked"].includes(item.status) && !hasNextTask(items, item)) {
-        issues.push({ item, reason: "Projet actif sans prochaine action", severity: "warning", action: "Definir une task en status: next" });
+        issues.push({ item, reason: "Projet actif sans prochaine action", severity: "warning", action: "Activer next sur le projet ou une task liee" });
       }
       if (item.type === "project" && ["active", "waiting", "blocked"].includes(item.status) && !window.CockpitModels.extractLatestProgress(item.markdown).date) {
         issues.push({ item, reason: "Projet sans date d'avancement", severity: "warning", action: "Ajouter ## jj.mm.aaaa dans # Avancement" });
@@ -2716,11 +2935,12 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 (function () {
   const COLUMN_PREFS_KEY = "tabulator-cockpit-column-visibility";
+  let quickWaitingOutsideHandler = null;
 
   const viewMeta = {
-    today: ["Aujourd'hui", "Pages dont les proprietes demandent une action."],
-    inbox: ["Inbox", "Captures brutes et pages encore peu clarifiees."],
-    review: ["A revoir", "Ce qui doit revenir maintenant, etre clarifie ou ne pas etre oublie."],
+    today: ["Aujourd'hui", "Ce que tu as choisi, puis ce qui est arrive automatiquement."],
+    inbox: ["Inbox", "Captures brutes a clarifier quand tu es disponible."],
+    review: ["A revoir", "Ce qui demande une decision maintenant. Les next restent dans Aujourd'hui."],
     projects: ["Projets", "Pages projet et contenu rattache."],
     tasks: ["Taches", "Toutes les pages task filtrables."],
     completed: ["Terminees", "Elements termines ou archives."],
@@ -2792,6 +3012,29 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return `<button class="row-done-button" type="button" data-done-id="${data.id}" title="Marquer terminee">OK</button>`;
   }
 
+  function nextFormatter(cell) {
+    const data = cell.getRow().getData();
+    const selected = Boolean(cell.getValue());
+    return `<button class="row-next-button${selected ? " active" : ""}" type="button" data-next-id="${data.id}" data-next-value="${selected ? "false" : "true"}" aria-pressed="${selected}" title="${selected ? "Retirer d'aujourd'hui" : "Ajouter a aujourd'hui"}">${selected ? "✓" : "+"}</button>`;
+  }
+
+  function workflowActionsFormatter(cell) {
+    const item = cell.getRow().getData();
+    const nextLabel = item.next ? "✓" : "+";
+    const nextTitle = item.next ? "Retirer d'aujourd'hui" : "Ajouter a aujourd'hui";
+    const actions = [
+      `<button class="row-next-button${item.next ? " active" : ""}" type="button" data-next-id="${item.id}" data-next-value="${item.next ? "false" : "true"}" aria-pressed="${Boolean(item.next)}" title="${nextTitle}">${nextLabel}</button>`,
+    ];
+    if (["task", "project"].includes(item.type)) {
+      actions.push(`<button class="row-workflow-button" type="button" data-rel-days="1" data-rel-id="${item.id}" title="Revoir dans 1 jour">+1j</button>`);
+      actions.push(`<button class="row-workflow-button" type="button" data-rel-days="3" data-rel-id="${item.id}" title="Revoir dans 3 jours">+3j</button>`);
+      actions.push(`<button class="row-workflow-button${item.status === "waiting" ? " active" : ""}" type="button" data-waiting-id="${item.id}" title="Definir l'attente">Wait</button>`);
+    }
+    if (item.type === "task") actions.push(`<button class="row-workflow-button done" type="button" data-workflow-done-id="${item.id}" title="Marquer terminee">OK</button>`);
+    if (item.type === "journal") actions.push(`<button class="row-workflow-button done" type="button" data-workflow-done-id="${item.id}" title="Marquer traite">Traite</button>`);
+    return `<div class="row-workflow-actions">${actions.join("")}</div>`;
+  }
+
   function dragFormatter() {
     return "<span class='drag-handle' title='Deplacer'>::</span>";
   }
@@ -2807,7 +3050,15 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
       options.showType === false ? null : { title: "Type", field: "type", width: 96, responsive: 3, formatter: typeFormatter, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
       { title: "Titre", field: "title", minWidth: 260, formatter: titleFormatter },
-      { title: "Statut", field: "status", width: 104, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.STATUSES } },
+      {
+        title: "Statut",
+        field: "status",
+        width: 104,
+        formatter: pillFormatter,
+        editor: "list",
+        editorParams: (cell) => ({ values: window.CockpitModels.statusesForType(cell.getRow().getData().type) }),
+      },
+      { title: "Next", field: "next", width: 62, hozAlign: "center", headerSort: false, formatter: nextFormatter },
       { title: "Priorite", field: "priority", width: 96, responsive: 2, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.PRIORITIES } },
       { title: "Apres", field: "parentInfo", minWidth: 210, responsive: 1, formatter: parentInfoFormatter },
       {
@@ -2825,6 +3076,20 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       { title: "Tags", field: "tags", minWidth: 120, responsive: 3, formatter: tagFormatter, editor: "input" },
     ];
     return columns.filter(Boolean);
+  }
+
+  function workflowColumns(app) {
+    const columns = baseColumns(app).filter((column) => !["_done", "next"].includes(column.field));
+    const titleIndex = columns.findIndex((column) => column.field === "title");
+    columns.splice(titleIndex + 1, 0, {
+      title: "Actions",
+      field: "workflowActions",
+      width: 232,
+      minWidth: 232,
+      headerSort: false,
+      formatter: workflowActionsFormatter,
+    });
+    return columns;
   }
 
   function progressAgeFormatter(cell) {
@@ -2872,14 +3137,15 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         editorParams: (cell) => ({
           values:
             cell.getRow().getData().type === "project"
-              ? ["active", "waiting", "blocked", "someday", "dormant", "done", "archived"]
-              : window.CockpitModels.STATUSES,
+              ? window.CockpitModels.statusesForType("project")
+              : window.CockpitModels.statusesForType(cell.getRow().getData().type),
         }),
       },
       { title: "Todos", field: "openTaskCount", width: 78, hozAlign: "center", formatter: projectOnlyFormatter },
       { title: "Dernier avancement", field: "lastProgressDate", width: 132, formatter: projectOnlyFormatter },
       { title: "Depuis", field: "progressAgeDays", width: 82, hozAlign: "center", formatter: progressAgeFormatter },
       { title: "Contexte recent", field: "lastProgressContext", minWidth: 300, formatter: projectOnlyFormatter },
+      { title: "Activite liee", field: "lastRelatedActivityLabel", minWidth: 220, formatter: projectOnlyFormatter },
       { title: "Tags", field: "tags", minWidth: 140, responsive: 2, formatter: tagFormatter, editor: "input" },
     ];
   }
@@ -2898,7 +3164,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         editor: "list",
         editorParams: { values: projectEditorValues(app), autocomplete: true, clearable: true },
       },
-      { title: "Statut", field: "status", width: 106, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.STATUSES } },
+      { title: "Statut", field: "status", width: 106, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.statusesForType("journal") } },
       { title: "Tags", field: "tags", minWidth: 160, formatter: tagFormatter, editor: "input" },
     ];
   }
@@ -2971,59 +3237,170 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function hasArrivedDate(item) {
+    const journalDate = item.type === "journal" ? window.CockpitModels.journalDate(item) : "";
     return (
       window.CockpitRules.isDueOrPast(item.dueDate) ||
-      window.CockpitRules.isDueOrPast(item.followupDate)
+      window.CockpitRules.isDueOrPast(item.followupDate) ||
+      journalDate === window.CockpitModels.todayIsoDate()
     );
   }
 
-  function reviewRank(item, issueIds) {
-    if (issueIds.has(item.id)) return 0;
-    if (window.CockpitRules.isDueOrPast(item.dueDate)) return 1;
-    if (window.CockpitRules.isDueOrPast(item.followupDate)) return 2;
-    if (item.type === "project" && item.progressAgeDays != null && item.progressAgeDays >= (window.CockpitApp.config?.staleAfterDays || 14)) return 3;
-    if (item.status === "next") return 4;
-    if (item.status === "inbox") return 5;
-    if (item.status === "blocked") return 6;
-    if (item.status === "waiting") return 7;
-    if (item.status === "dormant") return 8;
-    return 9;
+  function hasUpcomingDate(item, days = 3) {
+    const today = window.CockpitModels.todayIsoDate();
+    const limit = window.CockpitModels.todayIsoDate(days);
+    const journalDate = item.type === "journal" ? window.CockpitModels.journalDate(item) : "";
+    return [item.dueDate, item.followupDate, journalDate].some((date) => date && date > today && date <= limit);
+  }
+
+  function isPastActiveJournal(item) {
+    if (item.type !== "journal" || item.status !== "active") return false;
+    const date = window.CockpitModels.journalDate(item);
+    return Boolean(date && date < window.CockpitModels.todayIsoDate());
+  }
+
+  function latestRelatedActivity(items) {
+    const latest = [...items]
+      .filter((item) => item.updatedAt)
+      .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0];
+    if (!latest) return { date: "", title: "", label: "Aucune activite liee" };
+    const date = String(latest.updatedAt).slice(0, 10);
+    return { date, title: latest.title, label: `${date} · ${latest.title}` };
+  }
+
+  function daysSinceUpdate(item) {
+    if (!item.updatedAt) return null;
+    const updated = new Date(item.updatedAt);
+    if (Number.isNaN(updated.getTime())) return null;
+    const today = new Date(`${window.CockpitModels.todayIsoDate()}T12:00:00`);
+    return Math.max(0, Math.floor((today - updated) / 86400000));
+  }
+
+  function deferredReview(item, config) {
+    if (!["dormant", "someday"].includes(item.status) || item.followupDate) return null;
+    const threshold = item.status === "dormant" ? config.dormantReviewDays : config.somedayReviewDays;
+    const days = daysSinceUpdate(item);
+    if (days == null || days < threshold) return null;
+    return { days, threshold };
+  }
+
+  function reviewGroup(item, criticalIssueIds, projectIssueIds, config) {
+    if (hasArrivedDate(item)) return "01|Urgent";
+    if (hasUpcomingDate(item)) return "02|Prochaines echeances (3 j)";
+    if (item.status === "inbox" || criticalIssueIds.has(item.id)) return "03|A clarifier";
+    if (isPastActiveJournal(item)) return "04|Journaux a traiter";
+    if (deferredReview(item, config)) return "05|A revisiter";
+    if (
+      item.type === "project" &&
+      !["dormant", "someday"].includes(item.status) &&
+      (projectIssueIds.has(item.id) || item.progressAgeDays == null || item.progressAgeDays >= config.staleAfterDays)
+    ) {
+      return "06|Projets a reactiver";
+    }
+    return "";
+  }
+
+  function reviewReason(item, issuesByItemId, config) {
+    const journalDate = item.type === "journal" ? window.CockpitModels.journalDate(item) : "";
+    if (window.CockpitRules.isDueOrPast(item.dueDate)) return `Echeance : ${item.dueDate}`;
+    if (window.CockpitRules.isDueOrPast(item.followupDate)) return `Rel : ${item.followupDate}`;
+    if (journalDate === window.CockpitModels.todayIsoDate()) return `Journal : ${journalDate}`;
+    if (isPastActiveJournal(item)) return `Journal actif a traiter depuis le ${journalDate}`;
+    if (item.dueDate) return `Echeance : ${item.dueDate}`;
+    if (item.followupDate) return `Rel : ${item.followupDate}`;
+    if (journalDate) return `Journal : ${journalDate}`;
+    if (item.status === "inbox") return "Capture a clarifier";
+
+    const reasons = [...(issuesByItemId.get(item.id) || [])];
+    const deferred = deferredReview(item, config);
+    if (deferred) reasons.unshift(`${item.status} sans rel depuis ${deferred.days} j (cadence ${deferred.threshold} j)`);
+    if (item.type === "project") {
+      if (item.progressAgeDays == null) reasons.unshift("Pas de date dans Avancement");
+      else if (item.progressAgeDays >= config.staleAfterDays) reasons.unshift(`Avancement il y a ${item.progressAgeDays} j`);
+    }
+    return reasons.join(" · ") || "A clarifier";
+  }
+
+  function reviewProgressDateFormatter(cell) {
+    return cell.getRow().getData().type === "project" ? cell.getValue() || "Jamais" : "";
+  }
+
+  function reviewProgressAgeFormatter(cell) {
+    const item = cell.getRow().getData();
+    if (item.type !== "project") return "";
+    return item.progressAgeDays == null ? "--" : `${item.progressAgeDays} j`;
+  }
+
+  function reviewColumns(app) {
+    const columns = workflowColumns(app);
+    const actionsIndex = columns.findIndex((column) => column.field === "workflowActions");
+    columns.splice(actionsIndex + 1, 0,
+      { title: "Pourquoi", field: "reviewReason", minWidth: 220 },
+      { title: "Dernier avancement", field: "lastProgressDate", width: 140, formatter: reviewProgressDateFormatter },
+      { title: "Depuis", field: "progressAgeDays", width: 76, hozAlign: "center", formatter: reviewProgressAgeFormatter },
+      { title: "Activite liee", field: "lastRelatedActivityLabel", minWidth: 210, formatter: projectOnlyFormatter }
+    );
+    return columns;
   }
 
   function filterForView(view, rawItems) {
     const items = decorateParentInfo(window.CockpitRules.decorateItems(rawItems));
     const open = openItems(items);
     if (view === "today") {
-      return open.filter(
-        (item) =>
-          item.status === "next" ||
-          window.CockpitRules.isDueOrPast(item.dueDate) ||
-          window.CockpitRules.isDueOrPast(item.followupDate)
-      );
+      return open
+        .filter((item) => item.next || hasArrivedDate(item))
+        .map((item) => ({ ...item, todayGroup: item.next ? "01|Choisi aujourd'hui" : "02|Arrive automatiquement" }));
     }
     if (view === "inbox") {
       return open.filter((item) => item.status === "inbox");
     }
     if (view === "review") {
-      const issueIds = new Set(window.CockpitRules.getIssues(rawItems).map((issue) => issue.item.id));
-      const staleAfterDays = window.CockpitApp.config?.staleAfterDays || 14;
+      const issues = window.CockpitRules.getIssues(rawItems);
+      const issuesByItemId = new Map();
+      issues.forEach((issue) => {
+        const reasons = issuesByItemId.get(issue.item.id) || [];
+        reasons.push(issue.reason);
+        issuesByItemId.set(issue.item.id, reasons);
+      });
+      const criticalIssueIds = new Set(
+        issues
+          .filter(
+            (issue) =>
+              ["Attente sans date rel", "Blocage sans date rel", "Tache sans intention claire"].includes(issue.reason) &&
+              issue.item.type !== "project" &&
+              !["dormant", "someday"].includes(issue.item.status)
+          )
+          .map((issue) => issue.item.id)
+      );
+      const projectIssueIds = new Set(
+        issues
+          .filter((issue) => issue.item.type === "project")
+          .map((issue) => issue.item.id)
+      );
+      const config = {
+        staleAfterDays: window.CockpitApp.config?.staleAfterDays || 14,
+        dormantReviewDays: window.CockpitApp.config?.dormantReviewDays || 14,
+        somedayReviewDays: window.CockpitApp.config?.somedayReviewDays || 30,
+      };
       return open
         .map((item) => {
-          if (item.type !== "project") return item;
-          const progress = window.CockpitModels.extractLatestProgress(item.markdown);
-          return { ...item, progressAgeDays: progress.days, lastProgressDate: progress.date };
+          const progress = item.type === "project" ? window.CockpitModels.extractLatestProgress(item.markdown) : null;
+          const activity = item.type === "project" ? latestRelatedActivity(items.filter((candidate) => candidate.projectId === item.id)) : null;
+          const progressItem = progress
+            ? {
+                ...item,
+                progressAgeDays: progress.days,
+                lastProgressDate: progress.date,
+                lastRelatedActivityLabel: activity.label,
+              }
+            : item;
+          return {
+            ...progressItem,
+            reviewGroup: reviewGroup(progressItem, criticalIssueIds, projectIssueIds, config),
+            reviewReason: reviewReason(progressItem, issuesByItemId, config),
+          };
         })
-        .filter(
-          (item) =>
-            issueIds.has(item.id) ||
-            item.status === "inbox" ||
-            item.status === "next" ||
-            item.status === "blocked" ||
-            item.status === "dormant" ||
-            (item.type === "project" && item.progressAgeDays != null && item.progressAgeDays >= staleAfterDays) ||
-            hasArrivedDate(item)
-        )
-        .sort((a, b) => reviewRank(a, issueIds) - reviewRank(b, issueIds) || String(a.dueDate || a.followupDate || "").localeCompare(String(b.dueDate || b.followupDate || "")) || a.title.localeCompare(b.title, "fr"));
+        .filter((item) => item.reviewGroup)
+        .sort((a, b) => a.reviewGroup.localeCompare(b.reviewGroup) || String(a.dueDate || a.followupDate || "").localeCompare(String(b.dueDate || b.followupDate || "")) || a.title.localeCompare(b.title, "fr"));
     }
     if (view === "projects") {
       return manualOrderSort(
@@ -3031,13 +3408,18 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         .filter((item) => item.type === "project")
         .map((project) => {
           const children = open.filter((item) => item.projectId === project.id);
+          const allRelated = items.filter((item) => item.projectId === project.id);
           const progress = window.CockpitModels.extractLatestProgress(project.markdown);
+          const activity = latestRelatedActivity(allRelated);
           return {
             ...project,
             openTaskCount: children.filter((item) => item.type === "task").length,
             lastProgressDate: progress.date,
             lastProgressContext: progress.context || "Aucun contexte d'avancement",
             progressAgeDays: progress.days,
+            lastRelatedActivityDate: activity.date,
+            lastRelatedActivityTitle: activity.title,
+            lastRelatedActivityLabel: activity.label,
             _children: manualOrderSort(children).sort((a, b) => {
               const order = { task: 1, journal: 2, divers: 3 };
               return (order[a.type] || 9) - (order[b.type] || 9) || a.title.localeCompare(b.title, "fr");
@@ -3093,7 +3475,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       if (typeFilterApplies && app.filters.type && item.type !== app.filters.type) return false;
       if (app.filters.status && item.status !== app.filters.status) return false;
       if (app.currentView === "tasks" && app.filters.taskQuick === "past" && !hasArrivedDate(item)) return false;
-      if (app.currentView === "tasks" && app.filters.taskQuick === "next" && item.status !== "next") return false;
+      if (app.currentView === "tasks" && app.filters.taskQuick === "next" && !item.next) return false;
       if (!search) return true;
       return [item.searchText, row.reason, row.action].join(" ").toLowerCase().includes(search);
     });
@@ -3105,7 +3487,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function reviewCount(items) {
-    return filterForView("review", items).length;
+    return filterForView("review", items).filter((item) => ["01|Urgent", "03|A clarifier", "04|Journaux a traiter"].includes(item.reviewGroup)).length;
   }
 
   function setViewText(view, app) {
@@ -3219,6 +3601,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (app.currentView === "control") return controlColumns();
     if (app.currentView === "projects") return projectColumns();
     if (app.currentView === "journal") return journalColumns(app);
+    if (app.currentView === "review") return reviewColumns(app);
+    if (app.currentView === "today") return workflowColumns(app);
     return baseColumns(app, { showType: !isTaskOnlyView(app.currentView) });
   }
 
@@ -3243,6 +3627,66 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     app.table.replaceData(buildView(app));
   }
 
+  function closeQuickWaitingEditor() {
+    document.querySelector(".quick-waiting-editor")?.remove();
+    if (quickWaitingOutsideHandler) document.removeEventListener("pointerdown", quickWaitingOutsideHandler);
+    quickWaitingOutsideHandler = null;
+  }
+
+  function openQuickWaitingEditor(app, button) {
+    closeQuickWaitingEditor();
+    const item = window.CockpitRules.decorateItems(app.items).find((candidate) => candidate.id === button.dataset.waitingId);
+    if (!item) return;
+
+    const editor = document.createElement("div");
+    editor.className = "quick-waiting-editor";
+    editor.innerHTML = `
+      <label><span>J'attends</span><input type="text" data-waiting-source placeholder="Personne, equipe, fournisseur"></label>
+      <label><span>Retour</span><input type="date" data-waiting-date></label>
+      <div class="quick-waiting-actions">
+        <button type="button" data-waiting-cancel>Annuler</button>
+        <button type="button" class="primary" data-waiting-save>Enregistrer</button>
+      </div>
+    `;
+    document.body.append(editor);
+    const source = editor.querySelector("[data-waiting-source]");
+    const date = editor.querySelector("[data-waiting-date]");
+    source.value = item.waiting || "";
+    date.value = item.followupDate || window.CockpitModels.todayIsoDate(3);
+
+    const rect = button.getBoundingClientRect();
+    const left = Math.max(10, Math.min(rect.left, window.innerWidth - editor.offsetWidth - 10));
+    const top = rect.bottom + editor.offsetHeight + 10 < window.innerHeight ? rect.bottom + 6 : rect.top - editor.offsetHeight - 6;
+    editor.style.left = `${left}px`;
+    editor.style.top = `${Math.max(10, top)}px`;
+
+    const save = async () => {
+      const waiting = source.value.trim();
+      if (!waiting || !date.value) {
+        (!waiting ? source : date).focus();
+        return;
+      }
+      await app.updateProps(item.id, { status: "waiting", waiting, rel: date.value, next: false });
+      closeQuickWaitingEditor();
+    };
+
+    editor.querySelector("[data-waiting-save]").addEventListener("click", save);
+    editor.querySelector("[data-waiting-cancel]").addEventListener("click", closeQuickWaitingEditor);
+    editor.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeQuickWaitingEditor();
+      if (event.key === "Enter") {
+        event.preventDefault();
+        save();
+      }
+    });
+    quickWaitingOutsideHandler = (event) => {
+      if (!event.target.closest(".quick-waiting-editor") && !event.target.closest("[data-waiting-id]")) closeQuickWaitingEditor();
+    };
+    setTimeout(() => document.addEventListener("pointerdown", quickWaitingOutsideHandler), 0);
+    source.focus();
+    source.select();
+  }
+
   function configureTable(app) {
     if (!window.Tabulator) {
       document.getElementById("mainTable").innerHTML = "<p class='empty-linked'>Tabulator n'a pas ete charge.</p>";
@@ -3261,7 +3705,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       movableRows: viewAllowsManualOrder(app.currentView),
       dataTree: app.currentView === "projects",
       dataTreeStartExpanded: false,
-      groupBy: app.currentView === "journal" ? "journalGroup" : false,
+      groupBy: app.currentView === "journal" ? "journalGroup" : app.currentView === "review" ? "reviewGroup" : app.currentView === "today" ? "todayGroup" : false,
       groupStartOpen: true,
       groupHeader: (value, count) => `${String(value).split("|").slice(1).join("|")} · ${count}`,
       rowFormatter: (row) => {
@@ -3280,7 +3724,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       const data = cell.getRow().getData();
       const doc = app.items.find((candidate) => candidate.id === data.id);
       if (!doc) return;
-      const value = field === "tags" ? window.CockpitModels.normalizeTags(cell.getValue()) : cell.getValue() || "";
+      const value = field === "tags" ? window.CockpitModels.normalizeTags(cell.getValue()) : field === "next" ? Boolean(cell.getValue()) : cell.getValue() || "";
       app.updateProps(doc.id, { [field]: value });
     });
 
@@ -3314,6 +3758,34 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         event.preventDefault();
         event.stopPropagation();
         app.updateProps(doneButton.dataset.doneId, { status: "done" });
+        return;
+      }
+      const workflowDoneButton = event.target.closest("[data-workflow-done-id]");
+      if (workflowDoneButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        app.updateProps(workflowDoneButton.dataset.workflowDoneId, { status: "done", next: false });
+        return;
+      }
+      const relButton = event.target.closest("[data-rel-id]");
+      if (relButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        app.updateProps(relButton.dataset.relId, { rel: window.CockpitModels.todayIsoDate(Number(relButton.dataset.relDays)), next: false });
+        return;
+      }
+      const waitingButton = event.target.closest("[data-waiting-id]");
+      if (waitingButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        openQuickWaitingEditor(app, waitingButton);
+        return;
+      }
+      const nextButton = event.target.closest("[data-next-id]");
+      if (nextButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        app.updateProps(nextButton.dataset.nextId, { next: nextButton.dataset.nextValue === "true" });
         return;
       }
       const link = event.target.closest("[data-open-id]");
@@ -3373,10 +3845,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function propertyKeys(item) {
-    if (item.type === "project") return ["id", "type", "status", "priority", "rowColor", "rel", "tags", "slug"];
-    if (item.type === "journal") return ["id", "type", "status", "rowColor", "project", "tags", "slug"];
+    if (item.type === "project") return ["id", "type", "status", "next", "priority", "rowColor", "rel", "waiting", "tags", "slug"];
+    if (item.type === "journal") return ["id", "type", "status", "next", "rowColor", "project", "tags", "slug"];
     if (item.type === "divers") return ["id", "type", "status", "rowColor", "project", "parent", "tags", "slug"];
-    return ["id", "type", "status", "priority", "rowColor", "project", "parent", "due", "rel", "waiting", "tags", "slug"];
+    return ["id", "type", "status", "next", "priority", "rowColor", "project", "parent", "due", "rel", "waiting", "tags", "slug"];
   }
 
   function propertyValue(item, key) {
@@ -3426,7 +3898,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
                 const meta = rowColorMeta(value);
                 return `<span class="row-color-prop"><span class="row-color-swatch ${meta.className}">${meta.swatch}</span><span>${escapeHtml(meta.label)}</span></span>`;
               })()
-            : escapeHtml(value || "-");
+            : key === "next"
+              ? escapeHtml(value ? "Oui" : "-")
+              : escapeHtml(value || "-");
         return `<div class="prop-row">
           <div class="prop-key">${key}</div>
           ${
@@ -3547,7 +4021,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       await app.addItem({
         type: "task",
         title,
-        status: intent === "waiting" ? "waiting" : intent === "action" && date <= window.CockpitModels.todayIsoDate() ? "next" : "active",
+        status: intent === "waiting" ? "waiting" : "active",
+        next: date <= window.CockpitModels.todayIsoDate(),
         priority: "medium",
         project: doc.id,
         followupDate: date,
@@ -3585,16 +4060,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (key === "type") return window.CockpitModels.TYPES.map((value) => ({ value, label: value }));
     if (key === "status") {
       const item = selectedParsed(app);
-      const values =
-        item?.type === "project"
-          ? ["active", "waiting", "blocked", "someday", "dormant", "done", "archived"]
-          : item?.type === "journal"
-            ? ["active", "done", "archived"]
-            : item?.type === "divers"
-              ? ["active", "archived"]
-              : window.CockpitModels.STATUSES;
+      const values = window.CockpitModels.statusesForType(item?.type);
       return values.map((value) => ({ value, label: value }));
     }
+    if (key === "next") return [{ value: "false", label: "-" }, { value: "true", label: "Oui" }];
     if (key === "priority") return window.CockpitModels.PRIORITIES.map((value) => ({ value, label: value }));
     if (key === "rowColor") {
       return [
@@ -3633,7 +4102,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       editor.type = "text";
     }
 
-    const current = key === "tags" ? item.tags.join(", ") : propertyValue(item, key);
+    const current = key === "tags" ? item.tags.join(", ") : key === "next" ? String(Boolean(item.next)) : propertyValue(item, key);
     editor.value = current;
     button.replaceWith(editor);
     editor.focus();
@@ -3644,7 +4113,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const commit = async () => {
       if (committed || cancelled) return;
       committed = true;
-      const value = key === "tags" ? window.CockpitModels.normalizeTags(editor.value) : editor.value;
+      const value = key === "tags" ? window.CockpitModels.normalizeTags(editor.value) : key === "next" ? editor.value === "true" : editor.value;
       await app.updateProps(item.id, { [key]: value }, { quiet: true });
       if (key === "type") {
         renderDetail(app);
@@ -3869,6 +4338,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 (function () {
   let focusBinding = null;
   let focusSaveTimer = null;
+  let focusSavePromise = null;
+  let pendingFocusSave = null;
+  const FOCUS_DRAFT_KEY = "tabulator-cockpit-focus-draft";
 
   function focusUrlFor(id) {
     const url = new URL(window.location.href);
@@ -3890,6 +4362,24 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+  }
+
+  function readDraft(id) {
+    try {
+      const draft = JSON.parse(localStorage.getItem(FOCUS_DRAFT_KEY) || "null");
+      return draft?.id === id && typeof draft.body === "string" ? draft : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function writeDraft(id, body) {
+    localStorage.setItem(FOCUS_DRAFT_KEY, JSON.stringify({ id, body, updatedAt: Date.now() }));
+  }
+
+  function clearDraft(id, body) {
+    const draft = readDraft(id);
+    if (draft && (body === undefined || draft.body === body)) localStorage.removeItem(FOCUS_DRAFT_KEY);
   }
 
   function renderMissingFocus(id) {
@@ -3923,6 +4413,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return true;
     }
     const parsed = window.CockpitModels.parseDocument(doc);
+    const draft = readDraft(doc.id);
+    const initialBody = draft?.body ?? parsed.body;
     document.title = `${parsed.title} - Focus`;
     document.body.classList.add("focus-mode");
     const page = document.getElementById("focusPage");
@@ -3955,18 +4447,54 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (focusBinding) focusBinding.destroy();
     const host = document.getElementById("focusMarkdownEditor");
     const status = document.getElementById("focusStatus");
-    focusBinding = window.CockpitMarkdown.bindMarkdownEditor(host, parsed.body, (value) => {
+    const saveNow = async () => {
+      const pending = pendingFocusSave;
+      if (!pending) return;
+      pendingFocusSave = null;
+      const current = app.items.find((item) => item.id === pending.id);
+      if (!current) return;
+      const split = window.CockpitModels.splitMarkdown(current.markdown);
+      const markdown = window.CockpitModels.composeMarkdown(split.props, pending.body);
+      try {
+        await app.updateMarkdown(pending.id, markdown, { quiet: true });
+        clearDraft(pending.id, pending.body);
+        status.textContent = "Sauvegarde locale";
+      } catch (error) {
+        pendingFocusSave = pending;
+        status.textContent = "Sauvegarde a reprendre";
+        console.warn("Sauvegarde plein ecran impossible", error);
+      }
+    };
+
+    const queueSave = (value) => {
+      pendingFocusSave = { id: doc.id, body: value };
+      writeDraft(doc.id, value);
       clearTimeout(focusSaveTimer);
       status.textContent = "Sauvegarde...";
-      focusSaveTimer = setTimeout(async () => {
-        const current = app.items.find((item) => item.id === doc.id);
-        if (!current) return;
-        const split = window.CockpitModels.splitMarkdown(current.markdown);
-        const markdown = window.CockpitModels.composeMarkdown(split.props, value);
-        await app.updateMarkdown(doc.id, markdown, { quiet: true });
-        status.textContent = "Sauvegarde locale";
-      }, 350);
-    });
+      focusSaveTimer = setTimeout(() => {
+        focusSavePromise = saveNow();
+      }, 180);
+    };
+
+    const flushSave = () => {
+      clearTimeout(focusSaveTimer);
+      focusSavePromise = saveNow();
+      return focusSavePromise;
+    };
+
+    focusBinding = window.CockpitMarkdown.bindMarkdownEditor(host, initialBody, queueSave);
+    const input = host.querySelector(".overtype-input, textarea");
+    input?.addEventListener("input", () => queueSave(input.value));
+    window.addEventListener("pagehide", flushSave, { once: true });
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (document.visibilityState === "hidden") flushSave();
+      },
+      { once: true }
+    );
+
+    if (draft) queueSave(initialBody);
     return true;
   }
 
@@ -3981,6 +4509,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 (function () {
   const COLUMN_PREFS_KEY = "tabulator-cockpit-column-visibility";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
+  const LAST_EXPORT_KEY = "tabulator-cockpit-last-export";
 
   function download(filename, content, type) {
     const blob = new Blob([content], { type });
@@ -4037,6 +4566,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   function exportJson(app) {
     const payload = exportPayload(app);
     download(`cockpit-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(payload, null, 2), "application/json");
+    localStorage.setItem(LAST_EXPORT_KEY, payload.exportedAt);
+    document.dispatchEvent(new CustomEvent("cockpit:exported", { detail: { exportedAt: payload.exportedAt } }));
   }
 
   async function importJson(app, file) {
@@ -4068,13 +4599,17 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
-  const APP_VERSION = "0.5.6";
+  const APP_VERSION = "0.7.1";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
+  const FOCUS_DRAFT_KEY = "tabulator-cockpit-focus-draft";
+  const LAST_EXPORT_KEY = "tabulator-cockpit-last-export";
   const DEFAULT_CONFIG = {
     relOffsets: [1, 2, 3, 5, 7],
     staleAfterDays: 14,
+    dormantReviewDays: 14,
+    somedayReviewDays: 30,
   };
   let undoTimer = null;
 
@@ -4201,6 +4736,14 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       this.refresh();
       return loaded;
     },
+
+    async reloadFromStorage() {
+      await recoverFocusDraft();
+      const loaded = await window.CockpitStorage.getAllItems();
+      this.items = loaded;
+      if (this.selectedItemId && !loaded.some((item) => item.id === this.selectedItemId)) this.selectedItemId = null;
+      this.refresh();
+    },
   };
 
   function loadFavoriteIds() {
@@ -4222,6 +4765,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return {
       relOffsets: relOffsets.length ? relOffsets : [...DEFAULT_CONFIG.relOffsets],
       staleAfterDays: Number(raw.staleAfterDays) > 0 ? Number(raw.staleAfterDays) : DEFAULT_CONFIG.staleAfterDays,
+      dormantReviewDays: Number(raw.dormantReviewDays) > 0 ? Number(raw.dormantReviewDays) : DEFAULT_CONFIG.dormantReviewDays,
+      somedayReviewDays: Number(raw.somedayReviewDays) > 0 ? Number(raw.somedayReviewDays) : DEFAULT_CONFIG.somedayReviewDays,
     };
   }
 
@@ -4238,6 +4783,23 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(app.config));
   }
 
+  async function recoverFocusDraft() {
+    try {
+      const draft = JSON.parse(localStorage.getItem(FOCUS_DRAFT_KEY) || "null");
+      if (!draft?.id || typeof draft.body !== "string") return;
+      const current = app.items.find((item) => item.id === draft.id);
+      if (!current) return;
+      const split = window.CockpitModels.splitMarkdown(current.markdown);
+      const saved = await window.CockpitStorage.saveItem(
+        window.CockpitModels.updateDocumentMarkdown(current, window.CockpitModels.composeMarkdown(split.props, draft.body))
+      );
+      app.items = app.items.map((item) => (item.id === saved.id ? saved : item));
+      localStorage.removeItem(FOCUS_DRAFT_KEY);
+    } catch (error) {
+      console.warn("Brouillon plein ecran non restaure", error);
+    }
+  }
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -4247,11 +4809,41 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       .replaceAll("'", "&#039;");
   }
 
+  function bindReturnSync() {
+    let timer = null;
+    const reloadWhenBack = () => {
+      if (document.body.classList.contains("focus-mode")) return;
+      clearTimeout(timer);
+      // Leave the closing focus page enough time to finish its IndexedDB write.
+      timer = setTimeout(() => app.reloadFromStorage(), 260);
+    };
+    window.addEventListener("focus", reloadWhenBack);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") reloadWhenBack();
+    });
+  }
+
   function updateStorageStatus() {
     const issues = window.CockpitRules.getIssues(app.items).length;
     const mode = window.CockpitStorage.storageMode();
     document.getElementById("storageStatus").textContent = `${app.items.length} pages · ${issues} controles · ${mode} · v${APP_VERSION}`;
+    updateBackupStatus();
     updateReviewCount();
+  }
+
+  function updateBackupStatus() {
+    const element = document.getElementById("backupStatus");
+    if (!element) return;
+    const raw = localStorage.getItem(LAST_EXPORT_KEY);
+    const date = raw ? new Date(raw) : null;
+    if (!date || Number.isNaN(date.getTime())) {
+      element.textContent = "Aucun export JSON";
+      element.classList.add("warning");
+      return;
+    }
+    const days = Math.max(0, Math.floor((Date.now() - date.getTime()) / 86400000));
+    element.textContent = days === 0 ? "Dernier export : aujourd'hui" : `Dernier export : il y a ${days} j`;
+    element.classList.toggle("warning", days >= 7);
   }
 
   function updateReviewCount() {
@@ -4407,6 +4999,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const captureInput = document.getElementById("captureInput");
     const captureCount = document.getElementById("captureCount");
     const projectSuggest = document.getElementById("projectSuggest");
+    const settingsDialog = document.getElementById("radarSettingsDialog");
     let projectSuggestState = {
       open: false,
       start: -1,
@@ -4601,6 +5194,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
           title: capture.title,
           status: capture.status,
           priority: capture.priority,
+          next: capture.next,
           project: project ? project.id : "",
           dueDate: capture.dueDate,
           followupDate: capture.followupDate,
@@ -4687,7 +5281,26 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       });
     });
 
+    document.getElementById("radarSettingsButton").addEventListener("click", () => {
+      document.getElementById("staleAfterDaysInput").value = app.config.staleAfterDays;
+      document.getElementById("dormantReviewDaysInput").value = app.config.dormantReviewDays;
+      document.getElementById("somedayReviewDaysInput").value = app.config.somedayReviewDays;
+      settingsDialog.showModal();
+    });
+
+    document.getElementById("saveRadarSettingsButton").addEventListener("click", () => {
+      saveConfig({
+        ...app.config,
+        staleAfterDays: document.getElementById("staleAfterDaysInput").value,
+        dormantReviewDays: document.getElementById("dormantReviewDaysInput").value,
+        somedayReviewDays: document.getElementById("somedayReviewDaysInput").value,
+      });
+      settingsDialog.close();
+      app.refresh();
+    });
+
     document.getElementById("exportButton").addEventListener("click", () => window.CockpitImportExport.exportJson(app));
+    document.addEventListener("cockpit:exported", updateStorageStatus);
     document.getElementById("importInput").addEventListener("change", async (event) => {
       const [file] = event.target.files;
       if (!file) return;
@@ -4843,6 +5456,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     }
     app.items = await migrateAllIdsToShortIds(app.items);
     app.items = await canonicalizeProjectRelations(app.items);
+    await recoverFocusDraft();
     const focusId = window.CockpitFocus?.requestedFocusId();
     if (focusId) {
       window.CockpitFocus.render(app, focusId);
@@ -4850,6 +5464,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     }
     app.selectedItemId = null;
     app.refresh();
+    bindReturnSync();
   }
 
   window.addEventListener("DOMContentLoaded", init);
