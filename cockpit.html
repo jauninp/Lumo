@@ -131,9 +131,70 @@ button {
 .topbar p,
 .empty-detail h2,
 .empty-detail p,
-.detail-header h2,
-.eyebrow {
+.detail-header h2 {
   margin: 0;
+}
+
+.detail-heading {
+  min-width: 0;
+}
+
+.detail-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.detail-context {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.detail-context:empty {
+  display: none;
+}
+
+.detail-context button {
+  max-width: 280px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--accent-dark);
+  padding: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-context button:hover {
+  text-decoration: underline;
+}
+
+.detail-back-button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: white;
+  color: var(--accent-dark);
+  font-size: 18px;
+}
+
+.detail-back-button:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.detail-back-button[hidden] {
+  display: none;
 }
 
 .brand h1 {
@@ -168,7 +229,7 @@ button {
 
 .quick-actions {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(72px, 0.68fr);
+  grid-template-columns: minmax(0, 1fr) minmax(68px, 0.62fr) 36px;
   gap: 8px;
 }
 
@@ -182,6 +243,21 @@ button {
   border-color: var(--line-strong);
   background: var(--panel);
   color: var(--accent-dark);
+}
+
+.important-task-button {
+  width: 36px;
+  min-height: 34px;
+  border: 1px solid #d66a22;
+  border-radius: 7px;
+  background: #f07a2b;
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.important-task-button:hover {
+  background: #d96820;
 }
 
 .nav-list {
@@ -1154,21 +1230,140 @@ button {
   display: inline-grid;
   place-items: center;
   max-width: 76px;
-  padding: 2px 5px;
-  border: 1px solid #d7ddd8;
-  border-radius: 5px;
-  background: #f5f7f5;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #87918c;
+  font-size: 10px;
+  font-weight: 400;
   line-height: 1.2;
 }
 
 .short-id.copied {
-  border-color: var(--accent);
-  background: var(--accent-soft-strong);
   color: var(--accent-dark);
 }
+
+.short-id:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.row-color-menu {
+  position: fixed;
+  z-index: 140;
+  width: 226px;
+  padding: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: white;
+  box-shadow: 0 10px 24px rgba(31, 43, 47, 0.18);
+}
+
+.row-context-colors {
+  display: grid;
+  grid-template-columns: repeat(6, 30px);
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.row-context-colors button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+}
+
+.row-context-colors button:hover,
+.row-context-colors button.active {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.row-context-colors button > span:last-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.row-context-divider {
+  height: 1px;
+  margin: 6px -6px;
+  background: var(--line);
+}
+
+.row-context-action {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+  text-align: left;
+}
+
+.row-context-action > span:first-child {
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.row-context-action:hover {
+  background: var(--accent-subtle);
+}
+
+.row-context-reminder {
+  display: grid;
+  grid-template-columns: 48px repeat(5, 1fr);
+  align-items: center;
+  gap: 3px;
+  min-height: 34px;
+  padding: 3px 4px 3px 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.row-context-reminder button {
+  min-width: 0;
+  min-height: 25px;
+  padding: 3px 2px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text);
+  font-size: 10px;
+}
+
+.row-context-reminder button:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.context-color-swatch {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+}
+
+.context-color-swatch.none { background: white; }
+.context-color-swatch.yellow { background: #f3c94b; }
+.context-color-swatch.green { background: #62a95f; }
+.context-color-swatch.blue { background: #5c9fd8; }
+.context-color-swatch.red { background: #d86b5f; }
+.context-color-swatch.violet { background: #9270d8; }
 
 .parent-link {
   display: inline-grid;
@@ -1337,34 +1532,94 @@ button {
   line-height: 1.18;
 }
 
-.eyebrow {
-  margin-bottom: 6px;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .icon-button {
   padding: 6px 10px;
   white-space: nowrap;
 }
 
+.detail-close-button {
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+
 .page-toolbar {
+  position: relative;
+  z-index: 200;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  overflow: visible;
   gap: 8px;
   padding: 10px 20px;
   border-bottom: 1px solid var(--line);
   background: #fbfcfa;
 }
 
-.page-toolbar span {
+.page-toolbar > #markdownStatus {
   margin-left: auto;
   color: var(--muted);
   font-size: 12px;
+}
+
+.toolbar-icon-button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.page-actions-menu {
+  position: relative;
+}
+
+.page-actions-menu > summary {
+  display: grid;
+  place-items: center;
+  list-style: none;
+  cursor: pointer;
+}
+
+.page-actions-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.page-actions-menu > div {
+  position: absolute;
+  z-index: 210;
+  top: calc(100% + 5px);
+  right: 0;
+  display: grid;
+  min-width: 142px;
+  padding: 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: white;
+  box-shadow: 0 10px 24px rgba(31, 43, 47, 0.16);
+}
+
+.page-actions-menu > div button {
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  padding: 8px 9px;
+  color: var(--text);
+  text-align: left;
+}
+
+.page-actions-menu > div button:hover {
+  background: var(--accent-subtle);
+}
+
+.page-actions-menu > div button.danger {
+  color: var(--danger);
 }
 
 .ghost-button {
@@ -1437,6 +1692,11 @@ button {
   font-size: 12px;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.linked-section {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
 }
 
 .prop-list {
@@ -1595,7 +1855,26 @@ button {
 
 .control-reason {
   color: var(--danger);
-  font-weight: 750;
+  font-weight: 600;
+}
+
+.control-list {
+  display: grid;
+  gap: 5px;
+}
+
+.control-item {
+  padding: 6px 7px;
+  border-left: 2px solid #d8a09a;
+  background: #fffafa;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+.control-item .control-reason {
+  margin-bottom: 2px;
+  font-size: 11px;
 }
 
 .focus-page {
@@ -1913,13 +2192,14 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.8.7</span></p>
+            <p><span id="appVersion">v0.9.8</span></p>
           </div>
         </div>
 
         <div class="quick-actions" aria-label="Actions rapides">
           <button class="capture-button" id="quickCaptureButton" type="button">Capture</button>
           <button class="capture-button secondary" id="quickTaskButton" type="button">Tache</button>
+          <button class="important-task-button" id="quickImportantButton" type="button" title="Capturer une tache urgente pour aujourd'hui" aria-label="Tache importante">!</button>
         </div>
 
         <div class="sidebar-scroll">
@@ -1938,9 +2218,6 @@ button {
 
         <div class="sidebar-footer">
           <section class="mini-calendar" aria-label="Mini calendrier">
-            <div class="mini-calendar-header">
-              <strong id="miniCalendarLabel"></strong>
-            </div>
             <div class="mini-calendar-weekdays" aria-hidden="true">
               <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
             </div>
@@ -2085,20 +2362,28 @@ button {
 
     <template id="pageTemplate">
       <header class="detail-header">
-        <div>
-          <p class="eyebrow" id="detailType"></p>
-          <h2 id="detailTitle"></h2>
+        <div class="detail-heading">
+          <div class="detail-context" id="detailContext"></div>
+          <div class="detail-title-row">
+            <button class="detail-back-button" type="button" data-action="back" title="Revenir a la page precedente" aria-label="Retour" hidden>←</button>
+            <h2 id="detailTitle"></h2>
+          </div>
         </div>
-        <button class="icon-button" type="button" data-action="close">Fermer</button>
+        <button class="icon-button detail-close-button" type="button" data-action="close" title="Fermer" aria-label="Fermer">×</button>
       </header>
       <div class="page-toolbar">
-        <button class="ghost-button" type="button" data-action="favorite">Epingler</button>
-        <button class="ghost-button" type="button" data-action="duplicate">Dupliquer</button>
-        <button class="ghost-button" type="button" data-action="insert-date">Date du jour</button>
-        <button class="ghost-button" type="button" data-action="plan-next">Planifier la suite</button>
-        <button class="ghost-button" type="button" data-action="focus">Plein ecran</button>
-        <button class="ghost-button danger" type="button" data-action="archive">Archiver</button>
-        <button class="ghost-button danger" type="button" data-action="delete">Supprimer</button>
+        <button class="ghost-button toolbar-icon-button" type="button" data-action="favorite" title="Epingler" aria-label="Epingler">☆</button>
+        <button class="ghost-button toolbar-icon-button" type="button" data-action="insert-date" title="Inserer la date du jour" aria-label="Inserer la date du jour">⊞</button>
+        <button class="ghost-button toolbar-icon-button" type="button" data-action="plan-next" title="Planifier la suite" aria-label="Planifier la suite">→</button>
+        <button class="ghost-button toolbar-icon-button" type="button" data-action="focus" title="Ouvrir en plein ecran" aria-label="Ouvrir en plein ecran">⛶</button>
+        <details class="page-actions-menu">
+          <summary class="ghost-button toolbar-icon-button" title="Autres actions" aria-label="Autres actions">⋯</summary>
+          <div>
+            <button type="button" data-action="duplicate">Dupliquer</button>
+            <button type="button" data-action="archive">Archiver</button>
+            <button class="danger" type="button" data-action="delete">Supprimer</button>
+          </div>
+        </details>
         <span id="markdownStatus">Sauvegarde locale</span>
       </div>
       <div class="detail-content">
@@ -2242,7 +2527,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function statusesForType(type) {
     if (type === "project") return ["active", "waiting", "blocked", "someday", "dormant", "done", "archived"];
-    if (type === "journal") return ["active", "done", "archived"];
+    if (type === "journal") return ["active", "done"];
     if (type === "divers") return ["active", "archived"];
     return STATUSES;
   }
@@ -2363,7 +2648,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       projectName: projects[0] || "",
       tags: contexts,
       priority,
-      status: values.status || explicitStatus || (values.waiting || values.rel || values.relance || values.followup ? "waiting" : values.blocked ? "blocked" : "inbox"),
+      status: values.status || explicitStatus || (values.waiting || values.rel || values.relance || values.followup ? "waiting" : values.blocked ? "blocked" : isTrue(values.next) ? "active" : "inbox"),
       next: isTrue(values.next),
       dueDate: values.due || "",
       followupDate: values.rel || values.relance || values.followup || "",
@@ -2430,12 +2715,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       };
     }
     if (common.type === "journal") {
-      if (!["active", "done", "archived"].includes(common.status)) common.status = "active";
+      if (common.status === "archived") common.status = "done";
+      if (!["active", "done"].includes(common.status)) common.status = "active";
       return {
         ...common,
         project: props.project || "",
         tags: normalizeTags(props.tags),
-        archivedAt: props.archivedAt || "",
+        archivedAt: "",
       };
     }
     if (common.type === "divers") {
@@ -3092,6 +3378,16 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
           textarea.focus();
           onChange(textarea.value);
         },
+        insertLine(text) {
+          const start = textarea.selectionStart || 0;
+          const end = textarea.selectionEnd || start;
+          const prefix = start > 0 && textarea.value[start - 1] !== "\n" ? "\n" : "";
+          const insertion = `${prefix}${text}`;
+          textarea.value = `${textarea.value.slice(0, start)}${insertion}${textarea.value.slice(end)}`;
+          textarea.selectionStart = textarea.selectionEnd = start + insertion.length;
+          textarea.focus();
+          onChange(textarea.value);
+        },
       };
     }
 
@@ -3112,6 +3408,18 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         textarea.focus();
         textarea.dispatchEvent(new Event("input", { bubbles: true }));
       },
+      insertLine(text) {
+        const textarea = editor.textarea || host.querySelector("textarea");
+        if (!textarea) return;
+        const start = textarea.selectionStart || 0;
+        const end = textarea.selectionEnd || start;
+        const prefix = start > 0 && textarea.value[start - 1] !== "\n" ? "\n" : "";
+        const insertion = `${prefix}${text}`;
+        textarea.value = `${textarea.value.slice(0, start)}${insertion}${textarea.value.slice(end)}`;
+        textarea.selectionStart = textarea.selectionEnd = start + insertion.length;
+        textarea.focus();
+        textarea.dispatchEvent(new Event("input", { bubbles: true }));
+      },
     };
   }
 
@@ -3125,6 +3433,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   const COLUMN_PREFS_KEY = "tabulator-cockpit-column-visibility";
   let quickWaitingOutsideHandler = null;
   let quickRelOutsideHandler = null;
+  let rowColorOutsideHandler = null;
+  let rowColorKeyHandler = null;
 
   const viewMeta = {
     today: ["Aujourd'hui", "Ce que tu as choisi, puis ce qui est arrive automatiquement."],
@@ -3235,7 +3545,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const columns = [
       { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
       { title: "", field: "_done", width: 42, hozAlign: "center", headerSort: false, formatter: doneActionFormatter },
-      { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
+      { title: "ID", field: "id", width: 78, responsive: 3, formatter: idFormatter },
       options.showType === false ? null : { title: "Type", field: "type", width: 96, responsive: 3, formatter: typeFormatter, editor: "list", editorParams: { values: window.CockpitModels.TYPES } },
       { title: "Titre", field: "title", minWidth: 260, formatter: titleFormatter },
       {
@@ -3314,7 +3624,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   function projectColumns() {
     return [
       { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
-      { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
+      { title: "ID", field: "id", width: 78, responsive: 3, formatter: idFormatter },
       { title: "Projet / element lie", field: "title", minWidth: 310, formatter: projectTitleFormatter },
       { title: "Categorie", field: "category", width: 112, formatter: projectOnlyFormatter, editor: "list", editable: (cell) => cell.getRow().getData().type === "project", editorParams: { values: window.CockpitModels.PROJECT_CATEGORIES } },
       {
@@ -3331,6 +3641,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         }),
       },
       { title: "Priorite", field: "priority", width: 96, formatter: projectOnlyFormatter, editor: "list", editable: (cell) => cell.getRow().getData().type === "project", editorParams: { values: window.CockpitModels.PRIORITIES } },
+      { title: "Prochaine relance", field: "followupDate", width: 124, sorter: "date", formatter: projectOnlyFormatter, editor: "date", editable: (cell) => cell.getRow().getData().type === "project" },
       { title: "Todos", field: "openTaskCount", width: 78, hozAlign: "center", formatter: projectOnlyFormatter },
       { title: "Dernier avancement", field: "lastProgressDate", width: 132, formatter: projectOnlyFormatter },
       { title: "Depuis", field: "progressAgeDays", width: 82, hozAlign: "center", formatter: progressAgeFormatter },
@@ -3343,7 +3654,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   function journalColumns(app) {
     return [
       { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
-      { title: "ID", field: "id", width: 92, responsive: 3, formatter: idFormatter },
+      { title: "ID", field: "id", width: 78, responsive: 3, formatter: idFormatter },
       { title: "Date", field: "journalDate", width: 118, sorter: "date" },
       { title: "Titre", field: "title", minWidth: 320, formatter: titleFormatter },
       {
@@ -3713,14 +4024,15 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function prefsForView(prefs, view) {
     const value = prefs[view];
-    if (Array.isArray(value)) return { hidden: value, widths: {} };
+    if (Array.isArray(value)) return { hidden: value, widths: {}, order: [] };
     if (value && typeof value === "object") {
       return {
         hidden: Array.isArray(value.hidden) ? value.hidden : [],
         widths: value.widths && typeof value.widths === "object" ? value.widths : {},
+        order: Array.isArray(value.order) ? value.order : [],
       };
     }
-    return { hidden: [], widths: {} };
+    return { hidden: [], widths: {}, order: [] };
   }
 
   function hiddenColumns(view) {
@@ -3757,10 +4069,31 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     saveColumnPrefs(prefs);
   }
 
+  function setColumnOrder(view, order) {
+    const prefs = loadColumnPrefs();
+    const viewPrefs = prefsForView(prefs, view);
+    prefs[view] = { ...viewPrefs, order: order.filter(Boolean) };
+    saveColumnPrefs(prefs);
+  }
+
+  function orderedColumns(view, columns) {
+    const order = prefsForView(loadColumnPrefs(), view).order;
+    if (!order.length) return columns;
+    const rank = new Map(order.map((field, index) => [field, index]));
+    return columns
+      .map((column, index) => ({ column, index }))
+      .sort((a, b) => {
+        const aRank = rank.has(a.column.field) ? rank.get(a.column.field) : order.length + a.index;
+        const bRank = rank.has(b.column.field) ? rank.get(b.column.field) : order.length + b.index;
+        return aRank - bRank;
+      })
+      .map(({ column }) => column);
+  }
+
   function applyColumnVisibility(view, columns) {
     const hidden = hiddenColumns(view);
     const widths = columnWidths(view);
-    return columns.map((column) => ({
+    return orderedColumns(view, columns).map((column) => ({
       ...column,
       width: column.field && widths[column.field] ? widths[column.field] : column.width,
       visible: column.field && column.field !== "title" ? !hidden.has(column.field) : column.visible,
@@ -3773,7 +4106,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const hidden = hiddenColumns(app.currentView);
     const seen = new Set();
     popover.innerHTML = "";
-    columns.forEach((column) => {
+    orderedColumns(app.currentView, columns).forEach((column) => {
       if (!column.field || seen.has(column.field)) return;
       seen.add(column.field);
       const label = document.createElement("label");
@@ -3826,6 +4159,109 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     document.querySelector(".quick-waiting-editor")?.remove();
     if (quickWaitingOutsideHandler) document.removeEventListener("pointerdown", quickWaitingOutsideHandler);
     quickWaitingOutsideHandler = null;
+  }
+
+  function closeRowColorMenu() {
+    document.querySelector(".row-color-menu")?.remove();
+    if (rowColorOutsideHandler) document.removeEventListener("pointerdown", rowColorOutsideHandler);
+    if (rowColorKeyHandler) document.removeEventListener("keydown", rowColorKeyHandler);
+    rowColorOutsideHandler = null;
+    rowColorKeyHandler = null;
+  }
+
+  function openRowColorMenu(app, event, row) {
+    closeRowColorMenu();
+    closeQuickRelMenu();
+    closeQuickWaitingEditor();
+    const data = row.getData();
+    const id = data.itemId || data.id;
+    const items = window.CockpitRules.decorateItems(app.items);
+    const item = items.find((candidate) => candidate.id === id);
+    if (!item) return;
+    const project = item.type === "project" ? null : window.CockpitRules.resolveProject(items, item);
+    const colors = [
+      ["", "Aucune"],
+      ["yellow", "Jaune"],
+      ["green", "Vert"],
+      ["blue", "Bleu"],
+      ["red", "Rouge"],
+      ["violet", "Violet"],
+    ];
+    const menu = document.createElement("div");
+    menu.className = "row-color-menu";
+    menu.setAttribute("role", "menu");
+
+    const colorGroup = document.createElement("div");
+    colorGroup.className = "row-context-colors";
+    colors.forEach(([value, label]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = value === item.rowColor ? "active" : "";
+      button.title = label;
+      button.innerHTML = `<span class="context-color-swatch ${value || "none"}"></span><span>${label}</span>`;
+      button.addEventListener("click", async () => {
+        await app.updateProps(id, { rowColor: value });
+        closeRowColorMenu();
+      });
+      colorGroup.append(button);
+    });
+    menu.append(colorGroup);
+
+    const divider = () => {
+      const line = document.createElement("div");
+      line.className = "row-context-divider";
+      menu.append(line);
+    };
+    const action = (label, symbol, handler) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "row-context-action";
+      button.innerHTML = `<span aria-hidden="true">${symbol}</span><span>${label}</span>`;
+      button.addEventListener("click", async () => {
+        await handler();
+        closeRowColorMenu();
+      });
+      menu.append(button);
+    };
+
+    if (["task", "project"].includes(item.type)) {
+      divider();
+      const reminder = document.createElement("div");
+      reminder.className = "row-context-reminder";
+      const reminderLabel = document.createElement("span");
+      reminderLabel.textContent = "Revoir";
+      reminder.append(reminderLabel);
+      const offsets = Array.isArray(app.config?.relOffsets) && app.config.relOffsets.length ? app.config.relOffsets : [1, 2, 3, 5, 7];
+      offsets.slice(0, 5).forEach((days) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = `+${days}j`;
+        button.title = relOffsetLabel(days);
+        button.addEventListener("click", async () => {
+          await app.updateProps(id, { rel: window.CockpitModels.todayIsoDate(Number(days)), next: false });
+          closeRowColorMenu();
+        });
+        reminder.append(button);
+      });
+      menu.append(reminder);
+    }
+
+    if (project) {
+      divider();
+      action(`Ouvrir ${project.title}`, "↗", () => app.selectItem(project.id));
+    }
+
+    document.body.append(menu);
+    menu.style.left = `${Math.max(8, Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8))}px`;
+    menu.style.top = `${Math.max(8, Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8))}px`;
+    rowColorOutsideHandler = (pointerEvent) => {
+      if (!pointerEvent.target.closest(".row-color-menu")) closeRowColorMenu();
+    };
+    rowColorKeyHandler = (keyEvent) => {
+      if (keyEvent.key === "Escape") closeRowColorMenu();
+    };
+    setTimeout(() => document.addEventListener("pointerdown", rowColorOutsideHandler), 0);
+    document.addEventListener("keydown", rowColorKeyHandler);
   }
 
   function relOffsetLabel(days) {
@@ -3948,6 +4384,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       placeholder: "Aucune page pour cette vue",
       selectableRows: 1,
       movableRows: viewAllowsManualOrder(app.currentView),
+      movableColumns: true,
       dataTree: app.currentView === "projects",
       dataTreeStartExpanded: false,
       groupBy: app.currentView === "journal" ? "journalGroup" : app.currentView === "review" ? "reviewGroup" : app.currentView === "today" ? "todayGroup" : false,
@@ -3979,6 +4416,16 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
     app.table.on("columnResized", (column) => {
       setColumnWidth(app.currentView, column.getField(), column.getWidth());
+    });
+
+    app.table.on("columnMoved", () => {
+      setColumnOrder(app.currentView, app.table.getColumns().map((column) => column.getField()).filter(Boolean));
+      renderColumnMenu(app, rawColumns);
+    });
+
+    app.table.on("rowContext", (event, row) => {
+      event.preventDefault();
+      openRowColorMenu(app, event, row);
     });
 
     document.getElementById("mainTable").onclick = (event) => {
@@ -4083,24 +4530,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       .replaceAll("'", "&#039;");
   }
 
-  function rowColorMeta(value) {
-    return (
-      {
-        "": { label: "Aucune", swatch: "□", className: "none" },
-        yellow: { label: "Jaune", swatch: "■", className: "yellow" },
-        green: { label: "Vert", swatch: "■", className: "green" },
-        blue: { label: "Bleu", swatch: "■", className: "blue" },
-        red: { label: "Rouge", swatch: "■", className: "red" },
-        violet: { label: "Violet", swatch: "■", className: "violet" },
-      }[value || ""] || { label: value || "Aucune", swatch: "□", className: "none" }
-    );
-  }
-
   function propertyKeys(item) {
-    if (item.type === "project") return ["id", "type", "category", "status", "next", "priority", "rowColor", "rel", "waiting", "tags"];
-    if (item.type === "journal") return ["id", "type", "status", "next", "rowColor", "project", "tags"];
-    if (item.type === "divers") return ["id", "type", "status", "rowColor", "project", "parent", "tags"];
-    return ["id", "type", "status", "next", "priority", "rowColor", "project", "parent", "due", "rel", "waiting", "tags"];
+    if (item.type === "project") return ["id", "type", "category", "status", "next", "priority", "rel", "waiting", "tags"];
+    if (item.type === "journal") return ["id", "type", "status", "next", "project", "tags"];
+    if (item.type === "divers") return ["id", "type", "status", "project", "parent", "tags"];
+    return ["id", "type", "status", "next", "priority", "project", "parent", "due", "rel", "waiting", "tags"];
   }
 
   function propertyValue(item, key) {
@@ -4123,10 +4557,6 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     return "rel";
   }
 
-  function reminderFieldLabel(field) {
-    return "rel";
-  }
-
   function propertyDisplayValue(app, item, key) {
     if (key === "tags") return item.tags.join(", ");
     if (key === "project" && item.project) {
@@ -4145,12 +4575,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         const value = propertyDisplayValue(app, item, key);
         const editable = !["id", "slug"].includes(key);
         const display =
-          key === "rowColor"
-            ? (() => {
-                const meta = rowColorMeta(value);
-                return `<span class="row-color-prop"><span class="row-color-swatch ${meta.className}">${meta.swatch}</span><span>${escapeHtml(meta.label)}</span></span>`;
-              })()
-            : key === "next"
+          key === "next"
               ? escapeHtml(value ? "Oui" : "-")
               : escapeHtml(value || "-");
         return `<div class="prop-row">
@@ -4166,10 +4591,36 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function updateDetailHeading(item) {
-    const type = document.getElementById("detailType");
     const title = document.getElementById("detailTitle");
-    if (type) type.textContent = `${item.type} · ${item.status} · ${item.priority}`;
     if (title) title.textContent = item.title;
+  }
+
+  function renderDetailNavigation(app, item) {
+    const context = document.getElementById("detailContext");
+    const backButton = document.querySelector("[data-action='back']");
+    const items = window.CockpitRules.decorateItems(app.items);
+    const project = window.CockpitRules.resolveProject(items, item);
+    if (context) {
+      context.innerHTML = "";
+      if (project) {
+        const projectButton = document.createElement("button");
+        projectButton.type = "button";
+        projectButton.textContent = project.title;
+        projectButton.title = `Ouvrir le projet ${project.title}`;
+        projectButton.addEventListener("click", () => app.navigateItem(project.id));
+        const separator = document.createElement("span");
+        separator.textContent = "/";
+        const type = document.createElement("span");
+        type.textContent = item.type === "task" ? "Tache" : item.type === "journal" ? "Journal" : "Divers";
+        context.append(projectButton, separator, type);
+      }
+    }
+    if (backButton) {
+      const previousId = app.detailHistory[app.detailHistory.length - 1];
+      const previous = items.find((candidate) => candidate.id === previousId);
+      backButton.hidden = !previous;
+      backButton.title = previous ? `Retour a ${previous.title}` : "Revenir a la page precedente";
+    }
   }
 
   function syncSelectedRow(app) {
@@ -4180,7 +4631,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   }
 
   function insertTodayHeading() {
-    markdownBinding?.insertText(`\n\n## ${window.CockpitModels.todayDisplayDate()}\n`);
+    markdownBinding?.insertLine(`## ${window.CockpitModels.todayDisplayDate()}\n`);
   }
 
   function closePlanNextModal() {
@@ -4318,16 +4769,6 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     if (key === "next") return [{ value: "false", label: "-" }, { value: "true", label: "Oui" }];
     if (key === "priority") return window.CockpitModels.PRIORITIES.map((value) => ({ value, label: value }));
     if (key === "category") return window.CockpitModels.PROJECT_CATEGORIES.map((value) => ({ value, label: value }));
-    if (key === "rowColor") {
-      return [
-        { value: "", label: rowColorMeta("").label, color: "#ffffff" },
-        ...window.CockpitModels.ROW_COLORS.filter(Boolean).map((value) => {
-          const meta = rowColorMeta(value);
-          const colors = { yellow: "#f3c94b", green: "#62a95f", blue: "#5c9fd8", red: "#d86b5f", violet: "#9270d8" };
-          return { value, label: meta.label, color: colors[value] };
-        }),
-      ];
-    }
     if (key === "project") {
       return [
         { value: "", label: "Sans projet" },
@@ -4362,14 +4803,6 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
     const current = key === "tags" ? item.tags.join(", ") : key === "next" ? String(Boolean(item.next)) : propertyValue(item, key);
     editor.value = current;
-    if (key === "rowColor") {
-      const syncColor = () => {
-        const selected = choices.find((choice) => choice.value === editor.value);
-        editor.style.backgroundColor = selected?.color || "#ffffff";
-      };
-      syncColor();
-      editor.addEventListener("input", syncColor);
-    }
     button.replaceWith(editor);
     editor.focus();
     if (editor.select) editor.select();
@@ -4387,6 +4820,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       }
       const updated = selectedParsed(app);
       updateDetailHeading(updated);
+      renderDetailNavigation(app, updated);
       renderInspector(app);
       syncSelectedRow(app);
     };
@@ -4436,6 +4870,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     const offsets = app.config?.relOffsets || [1, 2, 3, 5, 7];
     const reminderKey = reminderField(item);
     pane.innerHTML = `
+      <section class="inspector-section linked-section">
+        <h3>Pages liees</h3>
+        ${renderRelated(app, item)}
+      </section>
       <section class="inspector-section">
         <h3>Proprietes</h3>
         ${renderProps(app, item)}
@@ -4445,23 +4883,17 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         <div class="quick-date-buttons" data-reminder-field="${reminderKey}">
           ${offsets.map((days) => `<button type="button" data-reminder-days="${days}">${offsetLabel(days)}</button>`).join("")}
         </div>
-        <div class="empty-linked">Met a jour ${reminderFieldLabel(reminderKey)}.</div>
       </section>
-      <section class="inspector-section">
-        <h3>Controles</h3>
-        ${
-          issues.length
-            ? `<div class="linked-list">${issues.map((issue) => `<div class="linked-item"><div class="control-reason">${issue.reason}</div><div class="linked-meta">${issue.action}</div></div>`).join("")}</div>`
-            : "<div class='empty-linked'>Aucun probleme detecte.</div>"
-        }
-      </section>
-      <section class="inspector-section">
-        <h3>Pages liees</h3>
-        ${renderRelated(app, item)}
-      </section>
+      ${
+        issues.length
+          ? `<section class="inspector-section control-section"><h3>Controles</h3><div class="control-list">${issues
+              .map((issue) => `<div class="control-item"><div class="control-reason">${issue.reason}</div><div>${issue.action}</div></div>`)
+              .join("")}</div></section>`
+          : ""
+      }
     `;
     pane.querySelectorAll("[data-linked-id]").forEach((button) => {
-      button.addEventListener("click", () => app.selectItem(button.dataset.linkedId));
+      button.addEventListener("click", () => app.navigateItem(button.dataset.linkedId));
     });
     pane.querySelectorAll("[data-prop-key]").forEach((button) => {
       button.addEventListener("click", () => startPropertyEdit(app, button));
@@ -4504,7 +4936,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       const syncFavoriteButton = () => {
         const isFavorite = app.favoriteIds?.includes(doc.id);
         favoriteButton.classList.toggle("active", Boolean(isFavorite));
-        favoriteButton.textContent = isFavorite ? "Epingle" : "Epingler";
+        favoriteButton.textContent = isFavorite ? "★" : "☆";
+        favoriteButton.title = isFavorite ? "Retirer des onglets" : "Epingler";
+        favoriteButton.setAttribute("aria-label", favoriteButton.title);
       };
       syncFavoriteButton();
       favoriteButton.addEventListener("click", () => {
@@ -4514,6 +4948,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     }
 
     document.querySelector("[data-action='close']").addEventListener("click", () => {
+      app.detailHistory = [];
       app.selectedItemId = null;
       if (app.table) app.table.deselectRow();
       renderDetail(app);
@@ -4523,9 +4958,12 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         markdown: doc.markdown.replace(/^#\s+(.+)$/m, `# Copie - ${parsedDoc.title}`),
       });
     });
+    const backButton = document.querySelector("[data-action='back']");
+    if (backButton) backButton.addEventListener("click", () => app.navigateBack());
     const focusButton = document.querySelector("[data-action='focus']");
     if (focusButton) {
       focusButton.addEventListener("click", () => {
+        app.focusPagePending = true;
         window.open(window.CockpitFocus.focusUrlFor(doc.id), "_blank", "noopener");
       });
     }
@@ -4537,7 +4975,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       planNextButton.hidden = parsedDoc.type !== "project";
       planNextButton.addEventListener("click", () => openPlanNextModal(app, doc));
     }
-    document.querySelector("[data-action='archive']").addEventListener("click", () => {
+    const archiveButton = document.querySelector("[data-action='archive']");
+    if (parsedDoc.type === "journal") archiveButton.textContent = "Terminer";
+    archiveButton.addEventListener("click", () => {
+      if (parsedDoc.type === "journal") {
+        app.updateProps(doc.id, { status: "done", archivedAt: "" });
+        return;
+      }
       app.updateProps(doc.id, { status: "archived", archivedAt: window.CockpitModels.isoNow().slice(0, 10) });
     });
     document.querySelector("[data-action='delete']").addEventListener("click", () => {
@@ -4547,6 +4991,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function closeDetail(app) {
     if (!app.selectedItemId) return;
+    app.detailHistory = [];
     app.selectedItemId = null;
     if (app.table) app.table.deselectRow();
     renderDetail(app);
@@ -4586,6 +5031,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     pane.append(template.content.cloneNode(true));
     const parsed = window.CockpitModels.parseDocument(doc);
     updateDetailHeading(parsed);
+    renderDetailNavigation(app, parsed);
     pane.classList.add("open");
     bindMarkdown(app, doc);
     bindActions(app, doc);
@@ -4795,13 +5241,13 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
   function exportPayload(app) {
     return {
       app: "tabulator-cockpit",
-      version: 4,
+      version: 5,
       format: "markdown-with-properties",
       exportedAt: new Date().toISOString(),
       items: app.items,
       ui: {
         favoriteIds: app.favoriteIds || [],
-        columnVisibility: readJsonStorage(COLUMN_PREFS_KEY, {}),
+        columnPreferences: readJsonStorage(COLUMN_PREFS_KEY, {}),
         hideBlockedChildren: localStorage.getItem(HIDE_BLOCKED_CHILDREN_KEY) !== "0",
         config: app.config || window.CockpitConfig?.load?.() || {},
       },
@@ -4810,8 +5256,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function restoreUi(app, ui) {
     if (!ui || typeof ui !== "object") return;
-    if (ui.columnVisibility && typeof ui.columnVisibility === "object") {
-      localStorage.setItem(COLUMN_PREFS_KEY, JSON.stringify(ui.columnVisibility));
+    const columnPreferences = ui.columnPreferences || ui.columnVisibility;
+    if (columnPreferences && typeof columnPreferences === "object") {
+      localStorage.setItem(COLUMN_PREFS_KEY, JSON.stringify(columnPreferences));
     }
     if (typeof ui.hideBlockedChildren === "boolean") {
       localStorage.setItem(HIDE_BLOCKED_CHILDREN_KEY, ui.hideBlockedChildren ? "1" : "0");
@@ -4861,7 +5308,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
 
 (function () {
-  const APP_VERSION = "0.8.7";
+  const APP_VERSION = "0.9.8";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
@@ -4883,6 +5330,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     calendarDate: "",
     selectedItemId: null,
     favoriteIds: [],
+    focusPagePending: false,
+    detailHistory: [],
     filters: {
       search: "",
       type: "",
@@ -4946,8 +5395,9 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       return doc;
     },
 
-    selectItem(id) {
+    selectItem(id, options = {}) {
       if (!id) return;
+      if (options.resetHistory !== false) this.detailHistory = [];
       this.selectedItemId = id;
       window.CockpitDetail.renderDetail(this);
       renderFavoriteTabs();
@@ -4959,6 +5409,18 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         });
         if (row) row.select();
       }
+    },
+
+    navigateItem(id) {
+      if (!id || id === this.selectedItemId) return;
+      if (this.selectedItemId) this.detailHistory.push(this.selectedItemId);
+      this.selectItem(id, { resetHistory: false });
+    },
+
+    navigateBack() {
+      let id = this.detailHistory.pop();
+      while (id && !this.items.some((item) => item.id === id)) id = this.detailHistory.pop();
+      if (id) this.selectItem(id, { resetHistory: false });
     },
 
     refresh() {
@@ -5074,6 +5536,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     let timer = null;
     const reloadWhenBack = () => {
       if (document.body.classList.contains("focus-mode")) return;
+      if (!app.focusPagePending) return;
+      app.focusPagePending = false;
       clearTimeout(timer);
       // Leave the closing focus page enough time to finish its IndexedDB write.
       timer = setTimeout(() => app.reloadFromStorage(), 260);
@@ -5269,6 +5733,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       selected: 0,
       projects: [],
     };
+    let captureDestination = "inbox";
     const sidebarMenus = [...document.querySelectorAll(".sidebar-menu")];
 
     function closeSidebarMenus(except = null) {
@@ -5394,6 +5859,7 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
     }
 
     document.getElementById("quickCaptureButton").addEventListener("click", () => {
+      captureDestination = "inbox";
       captureInput.value = "";
       captureCount.textContent = "0 ligne";
       closeProjectSuggest();
@@ -5406,9 +5872,21 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
       await app.addItem({
         type: "task",
         title: "Nouvelle tache",
-        status: "inbox",
+        status: "active",
         priority: "medium",
       });
+    });
+
+    document.getElementById("quickImportantButton").addEventListener("click", () => {
+      captureDestination = "today";
+      captureInput.value = "(A) next ";
+      captureCount.textContent = "1 ligne";
+      closeProjectSuggest();
+      captureDialog.showModal();
+      setTimeout(() => {
+        captureInput.focus();
+        captureInput.setSelectionRange(captureInput.value.length, captureInput.value.length);
+      }, 0);
     });
 
     captureInput.addEventListener("input", () => {
@@ -5464,7 +5942,8 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         items.push(await window.CockpitStorage.saveItem(item));
       }
       app.items = [...items.reverse(), ...app.items];
-      setActiveView("inbox");
+      setActiveView(captureDestination);
+      captureDestination = "inbox";
       app.selectedItemId = null;
       captureDialog.close();
       closeProjectSuggest();
@@ -5593,15 +6072,11 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
 
   function renderMiniCalendar() {
     const grid = document.getElementById("miniCalendarGrid");
-    const label = document.getElementById("miniCalendarLabel");
-    if (!grid || !label) return;
+    if (!grid) return;
     const todayKey = window.CockpitModels.todayIsoDate();
     const today = new Date(`${todayKey}T12:00:00`);
     const monday = new Date(today);
     monday.setDate(today.getDate() - ((today.getDay() + 6) % 7) - 14);
-    const end = new Date(monday);
-    end.setDate(monday.getDate() + 34);
-    label.textContent = `${dateKey(monday).slice(5)} → ${dateKey(end).slice(5)}`;
 
     const parsed = window.CockpitRules.decorateItems(app.items);
     const dueDates = new Set();
