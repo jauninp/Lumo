@@ -536,6 +536,10 @@ button {
   width: min(460px, calc(100vw - 48px));
 }
 
+.manager-brief-dialog {
+  width: min(520px, calc(100vw - 48px));
+}
+
 .capture-form {
   display: grid;
   gap: 14px;
@@ -567,6 +571,23 @@ button {
 .settings-form small {
   color: var(--muted);
   font-size: 11px;
+}
+
+.manager-brief-form label {
+  grid-template-columns: 120px minmax(0, 1fr);
+}
+
+.manager-brief-form .capture-form-header p {
+  margin-top: 3px;
+}
+
+.manager-brief-error {
+  margin: 0;
+  padding: 7px 9px;
+  border-radius: 6px;
+  background: #f9dfdb;
+  color: var(--danger);
+  font-size: 12px;
 }
 
 .capture-form-header,
@@ -1765,6 +1786,12 @@ button {
   color: var(--muted);
 }
 
+#markdownEditor .vditor-outline__content,
+#focusMarkdownEditor .vditor-outline__content {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .markdown-fallback {
   width: 100%;
   height: 100%;
@@ -2296,7 +2323,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.11.1</span></p>
+            <p><span id="appVersion">v0.12.1</span></p>
           </div>
         </div>
 
@@ -2333,6 +2360,7 @@ button {
               <div class="sidebar-popover">
                 <button type="button" id="newProjectButton">Nouveau projet</button>
                 <button type="button" id="newJournalButton">Journal</button>
+                <button type="button" id="newManagerBriefButton">Point chef</button>
                 <button type="button" id="newDiversButton">Divers</button>
                 <button type="button" id="newFollowupButton">Attente</button>
               </div>
@@ -2367,6 +2395,7 @@ button {
                 <div class="top-create-popover">
                   <button type="button" id="topNewProjectButton">Projet</button>
                   <button type="button" id="topNewJournalButton">Journal</button>
+                  <button type="button" id="topNewManagerBriefButton">Point chef</button>
                   <button type="button" id="topNewDiversButton">Divers</button>
                 </div>
               </details>
@@ -2431,6 +2460,35 @@ button {
         <div class="capture-form-actions">
           <span id="captureCount">0 ligne</span>
           <button type="button" class="capture-button" id="captureSubmitButton">Capturer</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="settings-dialog manager-brief-dialog" id="managerBriefDialog">
+      <form method="dialog" class="settings-form manager-brief-form">
+        <div class="capture-form-header">
+          <div>
+            <h2>Preparer le point chef</h2>
+            <p>Le resultat sera cree comme journal Markdown editable.</p>
+          </div>
+          <button type="submit" class="icon-button" value="cancel">Fermer</button>
+        </div>
+        <label>
+          <span>Titre</span>
+          <input id="managerBriefTitleInput" type="text" value="Point avec mon chef">
+        </label>
+        <label>
+          <span>Du</span>
+          <input id="managerBriefStartInput" type="date">
+        </label>
+        <label>
+          <span>Au</span>
+          <input id="managerBriefEndInput" type="date">
+        </label>
+        <p class="manager-brief-error" id="managerBriefError" hidden></p>
+        <div class="capture-form-actions">
+          <span>Toutes les dates sont incluses.</span>
+          <button type="button" class="capture-button" id="createManagerBriefButton">Creer le journal</button>
         </div>
       </form>
     </dialog>
@@ -2976,10 +3034,10 @@ button {
     return `${match[3]}-${match[2].padStart(2, "0")}-${match[1].padStart(2, "0")}`;
   }
 
-  function extractLatestProgress(markdown) {
+  function extractProgressEntries(markdown) {
     const body = splitMarkdown(markdown).body;
     const startMatch = /^#\s+Avancement\s*$/im.exec(body);
-    if (!startMatch) return { date: "", context: "", days: null };
+    if (!startMatch) return [];
     const sectionStart = startMatch.index + startMatch[0].length;
     const remainder = body.slice(sectionStart);
     const nextSection = /^#\s+/m.exec(remainder);
@@ -2990,20 +3048,26 @@ button {
     while ((match = headingPattern.exec(section))) {
       const date = parseHeadingDate(match[1]);
       if (!date) continue;
-      entries.push({ date, contentStart: headingPattern.lastIndex, headingStart: match.index });
+      entries.push({ date, heading: match[1].trim(), contentStart: headingPattern.lastIndex, headingStart: match.index });
     }
-    if (!entries.length) return { date: "", context: "", days: null };
     entries.forEach((entry, index) => {
       const end = index + 1 < entries.length ? entries[index + 1].headingStart : section.length;
       const content = section.slice(entry.contentStart, end).trim();
+      entry.content = content;
       entry.context = content
         .split(/\r?\n/)
-        .map((line) => line.replace(/^[-*]\s+/, "").trim())
+        .map((line) => line.replace(/^[-*]\s+/, "").replace(/\s+/g, " ").trim())
         .filter(Boolean)
-        .slice(0, 2)
+        .slice(0, 3)
         .join(" ");
     });
     entries.sort((a, b) => b.date.localeCompare(a.date));
+    return entries;
+  }
+
+  function extractLatestProgress(markdown) {
+    const entries = extractProgressEntries(markdown);
+    if (!entries.length) return { date: "", context: "", days: null };
     const latest = entries[0];
     const today = new Date(`${todayIsoDate()}T12:00:00`);
     const update = new Date(`${latest.date}T12:00:00`);
@@ -3109,6 +3173,7 @@ button {
     updateDocumentProps,
     updateDocumentMarkdown,
     updateDocumentBody,
+    extractProgressEntries,
     extractLatestProgress,
     journalDate,
     normalizeTags,
@@ -5554,7 +5619,167 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.11.1";
+  function inRange(date, startDate, endDate) {
+    return Boolean(date && date >= startDate && date <= endDate);
+  }
+
+  function addDays(dateValue, days) {
+    const date = new Date(`${dateValue}T12:00:00`);
+    date.setDate(date.getDate() + days);
+    return date.toISOString().slice(0, 10);
+  }
+
+  function displayDate(value) {
+    const [year, month, day] = String(value || "").split("-");
+    return year && month && day ? `${day}.${month}.${year}` : value;
+  }
+
+  function cleanInline(value) {
+    return String(value || "")
+      .replace(/\r?\n/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function projectSuffix(item) {
+    return item.projectTitle ? ` _(Projet : ${cleanInline(item.projectTitle)})_` : "";
+  }
+
+  function bullets(values, emptyLabel = "Rien a signaler.") {
+    return values.length ? values.join("\n") : `- ${emptyLabel}`;
+  }
+
+  function completedDate(item) {
+    if (item.completedAt) return item.completedAt;
+    if (item.status === "done") return String(item.updatedAt || "").slice(0, 10);
+    return "";
+  }
+
+  function generate(rawItems, startDate, endDate) {
+    const items = window.CockpitRules.decorateItems(rawItems);
+    const tasks = items.filter((item) => item.type === "task");
+    const projects = items.filter((item) => item.type === "project");
+
+    const completed = tasks
+      .map((item) => ({ item, date: completedDate(item) }))
+      .filter(({ date }) => inRange(date, startDate, endDate))
+      .sort((a, b) => b.date.localeCompare(a.date) || a.item.title.localeCompare(b.item.title, "fr"))
+      .map(({ item, date }) => `- ${cleanInline(item.title)}${projectSuffix(item)} _(${displayDate(date)})_`);
+
+    const progress = projects
+      .flatMap((project) =>
+        window.CockpitModels
+          .extractProgressEntries(project.markdown)
+          .filter((entry) => inRange(entry.date, startDate, endDate))
+          .map((entry) => ({ project, entry }))
+      )
+      .sort((a, b) => b.entry.date.localeCompare(a.entry.date) || a.project.title.localeCompare(b.project.title, "fr"))
+      .map(
+        ({ project, entry }) =>
+          `- **${cleanInline(project.title)}** _(${displayDate(entry.date)})_${entry.context ? ` : ${cleanInline(entry.context)}` : ""}`
+      );
+
+    const journals = items
+      .filter((item) => item.type === "journal")
+      .map((item) => ({ item, date: window.CockpitModels.journalDate(item) }))
+      .filter(({ date }) => inRange(date, startDate, endDate))
+      .sort((a, b) => b.date.localeCompare(a.date) || a.item.title.localeCompare(b.item.title, "fr"))
+      .map(({ item }) => `- ${cleanInline(item.title)}${projectSuffix(item)}`);
+
+    const active = tasks
+      .filter((item) => item.status === "active" && !item.next && inRange(String(item.updatedAt || "").slice(0, 10), startDate, endDate))
+      .sort((a, b) => Number(b.important) - Number(a.important) || a.title.localeCompare(b.title, "fr"))
+      .map((item) => `- ${item.important ? "**Important** - " : ""}${cleanInline(item.title)}${projectSuffix(item)}`);
+
+    const waiting = tasks
+      .filter((item) => item.status === "waiting")
+      .sort((a, b) => String(a.reviewDate || "9999").localeCompare(String(b.reviewDate || "9999")) || a.title.localeCompare(b.title, "fr"))
+      .map(
+        (item) =>
+          `- ${cleanInline(item.title)}${projectSuffix(item)}${item.waiting ? ` - attente : ${cleanInline(item.waiting)}` : ""}${
+            item.reviewDate ? ` - revoir ${displayDate(item.reviewDate)}` : ""
+          }`
+      );
+
+    const paused = tasks
+      .filter(
+        (item) =>
+          item.status === "paused" &&
+          (item.important || inRange(String(item.updatedAt || "").slice(0, 10), startDate, endDate) || inRange(item.reviewDate, startDate, endDate))
+      )
+      .sort((a, b) => Number(b.important) - Number(a.important) || a.title.localeCompare(b.title, "fr"))
+      .map((item) => `- ${cleanInline(item.title)}${projectSuffix(item)}${item.reviewDate ? ` - revoir ${displayDate(item.reviewDate)}` : ""}`);
+
+    const next = items
+      .filter((item) => item.next && window.CockpitRules.isOpen(item))
+      .sort((a, b) => Number(b.important) - Number(a.important) || a.title.localeCompare(b.title, "fr"))
+      .map((item) => `- ${item.important ? "**Important** - " : ""}${cleanInline(item.title)}${projectSuffix(item)}`);
+
+    const dueLimit = addDays(endDate, 14);
+    const upcoming = tasks
+      .filter((item) => window.CockpitRules.isOpen(item) && item.dueDate && item.dueDate >= startDate && item.dueDate <= dueLimit)
+      .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || a.title.localeCompare(b.title, "fr"))
+      .map((item) => `- **${displayDate(item.dueDate)}** - ${cleanInline(item.title)}${projectSuffix(item)}`);
+
+    const summaryParts = [];
+    if (completed.length) summaryParts.push(`${completed.length} tache${completed.length > 1 ? "s" : ""} terminee${completed.length > 1 ? "s" : ""}`);
+    if (progress.length) summaryParts.push(`${progress.length} avancement${progress.length > 1 ? "s" : ""} projet`);
+    if (waiting.length) summaryParts.push(`${waiting.length} attente${waiting.length > 1 ? "s" : ""} en cours`);
+
+    return [
+      "## Resume",
+      "",
+      `> Periode du ${displayDate(startDate)} au ${displayDate(endDate)}.`,
+      "",
+      summaryParts.length ? `- ${summaryParts.join(" ; ")}.` : "- Periode a completer.",
+      "",
+      "## Realise",
+      "",
+      bullets(completed),
+      "",
+      "## Avancement des projets",
+      "",
+      bullets(progress),
+      "",
+      "## Journaux et seances",
+      "",
+      bullets(journals),
+      "",
+      "## En cours",
+      "",
+      bullets(active),
+      "",
+      "## Attentes et points de vigilance",
+      "",
+      bullets([...waiting, ...paused]),
+      "",
+      "## Prochaines etapes",
+      "",
+      bullets(next),
+      "",
+      "## Echeances a venir",
+      "",
+      bullets(upcoming),
+      "",
+      "## Decisions ou aide attendue",
+      "",
+      "- ",
+      "",
+      "## Notes de seance",
+      "",
+      "- ",
+    ].join("\n");
+  }
+
+  window.CockpitManagerBrief = {
+    generate,
+    displayDate,
+  };
+})();
+
+
+(function () {
+  const APP_VERSION = "0.12.1";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
@@ -5969,6 +6194,7 @@ button {
     const captureCount = document.getElementById("captureCount");
     const projectSuggest = document.getElementById("projectSuggest");
     const settingsDialog = document.getElementById("radarSettingsDialog");
+    const managerBriefDialog = document.getElementById("managerBriefDialog");
     let projectSuggestState = {
       open: false,
       start: -1,
@@ -6244,10 +6470,47 @@ button {
       document.querySelector(".top-create-menu")?.removeAttribute("open");
     };
 
+    const openManagerBrief = () => {
+      document.getElementById("managerBriefTitleInput").value = "Point avec mon chef";
+      document.getElementById("managerBriefStartInput").value = window.CockpitModels.todayIsoDate(-7);
+      document.getElementById("managerBriefEndInput").value = window.CockpitModels.todayIsoDate();
+      const error = document.getElementById("managerBriefError");
+      error.hidden = true;
+      error.textContent = "";
+      document.querySelector(".top-create-menu")?.removeAttribute("open");
+      managerBriefDialog.showModal();
+      setTimeout(() => document.getElementById("managerBriefStartInput").focus(), 0);
+    };
+
     document.getElementById("newProjectButton").addEventListener("click", createProject);
     document.getElementById("topNewProjectButton").addEventListener("click", createProject);
     document.getElementById("newJournalButton").addEventListener("click", createJournal);
     document.getElementById("topNewJournalButton").addEventListener("click", createJournal);
+    document.getElementById("newManagerBriefButton").addEventListener("click", openManagerBrief);
+    document.getElementById("topNewManagerBriefButton").addEventListener("click", openManagerBrief);
+
+    document.getElementById("createManagerBriefButton").addEventListener("click", async () => {
+      const title = document.getElementById("managerBriefTitleInput").value.trim() || "Point avec mon chef";
+      const startDate = document.getElementById("managerBriefStartInput").value;
+      const endDate = document.getElementById("managerBriefEndInput").value;
+      const error = document.getElementById("managerBriefError");
+      if (!startDate || !endDate || startDate > endDate) {
+        error.textContent = !startDate || !endDate ? "Choisis les deux dates." : "La date de debut doit preceder la date de fin.";
+        error.hidden = false;
+        return;
+      }
+
+      const body = window.CockpitManagerBrief.generate(app.items, startDate, endDate);
+      managerBriefDialog.close();
+      setActiveView("journal");
+      await app.addItem({
+        type: "journal",
+        title: `${window.CockpitModels.todayIsoDate()} - ${title}`,
+        status: "active",
+        tags: ["point-chef"],
+        body,
+      });
+    });
 
     document.getElementById("newDiversButton").addEventListener("click", () => {
       app.addItem({
