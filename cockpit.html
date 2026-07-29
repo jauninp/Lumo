@@ -857,6 +857,48 @@ button {
   grid-template-columns: minmax(180px, 300px) 112px auto 138px 118px;
 }
 
+.search-control {
+  position: relative;
+  min-width: 0;
+}
+
+.search-control input {
+  width: 100%;
+  padding-right: 31px;
+}
+
+.search-control input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-control button {
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.search-control button:hover {
+  background: var(--accent-subtle);
+  color: var(--text);
+}
+
+.search-control button[hidden] {
+  display: none;
+}
+
 .topbar-tools input,
 .topbar-tools select,
 .topbar-check,
@@ -2340,7 +2382,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.13.0</span></p>
+            <p><span id="appVersion">v0.13.1</span></p>
           </div>
         </div>
 
@@ -2420,7 +2462,10 @@ button {
             <p id="viewSubtitle">Ce qui doit revenir maintenant, etre clarifie ou ne pas etre oublie.</p>
           </div>
           <div class="topbar-tools">
-            <input id="searchInput" type="search" placeholder="Rechercher partout...">
+            <div class="search-control">
+              <input id="searchInput" type="search" placeholder="Rechercher partout...">
+              <button id="clearSearchButton" type="button" aria-label="Effacer la recherche" title="Effacer la recherche" hidden>×</button>
+            </div>
             <select id="typeFilter" aria-label="Filtre type">
               <option value="">Types</option>
               <option value="project">project</option>
@@ -5890,7 +5935,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.13.0";
+  const APP_VERSION = "0.13.1";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
@@ -6270,11 +6315,25 @@ button {
 
   function bindFilters() {
     const statusFilter = document.getElementById("statusFilter");
+    const searchInput = document.getElementById("searchInput");
+    const clearSearchButton = document.getElementById("clearSearchButton");
     window.CockpitModels.STATUSES.forEach((status) => statusFilter.append(new Option(status, status)));
 
-    document.getElementById("searchInput").addEventListener("input", (event) => {
+    const syncSearchClearButton = () => {
+      clearSearchButton.hidden = !searchInput.value;
+    };
+
+    searchInput.addEventListener("input", (event) => {
       app.filters.search = event.target.value;
+      syncSearchClearButton();
       app.refresh();
+    });
+    clearSearchButton.addEventListener("click", () => {
+      searchInput.value = "";
+      app.filters.search = "";
+      syncSearchClearButton();
+      app.refresh();
+      searchInput.focus();
     });
     document.getElementById("typeFilter").addEventListener("change", (event) => {
       app.filters.type = event.target.value;
