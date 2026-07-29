@@ -1792,6 +1792,23 @@ button {
   line-height: 1.4;
 }
 
+.row-treated-button {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #9aa8b2;
+  border-radius: 4px;
+  background: #fff;
+  color: #fff;
+  font-size: 14px;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.row-treated-button.active {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
 .markdown-fallback {
   width: 100%;
   height: 100%;
@@ -2323,7 +2340,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.12.1</span></p>
+            <p><span id="appVersion">v0.13.0</span></p>
           </div>
         </div>
 
@@ -2403,7 +2420,7 @@ button {
             <p id="viewSubtitle">Ce qui doit revenir maintenant, etre clarifie ou ne pas etre oublie.</p>
           </div>
           <div class="topbar-tools">
-            <input id="searchInput" type="search" placeholder="Rechercher...">
+            <input id="searchInput" type="search" placeholder="Rechercher partout...">
             <select id="typeFilter" aria-label="Filtre type">
               <option value="">Types</option>
               <option value="project">project</option>
@@ -2967,7 +2984,27 @@ button {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
-    parsed.searchText = [parsed.title, parsed.body, parsed.type, parsed.status, parsed.next ? "next" : "", parsed.important ? "important" : "", parsed.project, parsed.parent, parsed.date, parsed.waiting, parsed.tags.join(" ")]
+    parsed.searchText = [
+      parsed.id,
+      parsed.slug,
+      parsed.title,
+      parsed.body,
+      parsed.type,
+      parsed.status,
+      parsed.next ? "next aujourd'hui" : "",
+      parsed.important ? "important" : "",
+      parsed.category,
+      parsed.project,
+      parsed.parent,
+      parsed.date,
+      parsed.dueDate,
+      parsed.reviewDate,
+      parsed.waiting,
+      parsed.tags.join(" "),
+      parsed.createdAt,
+      parsed.updatedAt,
+      parsed.completedAt,
+    ]
       .join(" ")
       .toLowerCase();
     return parsed;
@@ -3432,6 +3469,21 @@ button {
 
 
 (function () {
+  const BLANK_LINE_MARKER = "\u200B";
+
+  function protectBlankLines(value) {
+    return String(value || "")
+      .replace(/\r\n/g, "\n")
+      .replace(/\n{3,}/g, (run) => `\n\n${Array.from({ length: run.length - 2 }, () => `${BLANK_LINE_MARKER}\n\n`).join("")}`);
+  }
+
+  function restoreBlankLines(value) {
+    return String(value || "").replace(/\n\n((?:\u200B\n\n)+)/g, (_match, markers) => {
+      const count = markers.split(BLANK_LINE_MARKER).length - 1;
+      return "\n".repeat(count + 2);
+    });
+  }
+
   function polishFrenchLabels(host) {
     const translations = {
       "éditeur & prévisualisation": "Éditeur et aperçu",
@@ -3469,7 +3521,7 @@ button {
           cdn: "https://unpkg.com/vditor@3.11.2",
           lang: "fr_FR",
           mode: "ir",
-          value: value || "",
+          value: protectBlankLines(value),
           height: "100%",
           minHeight: 360,
           cache: { enable: false },
@@ -3546,7 +3598,7 @@ button {
             maxWidth: 960,
           },
           after: () => polishFrenchLabels(host),
-          input: onChange,
+          input: (nextValue) => onChange(restoreBlankLines(nextValue)),
         });
       }
     } catch (error) {
@@ -3589,7 +3641,7 @@ button {
         if (typeof editor.destroy === "function") editor.destroy();
       },
       getValue() {
-        return typeof editor.getValue === "function" ? editor.getValue() : value || "";
+        return typeof editor.getValue === "function" ? restoreBlankLines(editor.getValue()) : value || "";
       },
       insertText(text) {
         editor.insertValue(text);
@@ -3738,6 +3790,26 @@ button {
     return label;
   }
 
+  function updatedAtFormatter(cell) {
+    const value = String(cell.getValue() || "").trim();
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString("fr-CH", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function treatedFormatter(cell) {
+    const item = cell.getRow().getData();
+    const treated = item.status === "done";
+    return `<button class="row-treated-button${treated ? " active" : ""}" type="button" data-treated-id="${item.id}" data-treated-value="${treated ? "false" : "true"}" aria-pressed="${treated}" title="${treated ? "Marquer non traite" : "Marquer traite"}">${treated ? "✓" : ""}</button>`;
+  }
+
   function importantFormatter(cell) {
     const item = cell.getRow().getData();
     const selected = Boolean(cell.getValue());
@@ -3836,6 +3908,7 @@ button {
       { title: "Revoir", field: "reviewDate", width: 112, sorter: isoDateSorter, formatter: reviewDateFormatter, editor: dateEditor, cellClick: openDateEditor },
       { title: "J'attends", field: "waiting", width: 120, responsive: 2, editor: "input" },
       { title: "Tags", field: "tags", minWidth: 120, responsive: 3, formatter: tagFormatter, editor: "input" },
+      { title: "Modifie", field: "updatedAt", width: 142, sorter: "string", formatter: updatedAtFormatter },
     ];
     return columns.filter(Boolean);
   }
@@ -3916,6 +3989,7 @@ button {
       { title: "Contexte recent", field: "lastProgressContext", minWidth: 300, formatter: projectOnlyFormatter },
       { title: "Activite liee", field: "lastRelatedActivityLabel", minWidth: 220, formatter: projectOnlyFormatter },
       { title: "Tags", field: "tags", minWidth: 140, responsive: 2, formatter: tagFormatter, editor: "input" },
+      { title: "Modifie", field: "updatedAt", width: 142, sorter: "string", formatter: updatedAtFormatter },
     ];
   }
 
@@ -3925,6 +3999,7 @@ button {
       { title: "ID", field: "id", width: 78, responsive: 3, formatter: idFormatter },
       { title: "Date", field: "journalDate", width: 118, sorter: isoDateSorter },
       { title: "Titre", field: "title", minWidth: 320, formatter: titleFormatter },
+      { title: "Traite", field: "treated", width: 72, hozAlign: "center", headerSort: false, formatter: treatedFormatter },
       {
         title: "Projet",
         field: "project",
@@ -3933,8 +4008,8 @@ button {
         editor: "list",
         editorParams: { values: projectEditorValues(app), autocomplete: true, clearable: true },
       },
-      { title: "Statut", field: "status", width: 106, formatter: pillFormatter, editor: "list", editorParams: { values: window.CockpitModels.statusesForType("journal") } },
       { title: "Tags", field: "tags", minWidth: 160, formatter: tagFormatter, editor: "input" },
+      { title: "Modifie", field: "updatedAt", width: 142, sorter: "string", formatter: updatedAtFormatter },
     ];
   }
 
@@ -4203,15 +4278,15 @@ button {
       return manualOrderSort(open.filter((item) => item.type === "task" && (!window.CockpitApp.filters.hideBlockedChildren || !parentIsBlocking(item))));
     }
     if (view === "completed") {
-      return manualOrderSort(items.filter((item) => item.status === "done" || item.status === "archived" || item.archivedAt));
+      return manualOrderSort(items.filter((item) => item.type !== "journal" && (item.status === "done" || item.status === "archived" || item.archivedAt)));
     }
     if (view === "journal") {
-      return open
+      return items
         .filter((item) => item.type === "journal")
         .map((item) => {
           const journalDate = window.CockpitModels.journalDate(item);
           const group = journalGroupInfo(journalDate);
-          return { ...item, journalDate, journalGroup: `${group.key}|${group.label}` };
+          return { ...item, treated: item.status === "done", journalDate, journalGroup: `${group.key}|${group.label}` };
         })
         .sort((a, b) => b.journalDate.localeCompare(a.journalDate));
     }
@@ -4240,20 +4315,35 @@ button {
 
   function applySearchAndFilters(app, rows) {
     const search = app.filters.search.trim().toLowerCase();
-    const typeFilterApplies = !isTaskOnlyView(app.currentView);
+    const typeFilterApplies = Boolean(search) || !isTaskOnlyView(app.currentView);
     return rows.filter((row) => {
       const item = row.itemId ? window.CockpitModels.parseDocument(app.items.find((candidate) => candidate.id === row.itemId) || row) : row;
       if (typeFilterApplies && app.filters.type && item.type !== app.filters.type) return false;
       if (app.filters.status && item.status !== app.filters.status) return false;
-      if (app.currentView === "tasks" && app.filters.taskQuick === "past" && !hasArrivedDate(item)) return false;
-      if (app.currentView === "tasks" && app.filters.taskQuick === "next" && !item.next) return false;
+      if (!search && app.currentView === "tasks" && app.filters.taskQuick === "past" && !hasArrivedDate(item)) return false;
+      if (!search && app.currentView === "tasks" && app.filters.taskQuick === "next" && !item.next) return false;
       if (!search) return true;
-      return [item.searchText, row.reason, row.action].join(" ").toLowerCase().includes(search);
+      return [
+        item.searchText,
+        item.projectTitle,
+        item.category,
+        item.dueDate,
+        item.reviewDate,
+        item.createdAt,
+        item.updatedAt,
+        item.completedAt,
+        row.reason,
+        row.action,
+      ].join(" ").toLowerCase().includes(search);
     });
   }
 
   function buildView(app) {
-    const sourceRows = app.currentView === "control" ? controlData(app.items) : filterForView(app.currentView, app.items);
+    const sourceRows = app.filters.search.trim()
+      ? decorateParentInfo(window.CockpitRules.decorateItems(app.items))
+      : app.currentView === "control"
+        ? controlData(app.items)
+        : filterForView(app.currentView, app.items);
     return applySearchAndFilters(app, sourceRows);
   }
 
@@ -4263,15 +4353,16 @@ button {
 
   function setViewText(view, app) {
     const [title, subtitle] = viewMeta[view];
-    document.getElementById("viewTitle").textContent = view === "calendar" ? app.calendarDate : title;
-    document.getElementById("viewSubtitle").textContent = subtitle;
-    document.getElementById("typeFilter")?.classList.toggle("hidden", isTaskOnlyView(view));
-    document.getElementById("quickTaskFilters")?.classList.toggle("hidden", view !== "tasks");
+    const searching = Boolean(app.filters.search.trim());
+    document.getElementById("viewTitle").textContent = searching ? "Recherche globale" : view === "calendar" ? app.calendarDate : title;
+    document.getElementById("viewSubtitle").textContent = searching ? "Toutes les pages, proprietes et contenus Markdown." : subtitle;
+    document.getElementById("typeFilter")?.classList.toggle("hidden", !searching && isTaskOnlyView(view));
+    document.getElementById("quickTaskFilters")?.classList.toggle("hidden", searching || view !== "tasks");
     document.querySelectorAll("[data-task-filter]").forEach((button) => {
       button.classList.toggle("active", app.filters.taskQuick === button.dataset.taskFilter);
     });
-    document.querySelector(".topbar-check")?.classList.toggle("hidden", view !== "tasks");
-    document.querySelector(".topbar-tools")?.classList.toggle("tasks-view", view === "tasks");
+    document.querySelector(".topbar-check")?.classList.toggle("hidden", searching || view !== "tasks");
+    document.querySelector(".topbar-tools")?.classList.toggle("tasks-view", !searching && view === "tasks");
   }
 
   function loadColumnPrefs() {
@@ -4387,13 +4478,18 @@ button {
     }));
   }
 
+  function tableViewKey(app) {
+    return app.filters.search.trim() ? "search" : app.currentView;
+  }
+
   function renderColumnMenu(app, columns) {
     const popover = document.getElementById("columnPopover");
     if (!popover) return;
-    const hidden = hiddenColumns(app.currentView);
+    const viewKey = tableViewKey(app);
+    const hidden = hiddenColumns(viewKey);
     const seen = new Set();
     popover.innerHTML = "";
-    orderedColumns(app.currentView, columns).forEach((column) => {
+    orderedColumns(viewKey, columns).forEach((column) => {
       if (!column.field || seen.has(column.field)) return;
       seen.add(column.field);
       const label = document.createElement("label");
@@ -4402,7 +4498,7 @@ button {
       input.checked = column.field === "title" || !hidden.has(column.field);
       input.disabled = column.field === "title";
       input.addEventListener("change", () => {
-        setColumnHidden(app.currentView, column.field, !input.checked);
+        setColumnHidden(viewKey, column.field, !input.checked);
         app.refresh();
       });
       const text = document.createElement("span");
@@ -4413,6 +4509,7 @@ button {
   }
 
   function columnsForView(app) {
+    if (app.filters.search.trim()) return baseColumns(app);
     if (app.currentView === "control") return controlColumns();
     if (app.currentView === "projects") return projectColumns();
     if (app.currentView === "journal") return journalColumns(app);
@@ -4438,7 +4535,7 @@ button {
 
   function restoreManualOrder(app) {
     if (!app.table) return;
-    setTableSort(app.currentView, []);
+    setTableSort(tableViewKey(app), []);
     if (typeof app.table.clearSort === "function") app.table.clearSort();
     app.table.replaceData(buildView(app));
   }
@@ -4663,6 +4760,8 @@ button {
     }
 
     const rawColumns = columnsForView(app);
+    const viewKey = tableViewKey(app);
+    const searching = Boolean(app.filters.search.trim());
     renderColumnMenu(app, rawColumns);
 
     app.table = new window.Tabulator("#mainTable", {
@@ -4670,21 +4769,21 @@ button {
       height: "100%",
       placeholder: "Aucune page pour cette vue",
       selectableRows: 1,
-      movableRows: viewAllowsManualOrder(app.currentView),
+      movableRows: !searching && viewAllowsManualOrder(app.currentView),
       movableColumns: true,
-      dataTree: app.currentView === "projects",
+      dataTree: !searching && app.currentView === "projects",
       dataTreeStartExpanded: false,
-      groupBy: app.currentView === "journal" ? "journalGroup" : app.currentView === "review" ? "reviewGroup" : app.currentView === "today" ? "todayGroup" : false,
+      groupBy: searching ? false : app.currentView === "journal" ? "journalGroup" : app.currentView === "review" ? "reviewGroup" : app.currentView === "today" ? "todayGroup" : false,
       groupStartOpen: true,
       groupHeader: (value, count) => `${String(value).split("|").slice(1).join("|")} · ${count}`,
-      initialSort: tableSort(app.currentView),
+      initialSort: tableSort(viewKey),
       rowFormatter: (row) => {
         const color = row.getData().rowColor || "";
         const element = row.getElement();
         element.classList.remove("row-color-yellow", "row-color-green", "row-color-blue", "row-color-red", "row-color-violet");
         if (color) element.classList.add(`row-color-${color}`);
       },
-      columns: applyColumnVisibility(app.currentView, rawColumns),
+      columns: applyColumnVisibility(viewKey, rawColumns),
       data: buildView(app),
     });
 
@@ -4703,16 +4802,16 @@ button {
     });
 
     app.table.on("columnResized", (column) => {
-      setColumnWidth(app.currentView, column.getField(), column.getWidth());
+      setColumnWidth(viewKey, column.getField(), column.getWidth());
     });
 
     app.table.on("columnMoved", () => {
-      setColumnOrder(app.currentView, app.table.getColumns().map((column) => column.getField()).filter(Boolean));
+      setColumnOrder(viewKey, app.table.getColumns().map((column) => column.getField()).filter(Boolean));
       renderColumnMenu(app, rawColumns);
     });
 
     app.table.on("dataSorted", (sorters) => {
-      setTableSort(app.currentView, sorters);
+      setTableSort(viewKey, sorters);
     });
 
     app.table.on("rowContext", (event, row) => {
@@ -4784,6 +4883,18 @@ button {
         event.preventDefault();
         event.stopPropagation();
         app.updateProps(importantButton.dataset.importantId, { important: importantButton.dataset.importantValue === "true" });
+        return;
+      }
+      const treatedButton = event.target.closest("[data-treated-id]");
+      if (treatedButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        const treated = treatedButton.dataset.treatedValue === "true";
+        app.updateProps(treatedButton.dataset.treatedId, {
+          status: treated ? "done" : "active",
+          completedAt: treated ? window.CockpitModels.todayIsoDate() : "",
+          next: false,
+        });
         return;
       }
       const link = event.target.closest("[data-open-id]");
@@ -5779,7 +5890,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.12.1";
+  const APP_VERSION = "0.13.0";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
