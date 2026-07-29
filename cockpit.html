@@ -2382,7 +2382,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.13.1</span></p>
+            <p><span id="appVersion">v0.13.2</span></p>
           </div>
         </div>
 
@@ -3559,6 +3559,17 @@ button {
   function bindMarkdownEditor(host, value, onChange) {
     host.innerHTML = "";
     let editor = null;
+    let ready = false;
+    let destroyed = false;
+
+    const destroyEditor = () => {
+      if (!editor || typeof editor.destroy !== "function") return;
+      try {
+        editor.destroy();
+      } catch (error) {
+        console.warn("Fermeture differee de Vditor.", error);
+      }
+    };
 
     try {
       if (window.Vditor) {
@@ -3642,8 +3653,17 @@ button {
             delay: 250,
             maxWidth: 960,
           },
-          after: () => polishFrenchLabels(host),
-          input: (nextValue) => onChange(restoreBlankLines(nextValue)),
+          after: () => {
+            ready = true;
+            if (destroyed) {
+              destroyEditor();
+              return;
+            }
+            polishFrenchLabels(host);
+          },
+          input: (nextValue) => {
+            if (!destroyed) onChange(restoreBlankLines(nextValue));
+          },
         });
       }
     } catch (error) {
@@ -3683,16 +3703,20 @@ button {
 
     return {
       destroy() {
-        if (typeof editor.destroy === "function") editor.destroy();
+        if (destroyed) return;
+        destroyed = true;
+        if (ready) destroyEditor();
       },
       getValue() {
-        return typeof editor.getValue === "function" ? restoreBlankLines(editor.getValue()) : value || "";
+        return !destroyed && typeof editor.getValue === "function" ? restoreBlankLines(editor.getValue()) : value || "";
       },
       insertText(text) {
+        if (destroyed) return;
         editor.insertValue(text);
         editor.focus();
       },
       insertLine(text) {
+        if (destroyed) return;
         editor.insertValue(text);
         editor.focus();
       },
@@ -4969,6 +4993,8 @@ button {
 (function () {
   let markdownBinding = null;
   let bodySaveTimer = null;
+  let bodySavePromise = null;
+  let markdownGeneration = 0;
   let globalCloseBound = false;
 
   function selectedParsed(app) {
@@ -5378,24 +5404,46 @@ button {
   }
 
   function bindMarkdown(app, doc) {
-    if (markdownBinding) markdownBinding.destroy();
+    disposeMarkdown();
+    const generation = ++markdownGeneration;
     const host = document.getElementById("markdownEditor");
     const status = document.getElementById("markdownStatus");
     const parsed = window.CockpitModels.parseDocument(doc);
     markdownBinding = window.CockpitMarkdown.bindMarkdownEditor(host, parsed.body, (value) => {
       clearTimeout(bodySaveTimer);
       status.textContent = "Sauvegarde...";
-      bodySaveTimer = setTimeout(async () => {
-        const current = app.items.find((item) => item.id === doc.id);
-        if (!current) return;
-        await app.updateMarkdown(doc.id, value, { quiet: true });
-        const updated = selectedParsed(app);
-        updateDetailHeading(updated);
-        renderInspector(app);
-        syncSelectedRow(app);
-        status.textContent = "Sauvegarde locale";
+      bodySaveTimer = setTimeout(() => {
+        const savePromise = (async () => {
+          if (generation !== markdownGeneration) return;
+          const current = app.items.find((item) => item.id === doc.id);
+          if (!current) return;
+          await app.updateMarkdown(doc.id, value, { quiet: true });
+          if (generation !== markdownGeneration) return;
+          const updated = selectedParsed(app);
+          updateDetailHeading(updated);
+          renderInspector(app);
+          syncSelectedRow(app);
+          status.textContent = "Sauvegarde locale";
+        })();
+        bodySavePromise = savePromise;
+        const clearPendingSave = () => {
+          if (bodySavePromise === savePromise) bodySavePromise = null;
+        };
+        savePromise.then(clearPendingSave, (error) => {
+          clearPendingSave();
+          status.textContent = "Sauvegarde a reprendre";
+          console.warn("Sauvegarde Markdown impossible.", error);
+        });
       }, 350);
     });
+  }
+
+  function disposeMarkdown() {
+    markdownGeneration += 1;
+    clearTimeout(bodySaveTimer);
+    bodySaveTimer = null;
+    markdownBinding?.destroy();
+    markdownBinding = null;
   }
 
   function bindActions(app, doc) {
@@ -5459,11 +5507,22 @@ button {
   }
 
   function closeDetail(app) {
-    if (!app.selectedItemId) return;
+    disposeMarkdown();
     app.detailHistory = [];
     app.selectedItemId = null;
     if (app.table) app.table.deselectRow();
     renderDetail(app);
+  }
+
+  async function prepareForDataReplace(app) {
+    const pendingSave = bodySavePromise;
+    closeDetail(app);
+    if (!pendingSave) return;
+    try {
+      await pendingSave;
+    } catch (error) {
+      console.warn("Sauvegarde precedente terminee avec une erreur avant import.", error);
+    }
   }
 
   function bindGlobalClose(app) {
@@ -5491,6 +5550,7 @@ button {
     const doc = app.items.find((candidate) => candidate.id === app.selectedItemId);
     const pane = document.getElementById("detailPane");
     if (!doc) {
+      disposeMarkdown();
       pane.classList.remove("open");
       pane.innerHTML = "<div class='empty-detail'><h2>Selectionne une page</h2><p>Le grand editeur Markdown s'ouvrira ici.</p></div>";
       return;
@@ -5510,6 +5570,8 @@ button {
   window.CockpitDetail = {
     renderDetail,
     renderInspector,
+    closeDetail,
+    prepareForDataReplace,
   };
 })();
 
@@ -5753,7 +5815,7 @@ button {
     if (!Array.isArray(items)) throw new Error("Le JSON ne contient pas de tableau items.");
     restoreUi(app, payload.ui);
     if (typeof app.replaceAllItems === "function") {
-      await app.replaceAllItems(items);
+      await app.replaceAllItems(items, { selectFirst: false });
       if (Array.isArray(payload.ui?.favoriteIds) && typeof app.setFavoriteIds === "function") {
         app.setFavoriteIds(payload.ui.favoriteIds);
         app.refresh();
@@ -5935,7 +5997,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.13.1";
+  const APP_VERSION = "0.13.2";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
@@ -6078,6 +6140,8 @@ button {
     },
 
     async replaceAllItems(items, options = {}) {
+      if (window.CockpitDetail?.prepareForDataReplace) await window.CockpitDetail.prepareForDataReplace(this);
+      else window.CockpitDetail?.closeDetail?.(this);
       let loaded = await window.CockpitStorage.replaceAllItems(items);
       loaded = await migrateAllIdsToShortIds(loaded);
       loaded = await canonicalizeProjectRelations(loaded);
