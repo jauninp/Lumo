@@ -693,7 +693,7 @@ button {
 
 .database-pane {
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
   min-width: 0;
   overflow: hidden;
 }
@@ -769,6 +769,117 @@ button {
 .favorite-tab-close:hover {
   background: #e7ece7;
   color: var(--danger);
+}
+
+.reminder-bar {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 12px;
+  max-height: 190px;
+  padding: 9px 14px;
+  border-bottom: 1px solid #d8a59e;
+  border-left: 4px solid var(--danger);
+  background: #fff3f1;
+  overflow: hidden;
+}
+
+.reminder-bar[hidden] {
+  display: none;
+}
+
+.reminder-bar > header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: start;
+  min-height: 30px;
+  color: #762b26;
+  font-size: 13px;
+}
+
+.reminder-bar > header span {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background: var(--danger);
+  color: white;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.reminder-list {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.reminder-alert-row {
+  display: grid;
+  grid-template-columns: 22px minmax(180px, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+}
+
+.reminder-alert-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.reminder-alert-title {
+  min-width: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: #63251f;
+  padding: 3px 0;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.reminder-alert-title:hover {
+  text-decoration: underline;
+}
+
+.reminder-alert-meta {
+  color: #83534e;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.reminder-alert-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.reminder-alert-actions button {
+  height: 26px;
+  border: 1px solid #cf948c;
+  border-radius: 5px;
+  background: white;
+  color: #6f302a;
+  padding: 0 7px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.reminder-alert-actions button:hover {
+  border-color: var(--danger);
+  background: #ffe7e3;
 }
 
 .topbar {
@@ -1851,6 +1962,32 @@ button {
   background: var(--accent);
 }
 
+.table-reminder {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: #b47a18;
+  font-size: 13px;
+  cursor: help;
+}
+
+.table-reminder.overdue {
+  border-radius: 50%;
+  background: #f9d9d5;
+  color: var(--danger);
+}
+
+.imperative-reminder-section {
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.imperative-reminder-section .quick-date-buttons button.danger {
+  border-color: #d5a09a;
+  color: var(--danger);
+}
+
 .markdown-fallback {
   width: 100%;
   height: 100%;
@@ -2382,7 +2519,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.13.2</span></p>
+            <p><span id="appVersion">v0.14.0</span></p>
           </div>
         </div>
 
@@ -2429,6 +2566,7 @@ button {
               <div class="sidebar-popover">
                 <button type="button" id="exportButton">Exporter JSON</button>
                 <button type="button" id="radarSettingsButton">Reglages radar</button>
+                <button type="button" id="notificationPermissionButton">Activer les notifications</button>
                 <label class="import-label">
                   Importer JSON
                   <input id="importInput" type="file" accept="application/json">
@@ -2444,6 +2582,14 @@ button {
 
       <main class="database-pane">
         <div class="favorite-tabs" id="favoriteTabs" aria-label="Pages favorites"></div>
+
+        <section class="reminder-bar" id="reminderBar" aria-live="polite" hidden>
+          <header>
+            <strong>A ne pas oublier</strong>
+            <span id="reminderCount">0</span>
+          </header>
+          <div class="reminder-list" id="reminderList"></div>
+        </section>
 
         <header class="topbar">
           <div class="view-heading">
@@ -2707,6 +2853,15 @@ button {
       .filter(Boolean);
   }
 
+  function normalizeReminder(value) {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    const normalized = text.replace(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/, "$1T$2");
+    const match = normalized.match(/^(\d{4}-\d{2}-\d{2})T(\d{1,2}):(\d{2})/);
+    if (!match) return "";
+    return `${match[1]}T${match[2].padStart(2, "0")}:${match[3]}`;
+  }
+
   function parseCaptureLine(source) {
     const raw = String(source || "").trim();
     const withoutPriority = raw.replace(/^\(([A-D])\)\s+/i, "");
@@ -2774,8 +2929,9 @@ button {
       next: isTrue(values.next),
       dueDate: values.due || "",
       reviewDate: values.revoir || values.rel || values.relance || values.followup || "",
+      reminderAt: values.rappel || values.alarm || "",
       waiting: values.waiting || "",
-      clarify: !isTrue(values.next) && !values.due && !values.revoir && !values.rel && !values.relance && !values.followup && !values.waiting,
+      clarify: !isTrue(values.next) && !values.due && !values.revoir && !values.rel && !values.relance && !values.followup && !values.rappel && !values.alarm && !values.waiting,
     };
   }
 
@@ -2827,6 +2983,7 @@ button {
       completedAt: props.completedAt || "",
       sortOrder: props.sortOrder || "",
       rowColor: ROW_COLORS.includes(props.rowColor) ? props.rowColor : "",
+      rappel: normalizeReminder(props.rappel || props.reminderAt || props.alarmAt),
     };
 
     if (common.type === "project") {
@@ -2874,7 +3031,7 @@ button {
 
   function stringifyYaml(props) {
     const cleanProps = propsForType(props);
-    const order = ["type", "status", "next", "important", "clarify", "sortOrder", "rowColor", "project", "parent", "date", "due", "revoir", "waiting", "tags", "completedAt", "archivedAt"];
+    const order = ["type", "status", "next", "important", "clarify", "sortOrder", "rowColor", "project", "parent", "date", "due", "revoir", "rappel", "waiting", "tags", "completedAt", "archivedAt"];
     const keys = order.concat(Object.keys(cleanProps).filter((key) => !order.includes(key)).sort());
     return keys
       .filter((key) => cleanProps[key] !== undefined && cleanProps[key] !== "" && !(Array.isArray(cleanProps[key]) && cleanProps[key].length === 0))
@@ -2934,6 +3091,7 @@ button {
       date: raw.date || "",
       due: raw.due || raw.dueDate || "",
       revoir: raw.revoir || raw.rel || raw.relance || raw.followup || raw.followupDate || raw.reviewDate || "",
+      rappel: raw.rappel || raw.reminderAt || raw.alarmAt || "",
       waiting: raw.waiting || "",
       tags: normalizeTags(raw.tags),
       archivedAt: raw.archivedAt || "",
@@ -2956,6 +3114,7 @@ button {
       parent: raw.parent || raw.parentId,
       due: raw.due || raw.dueDate,
       revoir: raw.revoir || raw.rel || raw.relance || raw.followup || raw.followupDate || raw.reviewDate,
+      rappel: raw.rappel || raw.reminderAt || raw.alarmAt,
       waiting: raw.waiting,
       tags: raw.tags,
       archivedAt: raw.archivedAt,
@@ -3022,6 +3181,7 @@ button {
       date: props.date || "",
       dueDate: props.due || props.dueDate || "",
       reviewDate: props.revoir || props.rel || props.relance || props.followup || props.followupDate || props.reviewDate || "",
+      reminderAt: normalizeReminder(props.rappel || props.reminderAt || props.alarmAt),
       waiting: props.waiting || "",
       tags: normalizeTags(props.tags),
       archivedAt: props.archivedAt || "",
@@ -3044,6 +3204,7 @@ button {
       parsed.date,
       parsed.dueDate,
       parsed.reviewDate,
+      parsed.reminderAt,
       parsed.waiting,
       parsed.tags.join(" "),
       parsed.createdAt,
@@ -3063,8 +3224,11 @@ button {
     }
     if ("rel" in normalizedPatch && !("revoir" in normalizedPatch)) normalizedPatch.revoir = normalizedPatch.rel;
     if ("followupDate" in normalizedPatch && !("revoir" in normalizedPatch)) normalizedPatch.revoir = normalizedPatch.followupDate;
+    if ("reminderAt" in normalizedPatch && !("rappel" in normalizedPatch)) normalizedPatch.rappel = normalizedPatch.reminderAt;
+    if ("alarmAt" in normalizedPatch && !("rappel" in normalizedPatch)) normalizedPatch.rappel = normalizedPatch.alarmAt;
     if (normalizedPatch.status === "done" && !normalizedPatch.completedAt && !parsed.completedAt) normalizedPatch.completedAt = todayIsoDate();
     if (normalizedPatch.status && normalizedPatch.status !== "done") normalizedPatch.completedAt = "";
+    if (["done", "archived"].includes(normalizedPatch.status) && !("rappel" in normalizedPatch)) normalizedPatch.rappel = "";
     if (
       parsed.clarify &&
       (normalizedPatch.next === true ||
@@ -3175,6 +3339,7 @@ button {
       parent: fields.parent || "",
       dueDate: fields.dueDate || "",
       reviewDate: fields.reviewDate || fields.revoir || fields.followupDate || fields.rel || "",
+      rappel: fields.rappel || fields.reminderAt || fields.alarmAt || "",
       waiting: fields.waiting || "",
       tags: normalizeTags(fields.tags),
     };
@@ -3509,6 +3674,212 @@ button {
     getIssues,
     decorateItems,
     backlinks,
+  };
+})();
+
+
+(function () {
+  const NOTIFIED_KEY = "tabulator-cockpit-notified-reminders";
+  let currentApp = null;
+  let intervalId = null;
+  let bound = false;
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function localDateTimeValue(date) {
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function formatReminder(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString("fr-CH", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function dueItems(app) {
+    const now = Date.now();
+    return window.CockpitRules
+      .decorateItems(app.items)
+      .filter((item) => item.reminderAt && window.CockpitRules.isOpen(item) && new Date(item.reminderAt).getTime() <= now)
+      .sort((a, b) => a.reminderAt.localeCompare(b.reminderAt));
+  }
+
+  function readNotified() {
+    try {
+      const value = JSON.parse(localStorage.getItem(NOTIFIED_KEY) || "{}");
+      return value && typeof value === "object" ? value : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function writeNotified(value) {
+    localStorage.setItem(NOTIFIED_KEY, JSON.stringify(value));
+  }
+
+  function updatePermissionButton() {
+    const button = document.getElementById("notificationPermissionButton");
+    if (!button) return;
+    if (!("Notification" in window)) {
+      button.textContent = "Notifications indisponibles";
+      button.disabled = true;
+      return;
+    }
+    const labels = {
+      granted: "Notifications actives",
+      denied: "Notifications bloquees",
+      default: "Activer les notifications",
+    };
+    button.textContent = labels[Notification.permission] || labels.default;
+    button.disabled = Notification.permission !== "default";
+  }
+
+  function notifyDueItems(app, items) {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    const notified = readNotified();
+    const liveIds = new Set(
+      window.CockpitRules
+        .decorateItems(app.items)
+        .filter((item) => item.reminderAt)
+        .map((item) => item.id)
+    );
+    Object.keys(notified).forEach((id) => {
+      if (!liveIds.has(id)) delete notified[id];
+    });
+    items.forEach((item) => {
+      if (notified[item.id] === item.reminderAt) return;
+      try {
+        const notification = new Notification("Rappel imperatif", {
+          body: `${item.title}\n${formatReminder(item.reminderAt)}`,
+          tag: `cockpit-${item.id}-${item.reminderAt}`,
+          requireInteraction: true,
+        });
+        notification.onclick = () => {
+          window.focus();
+          app.selectItem(item.id);
+          notification.close();
+        };
+        notified[item.id] = item.reminderAt;
+      } catch (error) {
+        console.warn("Notification navigateur impossible.", error);
+      }
+    });
+    writeNotified(notified);
+  }
+
+  function renderBar(app, items) {
+    const bar = document.getElementById("reminderBar");
+    const list = document.getElementById("reminderList");
+    const count = document.getElementById("reminderCount");
+    if (!bar || !list || !count) return;
+    bar.hidden = items.length === 0;
+    count.textContent = String(items.length);
+    list.innerHTML = items
+      .map(
+        (item) => `
+          <div class="reminder-alert-row">
+            <span class="reminder-alert-icon" aria-hidden="true">!</span>
+            <button type="button" class="reminder-alert-title" data-reminder-action="open" data-reminder-id="${item.id}">${escapeHtml(item.title)}</button>
+            <span class="reminder-alert-meta">${escapeHtml(item.type)} · ${escapeHtml(formatReminder(item.reminderAt))}</span>
+            <div class="reminder-alert-actions">
+              <button type="button" data-reminder-action="done" data-reminder-id="${item.id}" title="Acquitter le rappel">Fait</button>
+              <button type="button" data-reminder-action="hour" data-reminder-id="${item.id}" title="Reporter d'une heure">+1 h</button>
+              <button type="button" data-reminder-action="tomorrow" data-reminder-id="${item.id}" title="Reporter a demain 09:00">Demain 09 h</button>
+            </div>
+          </div>
+        `
+      )
+      .join("");
+  }
+
+  async function handleAction(app, button) {
+    const action = button.dataset.reminderAction;
+    const id = button.dataset.reminderId;
+    if (action === "open") {
+      app.selectItem(id);
+      return;
+    }
+    if (!id) return;
+    if (action === "done") {
+      await app.updateProps(id, { rappel: "" });
+      return;
+    }
+    const date = new Date();
+    date.setSeconds(0, 0);
+    if (action === "hour") date.setHours(date.getHours() + 1);
+    if (action === "tomorrow") {
+      date.setDate(date.getDate() + 1);
+      date.setHours(9, 0, 0, 0);
+    }
+    await app.updateProps(id, { rappel: localDateTimeValue(date) });
+  }
+
+  async function requestPermission() {
+    if (!("Notification" in window) || Notification.permission !== "default") {
+      updatePermissionButton();
+      return;
+    }
+    try {
+      await Notification.requestPermission();
+    } finally {
+      updatePermissionButton();
+      if (currentApp) refresh(currentApp);
+    }
+  }
+
+  function bind() {
+    if (bound) return;
+    bound = true;
+    document.getElementById("reminderBar")?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-reminder-action]");
+      if (button && currentApp) handleAction(currentApp, button);
+    });
+    document.getElementById("notificationPermissionButton")?.addEventListener("click", requestPermission);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && currentApp) refresh(currentApp);
+    });
+    window.addEventListener("focus", () => {
+      if (currentApp) refresh(currentApp);
+    });
+  }
+
+  function refresh(app) {
+    currentApp = app;
+    const items = dueItems(app);
+    renderBar(app, items);
+    notifyDueItems(app, items);
+    updatePermissionButton();
+    return items;
+  }
+
+  function init(app) {
+    currentApp = app;
+    bind();
+    updatePermissionButton();
+    clearInterval(intervalId);
+    intervalId = setInterval(() => refresh(app), 30000);
+    refresh(app);
+  }
+
+  window.CockpitReminders = {
+    init,
+    refresh,
+    requestPermission,
+    dueItems,
   };
 })();
 
@@ -3885,6 +4256,22 @@ button {
     return `<button class="row-important-button${selected ? " active" : ""}" type="button" data-important-id="${item.id}" data-important-value="${selected ? "false" : "true"}" aria-pressed="${selected}" title="${selected ? "Retirer l'importance" : "Marquer important"}">${selected ? "★" : "☆"}</button>`;
   }
 
+  function reminderFormatter(cell) {
+    const value = String(cell.getValue() || "");
+    if (!value) return "";
+    const date = new Date(value);
+    const overdue = !Number.isNaN(date.getTime()) && date.getTime() <= Date.now();
+    const label = Number.isNaN(date.getTime())
+      ? value
+      : date.toLocaleString("fr-CH", {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+    return `<span class="table-reminder${overdue ? " overdue" : ""}" title="Rappel imperatif : ${label}" aria-label="Rappel imperatif : ${label}">●</span>`;
+  }
+
   function typeFormatter(cell) {
     const value = cell.getValue() || "";
     return value ? `<span class="page-type ${String(value).toLowerCase()}">${value}</span>` : "";
@@ -3963,6 +4350,7 @@ button {
       },
       { title: "Next", field: "next", width: 62, hozAlign: "center", headerSort: false, formatter: nextFormatter },
       { title: "Important", field: "important", width: 82, hozAlign: "center", headerSort: false, formatter: importantFormatter },
+      { title: "Rappel", field: "reminderAt", width: 78, hozAlign: "center", sorter: "string", formatter: reminderFormatter },
       { title: "Apres", field: "parentInfo", minWidth: 210, responsive: 1, formatter: parentInfoFormatter },
       {
         title: "Projet",
@@ -4051,6 +4439,7 @@ button {
         }),
       },
       { title: "Important", field: "important", width: 82, hozAlign: "center", formatter: (cell) => cell.getRow().getData().type === "project" ? importantFormatter(cell) : "" },
+      { title: "Rappel", field: "reminderAt", width: 78, hozAlign: "center", sorter: "string", formatter: reminderFormatter },
       { title: "Revoir", field: "reviewDate", width: 112, sorter: isoDateSorter, formatter: projectFollowupFormatter, editor: dateEditor, cellClick: openDateEditor, editable: (cell) => cell.getRow().getData().type === "project" },
       { title: "Todos", field: "openTaskCount", width: 78, hozAlign: "center", formatter: projectOnlyFormatter },
       { title: "Dernier avancement", field: "lastProgressDate", width: 132, formatter: projectOnlyFormatter },
@@ -4069,6 +4458,7 @@ button {
       { title: "Date", field: "journalDate", width: 118, sorter: isoDateSorter },
       { title: "Titre", field: "title", minWidth: 320, formatter: titleFormatter },
       { title: "Traite", field: "treated", width: 72, hozAlign: "center", headerSort: false, formatter: treatedFormatter },
+      { title: "Rappel", field: "reminderAt", width: 78, hozAlign: "center", sorter: "string", formatter: reminderFormatter },
       {
         title: "Projet",
         field: "project",
@@ -5012,15 +5402,16 @@ button {
   }
 
   function propertyKeys(item) {
-    if (item.type === "project") return ["id", "category", "status", "next", "important", "revoir", "waiting", "tags"];
-    if (item.type === "journal") return ["id", "status", "next", "important", "project", "tags"];
-    if (item.type === "divers") return ["id", "status", "next", "important", "project", "parent", "revoir", "tags"];
-    return ["id", "status", "next", "important", "project", "parent", "due", "revoir", "waiting", "tags"];
+    if (item.type === "project") return ["id", "category", "status", "next", "important", "revoir", "rappel", "waiting", "tags"];
+    if (item.type === "journal") return ["id", "status", "next", "important", "project", "rappel", "tags"];
+    if (item.type === "divers") return ["id", "status", "next", "important", "project", "parent", "revoir", "rappel", "tags"];
+    return ["id", "status", "next", "important", "project", "parent", "due", "revoir", "rappel", "waiting", "tags"];
   }
 
   function propertyValue(item, key) {
     if (key === "due") return item.dueDate || "";
     if (key === "revoir") return item.reviewDate || "";
+    if (key === "rappel") return item.reminderAt || "";
     return item[key] || "";
   }
 
@@ -5034,6 +5425,7 @@ button {
     parent: "Apres",
     due: "Echeance",
     revoir: "Revoir",
+    rappel: "Rappel imperatif",
     waiting: "J'attends",
     tags: "Tags",
   };
@@ -5052,8 +5444,43 @@ button {
     return "revoir";
   }
 
+  function localDateTimeValue(date) {
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function reminderPresetValue(preset) {
+    const date = new Date();
+    date.setSeconds(0, 0);
+    if (preset === "hour") {
+      date.setHours(date.getHours() + 1);
+      return localDateTimeValue(date);
+    }
+    if (preset === "next-afternoon") {
+      if (date.getHours() >= 16) date.setDate(date.getDate() + 1);
+      date.setHours(16, 0, 0, 0);
+      return localDateTimeValue(date);
+    }
+    date.setDate(date.getDate() + 1);
+    date.setHours(9, 0, 0, 0);
+    return localDateTimeValue(date);
+  }
+
+  function formatReminder(value) {
+    const date = new Date(value);
+    if (!value || Number.isNaN(date.getTime())) return value || "";
+    return date.toLocaleString("fr-CH", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
   function propertyDisplayValue(app, item, key) {
     if (key === "tags") return item.tags.join(", ");
+    if (key === "rappel") return formatReminder(item.reminderAt);
     if (key === "project" && item.project) {
       const project = window.CockpitRules
         .decorateItems(app.items)
@@ -5290,6 +5717,8 @@ button {
         if (choice.color) option.style.backgroundColor = choice.color;
         editor.append(option);
       });
+    } else if (key === "rappel") {
+      editor.type = "datetime-local";
     } else if (["date", "due", "revoir"].includes(key)) {
       editor.type = "date";
     } else {
@@ -5318,6 +5747,7 @@ button {
       renderDetailNavigation(app, updated);
       renderInspector(app);
       syncSelectedRow(app);
+      window.CockpitReminders?.refresh(app);
     };
 
     editor.addEventListener("change", commit);
@@ -5379,6 +5809,15 @@ button {
           ${offsets.map((days) => `<button type="button" data-reminder-days="${days}">${offsetLabel(days)}</button>`).join("")}
         </div>
       </section>
+      <section class="inspector-section imperative-reminder-section">
+        <h3>Rappel imperatif</h3>
+        <div class="quick-date-buttons">
+          <button type="button" data-rappel-preset="hour">Dans 1 h</button>
+          <button type="button" data-rappel-preset="next-afternoon">Prochain 16 h</button>
+          <button type="button" data-rappel-preset="tomorrow">Demain 09 h</button>
+          ${item.reminderAt ? '<button type="button" class="danger" data-rappel-preset="clear">Effacer</button>' : ""}
+        </div>
+      </section>
       ${
         issues.length
           ? `<section class="inspector-section control-section"><h3>Controles</h3><div class="control-list">${issues
@@ -5399,6 +5838,15 @@ button {
         await app.updateProps(item.id, { [field]: addDaysIso(button.dataset.reminderDays) }, { quiet: true });
         renderInspector(app);
         syncSelectedRow(app);
+      });
+    });
+    pane.querySelectorAll("[data-rappel-preset]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const value = button.dataset.rappelPreset === "clear" ? "" : reminderPresetValue(button.dataset.rappelPreset);
+        await app.updateProps(item.id, { rappel: value }, { quiet: true });
+        renderInspector(app);
+        syncSelectedRow(app);
+        window.CockpitReminders?.refresh(app);
       });
     });
   }
@@ -5997,7 +6445,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.13.2";
+  const APP_VERSION = "0.14.0";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
@@ -6117,6 +6565,7 @@ button {
       updateStorageStatus();
       renderMiniCalendar();
       renderFavoriteTabs();
+      window.CockpitReminders?.refresh(this);
     },
 
     toggleFavorite(id) {
@@ -6639,6 +7088,7 @@ button {
           project: project ? project.id : "",
           dueDate: capture.dueDate,
           reviewDate: capture.reviewDate,
+          reminderAt: capture.reminderAt,
           tags: capture.tags,
         });
         items.push(await window.CockpitStorage.saveItem(item));
@@ -6939,6 +7389,7 @@ button {
     app.items = await migrateAllIdsToShortIds(app.items);
     app.items = await canonicalizeProjectRelations(app.items);
     await recoverFocusDraft();
+    window.CockpitReminders?.init(app);
     const focusId = window.CockpitFocus?.requestedFocusId();
     if (focusId) {
       window.CockpitFocus.render(app, focusId);
