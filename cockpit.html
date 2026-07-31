@@ -2519,7 +2519,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.14.0</span></p>
+            <p><span id="appVersion">v0.14.1</span></p>
           </div>
         </div>
 
@@ -3682,6 +3682,11 @@ button {
   const NOTIFIED_KEY = "tabulator-cockpit-notified-reminders";
   let currentApp = null;
   let intervalId = null;
+  let titleIntervalId = null;
+  let normalTitle = document.title;
+  let ownsTitle = false;
+  let titleAlertVisible = false;
+  let alertTitleText = "";
   let bound = false;
 
   function escapeHtml(value) {
@@ -3746,6 +3751,37 @@ button {
     };
     button.textContent = labels[Notification.permission] || labels.default;
     button.disabled = Notification.permission !== "default";
+  }
+
+  function stopTitleAlert() {
+    clearInterval(titleIntervalId);
+    titleIntervalId = null;
+    titleAlertVisible = false;
+    if (ownsTitle) document.title = normalTitle;
+    ownsTitle = false;
+  }
+
+  function updateTitleAlert(items) {
+    if (!document.hidden || !items.length) {
+      stopTitleAlert();
+      normalTitle = document.title;
+      return;
+    }
+    if (!ownsTitle) {
+      normalTitle = document.title;
+      ownsTitle = true;
+    }
+    alertTitleText = `● RAPPEL (${items.length})`;
+    if (!titleIntervalId) {
+      titleAlertVisible = true;
+      document.title = alertTitleText;
+      titleIntervalId = setInterval(() => {
+        titleAlertVisible = !titleAlertVisible;
+        document.title = titleAlertVisible ? alertTitleText : normalTitle;
+      }, 900);
+    } else if (titleAlertVisible) {
+      document.title = alertTitleText;
+    }
   }
 
   function notifyDueItems(app, items) {
@@ -3850,7 +3886,7 @@ button {
     });
     document.getElementById("notificationPermissionButton")?.addEventListener("click", requestPermission);
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible" && currentApp) refresh(currentApp);
+      if (currentApp) refresh(currentApp);
     });
     window.addEventListener("focus", () => {
       if (currentApp) refresh(currentApp);
@@ -3863,6 +3899,7 @@ button {
     renderBar(app, items);
     notifyDueItems(app, items);
     updatePermissionButton();
+    updateTitleAlert(items);
     return items;
   }
 
@@ -3871,7 +3908,7 @@ button {
     bind();
     updatePermissionButton();
     clearInterval(intervalId);
-    intervalId = setInterval(() => refresh(app), 30000);
+    intervalId = setInterval(() => refresh(app), 15000);
     refresh(app);
   }
 
@@ -6445,7 +6482,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.14.0";
+  const APP_VERSION = "0.14.1";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
