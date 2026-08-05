@@ -959,13 +959,13 @@ button {
 
 .topbar-tools {
   display: grid;
-  grid-template-columns: minmax(180px, 300px) 112px 112px 132px auto 138px 118px;
+  grid-template-columns: minmax(180px, 300px) 100px 112px 112px 132px auto 138px 118px;
   gap: 8px;
   min-width: 0;
 }
 
 .topbar-tools.tasks-view {
-  grid-template-columns: minmax(180px, 300px) 112px 132px auto 138px 118px;
+  grid-template-columns: minmax(180px, 300px) 100px 112px 132px auto 138px 118px;
 }
 
 .search-control {
@@ -2541,11 +2541,11 @@ button {
   }
 
   .topbar-tools {
-    grid-template-columns: minmax(170px, 260px) 104px 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(170px, 260px) 94px 104px 104px 122px auto 132px 104px;
   }
 
   .topbar-tools.tasks-view {
-    grid-template-columns: minmax(170px, 260px) 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(170px, 260px) 94px 104px 122px auto 132px 104px;
   }
 
   .detail-pane {
@@ -2600,11 +2600,11 @@ button {
 
   .topbar-tools {
     width: 100%;
-    grid-template-columns: minmax(180px, 1fr) 104px 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(180px, 1fr) 94px 104px 104px 122px auto 132px 104px;
   }
 
   .topbar-tools.tasks-view {
-    grid-template-columns: minmax(180px, 1fr) 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(180px, 1fr) 94px 104px 122px auto 132px 104px;
   }
 
   .table-wrap {
@@ -2649,7 +2649,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.15.0</span></p>
+            <p><span id="appVersion">v0.15.1</span></p>
           </div>
         </div>
 
@@ -2739,9 +2739,13 @@ button {
           </div>
           <div class="topbar-tools">
             <div class="search-control">
-              <input id="searchInput" type="search" placeholder="Rechercher partout...">
+              <input id="searchInput" type="search" placeholder="Rechercher dans cette vue...">
               <button id="clearSearchButton" type="button" aria-label="Effacer la recherche" title="Effacer la recherche" hidden>×</button>
             </div>
+            <select id="searchScope" aria-label="Portee de la recherche" title="Portee de la recherche">
+              <option value="view">Cette vue</option>
+              <option value="global">Partout</option>
+            </select>
             <select id="typeFilter" aria-label="Filtre type">
               <option value="">Types</option>
               <option value="project">project</option>
@@ -4998,14 +5002,15 @@ button {
 
   function applySearchAndFilters(app, rows) {
     const search = app.filters.search.trim().toLowerCase();
-    const typeFilterApplies = Boolean(search) || !isTaskOnlyView(app.currentView);
+    const globalSearch = app.filters.searchScope === "global";
+    const typeFilterApplies = globalSearch || !isTaskOnlyView(app.currentView);
     return rows.filter((row) => {
       const item = row.itemId ? window.CockpitModels.parseDocument(app.items.find((candidate) => candidate.id === row.itemId) || row) : row;
       if (typeFilterApplies && app.filters.type && item.type !== app.filters.type) return false;
       if (app.filters.status && item.status !== app.filters.status) return false;
       if (app.filters.tag && !item.tags.some((tag) => tag.toLocaleLowerCase("fr") === app.filters.tag.toLocaleLowerCase("fr"))) return false;
-      if (!search && app.currentView === "tasks" && app.filters.taskQuick === "past" && !hasArrivedDate(item)) return false;
-      if (!search && app.currentView === "tasks" && app.filters.taskQuick === "next" && !item.next) return false;
+      if (!globalSearch && app.currentView === "tasks" && app.filters.taskQuick === "past" && !hasArrivedDate(item)) return false;
+      if (!globalSearch && app.currentView === "tasks" && app.filters.taskQuick === "next" && !item.next) return false;
       if (!search) return true;
       return [
         item.searchText,
@@ -5023,7 +5028,7 @@ button {
   }
 
   function buildView(app) {
-    const sourceRows = app.filters.search.trim()
+    const sourceRows = app.filters.searchScope === "global"
       ? decorateParentInfo(window.CockpitRules.decorateItems(app.items))
       : app.currentView === "control"
         ? controlData(app.items)
@@ -5037,16 +5042,16 @@ button {
 
   function setViewText(view, app) {
     const [title, subtitle] = viewMeta[view];
-    const searching = Boolean(app.filters.search.trim());
-    document.getElementById("viewTitle").textContent = searching ? "Recherche globale" : view === "calendar" ? app.calendarDate : title;
-    document.getElementById("viewSubtitle").textContent = searching ? "Toutes les pages, proprietes et contenus Markdown." : subtitle;
-    document.getElementById("typeFilter")?.classList.toggle("hidden", !searching && isTaskOnlyView(view));
-    document.getElementById("quickTaskFilters")?.classList.toggle("hidden", searching || view !== "tasks");
+    const globalSearch = app.filters.searchScope === "global";
+    document.getElementById("viewTitle").textContent = globalSearch ? "Recherche globale" : view === "calendar" ? app.calendarDate : title;
+    document.getElementById("viewSubtitle").textContent = globalSearch ? "Toutes les pages, proprietes, tags et contenus Markdown." : subtitle;
+    document.getElementById("typeFilter")?.classList.toggle("hidden", !globalSearch && isTaskOnlyView(view));
+    document.getElementById("quickTaskFilters")?.classList.toggle("hidden", globalSearch || view !== "tasks");
     document.querySelectorAll("[data-task-filter]").forEach((button) => {
       button.classList.toggle("active", app.filters.taskQuick === button.dataset.taskFilter);
     });
-    document.querySelector(".topbar-check")?.classList.toggle("hidden", searching || view !== "tasks");
-    document.querySelector(".topbar-tools")?.classList.toggle("tasks-view", !searching && view === "tasks");
+    document.querySelector(".topbar-check")?.classList.toggle("hidden", globalSearch || view !== "tasks");
+    document.querySelector(".topbar-tools")?.classList.toggle("tasks-view", !globalSearch && view === "tasks");
   }
 
   function loadColumnPrefs() {
@@ -5163,7 +5168,7 @@ button {
   }
 
   function tableViewKey(app) {
-    return app.filters.search.trim() ? "search" : app.currentView;
+    return app.filters.searchScope === "global" ? "search" : app.currentView;
   }
 
   function renderColumnMenu(app, columns) {
@@ -5193,7 +5198,7 @@ button {
   }
 
   function columnsForView(app) {
-    if (app.filters.search.trim()) return baseColumns(app);
+    if (app.filters.searchScope === "global") return baseColumns(app);
     if (app.currentView === "control") return controlColumns();
     if (app.currentView === "projects") return projectColumns();
     if (app.currentView === "journal") return journalColumns(app);
@@ -5445,7 +5450,7 @@ button {
 
     const rawColumns = columnsForView(app);
     const viewKey = tableViewKey(app);
-    const searching = Boolean(app.filters.search.trim());
+    const searching = app.filters.searchScope === "global";
     renderColumnMenu(app, rawColumns);
 
     app.table = new window.Tabulator("#mainTable", {
@@ -6785,7 +6790,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.15.0";
+  const APP_VERSION = "0.15.1";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
@@ -6810,6 +6815,7 @@ button {
     detailHistory: [],
     filters: {
       search: "",
+      searchScope: "view",
       type: "",
       status: "",
       tag: "",
@@ -7198,10 +7204,22 @@ button {
     document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === view));
   }
 
+  function setSearchScope(scope) {
+    app.filters.searchScope = scope === "global" ? "global" : "view";
+    const searchInput = document.getElementById("searchInput");
+    const searchScope = document.getElementById("searchScope");
+    if (searchInput) searchInput.placeholder = app.filters.searchScope === "global" ? "Rechercher partout..." : "Rechercher dans cette vue...";
+    if (searchScope) {
+      searchScope.value = app.filters.searchScope;
+      searchScope.classList.toggle("active-filter", app.filters.searchScope === "global");
+    }
+  }
+
   function bindNav() {
     document.querySelectorAll(".nav-item").forEach((button) => {
       button.addEventListener("click", () => {
         setActiveView(button.dataset.view);
+        setSearchScope("view");
         app.refresh();
       });
     });
@@ -7210,6 +7228,7 @@ button {
   function bindFilters() {
     const statusFilter = document.getElementById("statusFilter");
     const searchInput = document.getElementById("searchInput");
+    const searchScope = document.getElementById("searchScope");
     const clearSearchButton = document.getElementById("clearSearchButton");
     window.CockpitModels.STATUSES.forEach((status) => statusFilter.append(new Option(status, status)));
 
@@ -7226,6 +7245,11 @@ button {
       searchInput.value = "";
       app.filters.search = "";
       syncSearchClearButton();
+      app.refresh();
+      searchInput.focus();
+    });
+    searchScope.addEventListener("change", (event) => {
+      setSearchScope(event.target.value);
       app.refresh();
       searchInput.focus();
     });
