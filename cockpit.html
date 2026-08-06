@@ -959,18 +959,20 @@ button {
 
 .topbar-tools {
   display: grid;
-  grid-template-columns: minmax(180px, 300px) 100px 112px 112px 132px auto 138px 118px;
+  grid-template-columns: minmax(320px, 1fr) 112px 112px 118px;
   gap: 8px;
   min-width: 0;
+  flex: 1 1 760px;
 }
 
 .topbar-tools.tasks-view {
-  grid-template-columns: minmax(180px, 300px) 100px 112px 132px auto 138px 118px;
+  grid-template-columns: minmax(280px, 1fr) 112px auto 138px 118px;
 }
 
 .search-control {
   position: relative;
   min-width: 0;
+  z-index: 14;
 }
 
 .search-control input {
@@ -1008,6 +1010,62 @@ button {
 
 .search-control button[hidden] {
   display: none;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: grid;
+  max-height: 310px;
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: white;
+  box-shadow: 0 14px 30px rgba(30, 37, 34, 0.16);
+}
+
+.search-suggestions[hidden] {
+  display: none;
+}
+
+.search-suggestions button {
+  position: static;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: auto;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+  transform: none;
+}
+
+.search-suggestions button:hover,
+.search-suggestions button.active {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.search-suggestions button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-suggestions button small {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .topbar-tools input,
@@ -1165,6 +1223,27 @@ button {
 .tabulator .tabulator-row,
 .tabulator .tabulator-row .tabulator-cell {
   font-weight: 400;
+}
+
+.tabulator .tabulator-footer {
+  border-top: 1px solid var(--line-strong);
+  background: #f7f9f8;
+}
+
+.tabulator .tabulator-footer .tabulator-footer-contents {
+  padding: 0;
+}
+
+.tabulator .table-summary-footer {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 32px;
+  padding: 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .table-tag {
@@ -2541,11 +2620,11 @@ button {
   }
 
   .topbar-tools {
-    grid-template-columns: minmax(170px, 260px) 94px 104px 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(280px, 1fr) 104px 104px 104px;
   }
 
   .topbar-tools.tasks-view {
-    grid-template-columns: minmax(170px, 260px) 94px 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(250px, 1fr) 104px auto 132px 104px;
   }
 
   .detail-pane {
@@ -2600,11 +2679,11 @@ button {
 
   .topbar-tools {
     width: 100%;
-    grid-template-columns: minmax(180px, 1fr) 94px 104px 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(260px, 1fr) 104px 104px 104px;
   }
 
   .topbar-tools.tasks-view {
-    grid-template-columns: minmax(180px, 1fr) 94px 104px 122px auto 132px 104px;
+    grid-template-columns: minmax(230px, 1fr) 104px auto 132px 104px;
   }
 
   .table-wrap {
@@ -2649,7 +2728,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.15.1</span></p>
+            <p><span id="appVersion">v0.16.1</span></p>
           </div>
         </div>
 
@@ -2739,13 +2818,10 @@ button {
           </div>
           <div class="topbar-tools">
             <div class="search-control">
-              <input id="searchInput" type="search" placeholder="Rechercher dans cette vue...">
+              <input id="searchInput" type="search" placeholder='Rechercher... #tag @personne project:"Nom"' title="Mots, #tag, @personne, -exclusion, OR et proprietes" autocomplete="off">
               <button id="clearSearchButton" type="button" aria-label="Effacer la recherche" title="Effacer la recherche" hidden>×</button>
+              <div class="search-suggestions" id="searchSuggestions" hidden></div>
             </div>
-            <select id="searchScope" aria-label="Portee de la recherche" title="Portee de la recherche">
-              <option value="view">Cette vue</option>
-              <option value="global">Partout</option>
-            </select>
             <select id="typeFilter" aria-label="Filtre type">
               <option value="">Types</option>
               <option value="project">project</option>
@@ -2755,9 +2831,6 @@ button {
             </select>
             <select id="statusFilter" aria-label="Filtre statut">
               <option value="">Statuts</option>
-            </select>
-            <select id="tagFilter" aria-label="Filtre tag">
-              <option value="">Tags</option>
             </select>
             <div class="quick-task-filters hidden" id="quickTaskFilters" aria-label="Filtres rapides taches">
               <button class="quick-filter-button" type="button" data-task-filter="past">Passees</button>
@@ -2799,7 +2872,7 @@ button {
           <button type="submit" class="icon-button" value="cancel">Fermer</button>
         </div>
         <div class="capture-input-wrap">
-          <textarea id="captureInput" placeholder="Ecrire une capture..."></textarea>
+          <textarea id="captureInput" placeholder="Ecrire une capture... #tag @personne"></textarea>
           <div class="project-suggest hidden" id="projectSuggest" role="listbox"></div>
         </div>
         <div class="capture-form-actions">
@@ -3006,9 +3079,10 @@ button {
   function parseCaptureLine(source) {
     const raw = String(source || "").trim();
     const withoutPriority = raw.replace(/^\(([A-D])\)\s+/i, "");
-    const tokens = withoutPriority.match(/\+\[[^\]]+\]|\+[\p{L}\p{N}_.-]+|@[\p{L}\p{N}_.-]+|[A-Za-z][A-Za-z0-9_-]*:\S+|\S+/gu) || [];
+    const tokens = withoutPriority.match(/\+\[[^\]]+\]|\+[\p{L}\p{N}_.-]+|#[\p{L}\p{N}_.-]+|@[\p{L}\p{N}_.-]+|[A-Za-z][A-Za-z0-9_-]*:\S+|\S+/gu) || [];
     const projects = [];
-    const contexts = [];
+    const tags = [];
+    const people = [];
     const values = {};
     const text = [];
     let explicitStatus = "";
@@ -3028,8 +3102,12 @@ button {
         projects.push(token.slice(1));
         return;
       }
+      if (/^#[\p{L}\p{N}_.-]+$/u.test(token)) {
+        tags.push(token.slice(1));
+        return;
+      }
       if (/^@[\p{L}\p{N}_.-]+$/u.test(token)) {
-        contexts.push(token.slice(1));
+        people.push(token.slice(1));
         return;
       }
       const valueMatch = token.match(/^([A-Za-z][A-Za-z0-9_-]*):(.+)$/);
@@ -3064,14 +3142,14 @@ button {
       raw,
       title: text.join(" ").trim() || raw,
       projectName: projects[0] || "",
-      tags: contexts,
+      tags,
       important,
-      status: normalizeStatus(values.status || explicitStatus || (values.waiting ? "waiting" : values.blocked ? "paused" : "active")),
+      status: normalizeStatus(values.status || explicitStatus || (values.waiting || people.length ? "waiting" : values.blocked ? "paused" : "active")),
       next: isTrue(values.next),
       dueDate: values.due || "",
       reviewDate: values.revoir || values.rel || values.relance || values.followup || "",
       reminderAt: values.rappel || values.alarm || "",
-      waiting: values.waiting || "",
+      waiting: values.waiting || people.join(", "),
       clarify: !isTrue(values.next) && !values.due && !values.revoir && !values.rel && !values.relance && !values.followup && !values.rappel && !values.alarm && !values.waiting,
     };
   }
@@ -3820,6 +3898,260 @@ button {
 
 
 (function () {
+  const BOOLEAN_VALUES = new Set(["true", "false", "oui", "non", "1", "0"]);
+
+  function tokenize(source) {
+    const tokens = [];
+    let token = "";
+    let quoted = false;
+    for (const char of String(source || "")) {
+      if (char === '"') {
+        quoted = !quoted;
+        token += char;
+        continue;
+      }
+      if (!quoted && (char === "(" || char === ")")) {
+        if (token) tokens.push(token);
+        tokens.push(char);
+        token = "";
+        continue;
+      }
+      if (!quoted && /\s/.test(char)) {
+        if (token) tokens.push(token);
+        token = "";
+        continue;
+      }
+      token += char;
+    }
+    if (token) tokens.push(token);
+    return tokens;
+  }
+
+  function unquote(value) {
+    const text = String(value || "").trim();
+    return text.startsWith('"') && text.endsWith('"') ? text.slice(1, -1) : text.replace(/^"|"$/g, "");
+  }
+
+  function normalize(value) {
+    return unquote(value).toLocaleLowerCase("fr");
+  }
+
+  function boolValue(value) {
+    return ["true", "oui", "1"].includes(normalize(value));
+  }
+
+  function dateAtOffset(offset) {
+    const date = new Date();
+    date.setHours(12, 0, 0, 0);
+    date.setDate(date.getDate() + offset);
+    return date.toISOString().slice(0, 10);
+  }
+
+  function dateMatches(actual, wanted) {
+    const value = String(actual || "").slice(0, 10);
+    const query = normalize(wanted);
+    const today = dateAtOffset(0);
+    if (!value) return false;
+    if (query === "today") return value === today;
+    if (["overdue", "past"].includes(query)) return value < today;
+    const next = query.match(/^next(\d+)d$/);
+    if (next) return value >= today && value <= dateAtOffset(Number(next[1]));
+    return value === query;
+  }
+
+  function recentDateMatches(actual, wanted) {
+    const value = String(actual || "").slice(0, 10);
+    const query = normalize(wanted);
+    const recent = query.match(/^(?:last)?(\d+)d$/);
+    if (!value || !recent) return false;
+    return value >= dateAtOffset(-Number(recent[1])) && value <= dateAtOffset(1);
+  }
+
+  function searchableText(item, row) {
+    return [
+      item.searchText,
+      item.title,
+      item.markdown,
+      item.projectTitle,
+      item.category,
+      item.dueDate,
+      item.reviewDate,
+      item.reminderAt,
+      item.waiting,
+      item.createdAt,
+      item.updatedAt,
+      item.completedAt,
+      row?.reason,
+      row?.action,
+    ]
+      .join(" ")
+      .toLocaleLowerCase("fr");
+  }
+
+  function propertyMatcher(key, rawValue, item, row) {
+    const value = normalize(rawValue);
+    if (key === "type") return item.type === value;
+    if (key === "status") return item.status === value;
+    if (key === "project") {
+      const ownProjectValues = item.type === "project" ? [item.title, item.slug, item.id] : [];
+      return [...ownProjectValues, item.projectTitle, item.projectId, item.project].some((candidate) => String(candidate || "").toLocaleLowerCase("fr").includes(value));
+    }
+    if (key === "waiting") return String(item.waiting || "").toLocaleLowerCase("fr").includes(value);
+    if (key === "next") return BOOLEAN_VALUES.has(value) && Boolean(item.next) === boolValue(value);
+    if (key === "important") return BOOLEAN_VALUES.has(value) && Boolean(item.important) === boolValue(value);
+    if (key === "due") return dateMatches(item.dueDate, value);
+    if (["revoir", "review"].includes(key)) return dateMatches(item.reviewDate, value);
+    if (["updated", "modifie"].includes(key)) return recentDateMatches(item.updatedAt, value);
+    if (key === "has") {
+      if (value === "project") return Boolean(item.projectId || item.project);
+      if (["rappel", "reminder"].includes(value)) return Boolean(item.reminderAt);
+      if (value === "tags") return Boolean(item.tags?.length);
+      if (value === "parent") return Boolean(item.parentId || item.parent);
+      return false;
+    }
+    return searchableText(item, row).includes(`${key}:${value}`);
+  }
+
+  function atomMatcher(rawToken, item, row) {
+    let token = String(rawToken || "");
+    let negative = false;
+    if (token.startsWith("-") && token.length > 1) {
+      negative = true;
+      token = token.slice(1);
+    }
+    let matched;
+    if (token.startsWith("#") && token.length > 1) {
+      const wanted = normalize(token.slice(1));
+      matched = item.tags.some((tag) => tag.toLocaleLowerCase("fr") === wanted);
+    } else if (token.startsWith("@") && token.length > 1) {
+      matched = String(item.waiting || "").toLocaleLowerCase("fr").includes(normalize(token.slice(1)));
+    } else {
+      const property = token.match(/^([A-Za-z][A-Za-z0-9_-]*):(.*)$/);
+      matched = property && property[2] ? propertyMatcher(property[1].toLowerCase(), property[2], item, row) : searchableText(item, row).includes(normalize(token));
+    }
+    return negative ? !matched : matched;
+  }
+
+  function compile(query) {
+    const tokens = tokenize(query);
+    let index = 0;
+
+    function parsePrimary() {
+      if (tokens[index] === "(") {
+        index += 1;
+        const expression = parseOr();
+        if (tokens[index] === ")") index += 1;
+        return expression;
+      }
+      const token = tokens[index++] || "";
+      return (item, row) => atomMatcher(token, item, row);
+    }
+
+    function parseAnd() {
+      const matchers = [];
+      while (index < tokens.length && tokens[index] !== ")" && tokens[index] !== "OR") {
+        const matcher = parsePrimary();
+        if (matcher) matchers.push(matcher);
+      }
+      return matchers.length ? (item, row) => matchers.every((matcher) => matcher(item, row)) : null;
+    }
+
+    function parseOr() {
+      const matchers = [];
+      const first = parseAnd();
+      if (first) matchers.push(first);
+      while (tokens[index] === "OR") {
+        index += 1;
+        const matcher = parseAnd();
+        if (matcher) matchers.push(matcher);
+      }
+      return matchers.length ? (item, row) => matchers.some((matcher) => matcher(item, row)) : null;
+    }
+
+    return tokens.length ? parseOr() || (() => true) : () => true;
+  }
+
+  function activeTags(query) {
+    return new Set(
+      tokenize(query)
+        .filter((token) => token.startsWith("#") && token.length > 1)
+        .map((token) => normalize(token.slice(1)))
+    );
+  }
+
+  function propertyValue(query, key) {
+    const prefix = `${key.toLowerCase()}:`;
+    const token = tokenize(query).find((candidate) => !candidate.startsWith("-") && candidate.toLowerCase().startsWith(prefix));
+    return token ? unquote(token.slice(prefix.length)) : "";
+  }
+
+  function quoteValue(value) {
+    const text = String(value || "").trim();
+    return /\s/.test(text) ? `"${text.replaceAll('"', "")}"` : text;
+  }
+
+  function cleanTokens(tokens) {
+    let next = [...tokens];
+    next = next.filter((token, index) => token !== "OR" || (index > 0 && next[index - 1] !== "(" && next[index - 1] !== "OR" && index < next.length - 1 && next[index + 1] !== ")" && next[index + 1] !== "OR"));
+    let previous;
+    do {
+      previous = next.length;
+      next = next.filter((token, index) => !(token === "(" && next[index + 1] === ")") && !(token === ")" && next[index - 1] === "("));
+    } while (next.length !== previous);
+    return next;
+  }
+
+  function joinTokens(tokens) {
+    return cleanTokens(tokens).join(" ").replace(/\(\s+/g, "(").replace(/\s+\)/g, ")").trim();
+  }
+
+  function setProperty(query, key, value) {
+    const prefix = `${key.toLowerCase()}:`;
+    const tokens = tokenize(query).filter((token) => !token.replace(/^-/, "").toLowerCase().startsWith(prefix));
+    if (value) tokens.push(`${key}:${quoteValue(value)}`);
+    return joinTokens(tokens);
+  }
+
+  function toggleTag(query, tag) {
+    const wanted = String(tag || "").trim();
+    const key = wanted.toLocaleLowerCase("fr");
+    const tokens = tokenize(query);
+    const exists = tokens.some((token) => token.startsWith("#") && normalize(token.slice(1)) === key);
+    const withoutTag = tokens.filter((token) => {
+      const positive = token.replace(/^-/, "");
+      return !(positive.startsWith("#") && normalize(positive.slice(1)) === key);
+    });
+    const next = exists ? withoutTag : [...withoutTag, `#${quoteValue(wanted)}`];
+    return joinTokens(next);
+  }
+
+  function currentFragment(input) {
+    const cursor = input.selectionStart ?? input.value.length;
+    const before = input.value.slice(0, cursor);
+    let start = 0;
+    let quoted = false;
+    for (let index = 0; index < before.length; index += 1) {
+      if (before[index] === '"') quoted = !quoted;
+      else if (!quoted && (/\s/.test(before[index]) || before[index] === "(")) start = index + 1;
+    }
+    return { value: before.slice(start), start, end: cursor };
+  }
+
+  window.CockpitSearch = {
+    tokenize,
+    compile,
+    matches: (item, row, query) => compile(query)(item, row),
+    activeTags,
+    propertyValue,
+    setProperty,
+    toggleTag,
+    quoteValue,
+    currentFragment,
+  };
+})();
+
+
+(function () {
   const NOTIFIED_KEY = "tabulator-cockpit-notified-reminders";
   let currentApp = null;
   let intervalId = null;
@@ -4319,11 +4651,11 @@ button {
 
   function tagFormatter(cell) {
     const tags = window.CockpitModels.normalizeTags(cell.getValue());
-    const active = String(window.CockpitApp?.filters?.tag || "").toLocaleLowerCase("fr");
+    const active = window.CockpitSearch.activeTags(window.CockpitApp?.filters?.search || "");
     return tags
       .map((tag) => {
-        const selected = tag.toLocaleLowerCase("fr") === active;
-        return `<button type="button" class="table-tag${selected ? " active" : ""}" data-tag-filter="${escapeHtml(tag)}" title="Filtrer par ${escapeHtml(tag)}">${escapeHtml(tag)}</button>`;
+        const selected = active.has(tag.toLocaleLowerCase("fr"));
+        return `<button type="button" class="table-tag${selected ? " active" : ""}" data-tag-filter="${escapeHtml(tag)}" title="Filtrer par ${escapeHtml(tag)}">#${escapeHtml(tag)}</button>`;
       })
       .join("");
   }
@@ -5000,35 +5332,25 @@ button {
     }));
   }
 
+  function hasGlobalFilters(app) {
+    return Boolean(app.filters.search.trim());
+  }
+
   function applySearchAndFilters(app, rows) {
-    const search = app.filters.search.trim().toLowerCase();
-    const globalSearch = app.filters.searchScope === "global";
-    const typeFilterApplies = globalSearch || !isTaskOnlyView(app.currentView);
+    const search = app.filters.search.trim();
+    const globalSearch = hasGlobalFilters(app);
+    const matcher = window.CockpitSearch.compile(search);
     return rows.filter((row) => {
       const item = row.itemId ? window.CockpitModels.parseDocument(app.items.find((candidate) => candidate.id === row.itemId) || row) : row;
-      if (typeFilterApplies && app.filters.type && item.type !== app.filters.type) return false;
-      if (app.filters.status && item.status !== app.filters.status) return false;
-      if (app.filters.tag && !item.tags.some((tag) => tag.toLocaleLowerCase("fr") === app.filters.tag.toLocaleLowerCase("fr"))) return false;
       if (!globalSearch && app.currentView === "tasks" && app.filters.taskQuick === "past" && !hasArrivedDate(item)) return false;
       if (!globalSearch && app.currentView === "tasks" && app.filters.taskQuick === "next" && !item.next) return false;
       if (!search) return true;
-      return [
-        item.searchText,
-        item.projectTitle,
-        item.category,
-        item.dueDate,
-        item.reviewDate,
-        item.createdAt,
-        item.updatedAt,
-        item.completedAt,
-        row.reason,
-        row.action,
-      ].join(" ").toLowerCase().includes(search);
+      return matcher(item, row);
     });
   }
 
   function buildView(app) {
-    const sourceRows = app.filters.searchScope === "global"
+    const sourceRows = hasGlobalFilters(app)
       ? decorateParentInfo(window.CockpitRules.decorateItems(app.items))
       : app.currentView === "control"
         ? controlData(app.items)
@@ -5042,9 +5364,9 @@ button {
 
   function setViewText(view, app) {
     const [title, subtitle] = viewMeta[view];
-    const globalSearch = app.filters.searchScope === "global";
+    const globalSearch = hasGlobalFilters(app);
     document.getElementById("viewTitle").textContent = globalSearch ? "Recherche globale" : view === "calendar" ? app.calendarDate : title;
-    document.getElementById("viewSubtitle").textContent = globalSearch ? "Toutes les pages, proprietes, tags et contenus Markdown." : subtitle;
+    document.getElementById("viewSubtitle").textContent = globalSearch ? "Tous les resultats correspondant aux recherches et filtres actifs." : subtitle;
     document.getElementById("typeFilter")?.classList.toggle("hidden", !globalSearch && isTaskOnlyView(view));
     document.getElementById("quickTaskFilters")?.classList.toggle("hidden", globalSearch || view !== "tasks");
     document.querySelectorAll("[data-task-filter]").forEach((button) => {
@@ -5168,7 +5490,7 @@ button {
   }
 
   function tableViewKey(app) {
-    return app.filters.searchScope === "global" ? "search" : app.currentView;
+    return hasGlobalFilters(app) ? "search" : app.currentView;
   }
 
   function renderColumnMenu(app, columns) {
@@ -5198,7 +5520,7 @@ button {
   }
 
   function columnsForView(app) {
-    if (app.filters.searchScope === "global") return baseColumns(app);
+    if (hasGlobalFilters(app)) return baseColumns(app);
     if (app.currentView === "control") return controlColumns();
     if (app.currentView === "projects") return projectColumns();
     if (app.currentView === "journal") return journalColumns(app);
@@ -5450,13 +5772,16 @@ button {
 
     const rawColumns = columnsForView(app);
     const viewKey = tableViewKey(app);
-    const searching = app.filters.searchScope === "global";
+    const searching = hasGlobalFilters(app);
+    const tableData = buildView(app);
+    const rowLabel = `${tableData.length} ligne${tableData.length === 1 ? "" : "s"}`;
     renderColumnMenu(app, rawColumns);
 
     app.table = new window.Tabulator("#mainTable", {
       layout: "fitColumns",
       height: "100%",
       placeholder: "Aucune page pour cette vue",
+      footerElement: `<div class="table-summary-footer"><span>${rowLabel}</span></div>`,
       selectableRows: 1,
       movableRows: !searching && viewAllowsManualOrder(app.currentView),
       movableColumns: true,
@@ -5473,7 +5798,7 @@ button {
         if (color) element.classList.add(`row-color-${color}`);
       },
       columns: applyColumnVisibility(viewKey, rawColumns),
-      data: buildView(app),
+      data: tableData,
     });
 
     app.table.on("cellEdited", (cell) => {
@@ -6790,12 +7115,13 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.15.1";
+  const APP_VERSION = "0.16.1";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
   const FOCUS_DRAFT_KEY = "tabulator-cockpit-focus-draft";
   const LAST_EXPORT_KEY = "tabulator-cockpit-last-export";
+  const RECENT_SEARCHES_KEY = "tabulator-cockpit-recent-searches";
   const DEFAULT_CONFIG = {
     relOffsets: [1, 2, 3, 5, 7],
     staleAfterDays: 14,
@@ -6815,10 +7141,8 @@ button {
     detailHistory: [],
     filters: {
       search: "",
-      searchScope: "view",
       type: "",
       status: "",
-      tag: "",
       taskQuick: "",
       hideBlockedChildren: true,
     },
@@ -6907,7 +7231,6 @@ button {
     },
 
     refresh() {
-      renderTagFilterOptions();
       window.CockpitViews.refreshTable(this);
       window.CockpitDetail.renderDetail(this);
       updateStorageStatus();
@@ -6937,16 +7260,14 @@ button {
     },
 
     setTagFilter(tag) {
-      const value = String(tag || "").trim();
-      const same = value.toLocaleLowerCase("fr") === String(this.filters.tag || "").toLocaleLowerCase("fr");
-      this.filters.tag = same ? "" : value;
-      renderTagFilterOptions();
-      this.refresh();
+      this.setSearchQuery(window.CockpitSearch.toggleTag(this.filters.search, tag), { focus: true });
     },
 
-    refreshTagOptions() {
-      renderTagFilterOptions();
+    setSearchQuery(query, options = {}) {
+      applySearchQuery(query, options);
     },
+
+    refreshTagOptions() {},
 
     async replaceAllItems(items, options = {}) {
       if (window.CockpitDetail?.prepareForDataReplace) await window.CockpitDetail.prepareForDataReplace(this);
@@ -6995,18 +7316,36 @@ button {
     return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label, "fr"));
   }
 
-  function renderTagFilterOptions() {
-    const select = document.getElementById("tagFilter");
-    if (!select) return;
-    const current = app.filters.tag || "";
-    const tags = availableTags();
-    select.innerHTML = '<option value="">Tags</option>';
-    tags.forEach(({ label, count }) => select.append(new Option(`${label} (${count})`, label)));
-    if (current && !tags.some(({ label }) => label.toLocaleLowerCase("fr") === current.toLocaleLowerCase("fr"))) {
-      select.append(new Option(current, current));
+  function syncStructuredSearchControls() {
+    const type = window.CockpitSearch.propertyValue(app.filters.search, "type");
+    const status = window.CockpitSearch.propertyValue(app.filters.search, "status");
+    const typeFilter = document.getElementById("typeFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    app.filters.type = window.CockpitModels.TYPES.includes(type) ? type : "";
+    app.filters.status = window.CockpitModels.STATUSES.includes(status) ? status : "";
+    if (typeFilter) {
+      typeFilter.value = app.filters.type;
+      typeFilter.classList.toggle("active-filter", Boolean(app.filters.type));
     }
-    select.value = tags.find(({ label }) => label.toLocaleLowerCase("fr") === current.toLocaleLowerCase("fr"))?.label || current;
-    select.classList.toggle("active-filter", Boolean(current));
+    if (statusFilter) {
+      statusFilter.value = app.filters.status;
+      statusFilter.classList.toggle("active-filter", Boolean(app.filters.status));
+    }
+  }
+
+  function applySearchQuery(query, options = {}) {
+    const value = String(query || "").trimStart();
+    app.filters.search = value;
+    const input = document.getElementById("searchInput");
+    const clear = document.getElementById("clearSearchButton");
+    if (input && input.value !== value) input.value = value;
+    if (clear) clear.hidden = !value;
+    syncStructuredSearchControls();
+    app.refresh();
+    if (options.focus && input) {
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
   }
 
   function normalizeConfig(raw = {}) {
@@ -7204,66 +7543,182 @@ button {
     document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === view));
   }
 
-  function setSearchScope(scope) {
-    app.filters.searchScope = scope === "global" ? "global" : "view";
-    const searchInput = document.getElementById("searchInput");
-    const searchScope = document.getElementById("searchScope");
-    if (searchInput) searchInput.placeholder = app.filters.searchScope === "global" ? "Rechercher partout..." : "Rechercher dans cette vue...";
-    if (searchScope) {
-      searchScope.value = app.filters.searchScope;
-      searchScope.classList.toggle("active-filter", app.filters.searchScope === "global");
-    }
-  }
-
   function bindNav() {
     document.querySelectorAll(".nav-item").forEach((button) => {
       button.addEventListener("click", () => {
         setActiveView(button.dataset.view);
-        setSearchScope("view");
         app.refresh();
       });
     });
   }
 
+  function loadRecentSearches() {
+    try {
+      const searches = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || "[]");
+      return Array.isArray(searches) ? searches.filter((query) => typeof query === "string" && query.trim()).slice(0, 8) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function rememberSearch(query) {
+    const value = String(query || "").trim();
+    if (!value) return;
+    const searches = [value, ...loadRecentSearches().filter((candidate) => candidate !== value)].slice(0, 8);
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+  }
+
+  function availableWaitingPeople() {
+    const counts = new Map();
+    window.CockpitRules.decorateItems(app.items).forEach((item) => {
+      String(item.waiting || "")
+        .split(/[,;]+/)
+        .map((value) => value.trim())
+        .filter(Boolean)
+        .forEach((label) => {
+          const key = label.toLocaleLowerCase("fr");
+          const entry = counts.get(key) || { label, count: 0 };
+          entry.count += 1;
+          counts.set(key, entry);
+        });
+    });
+    return [...counts.values()].sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "fr"));
+  }
+
+  function searchSuggestions(input) {
+    const fragment = window.CockpitSearch.currentFragment(input).value;
+    const lower = fragment.toLocaleLowerCase("fr");
+    const negative = fragment.startsWith("-") ? "-" : "";
+    const positive = negative ? fragment.slice(1) : fragment;
+    const results = [];
+    const addValues = (values, prefix, typed, detail) => {
+      const needle = typed.toLocaleLowerCase("fr");
+      values
+        .filter(({ label }) => label.toLocaleLowerCase("fr").includes(needle))
+        .slice(0, 10)
+        .forEach(({ label, count }) => {
+          const displayPrefix = ["#", "@"].includes(prefix) ? prefix : "";
+          results.push({ label: `${displayPrefix}${label}`, detail: count ? `${count} element${count > 1 ? "s" : ""}` : detail, replacement: `${negative}${prefix}${window.CockpitSearch.quoteValue(label)}` });
+        });
+    };
+
+    if (positive.startsWith("#")) addValues(availableTags(), "#", positive.slice(1), "tag");
+    else if (positive.startsWith("@")) addValues(availableWaitingPeople(), "@", positive.slice(1), "attente");
+    else {
+      const property = positive.match(/^([A-Za-z][A-Za-z0-9_-]*):(.*)$/);
+      if (property) {
+        const key = property[1].toLowerCase();
+        const typed = property[2].replace(/^"/, "").toLocaleLowerCase("fr");
+        const staticValues = {
+          type: window.CockpitModels.TYPES,
+          status: window.CockpitModels.STATUSES,
+          next: ["true", "false"],
+          important: ["true", "false"],
+          revoir: ["today", "overdue", "next7d"],
+          due: ["today", "overdue", "next7d"],
+          updated: ["last7d", "last14d", "last30d"],
+          has: ["project", "rappel", "tags", "parent"],
+        };
+        if (key === "project") {
+          const projects = window.CockpitRules
+            .decorateItems(app.items)
+            .filter((item) => item.type === "project")
+            .map((item) => ({ label: item.title, count: 0 }));
+          addValues(projects, `${key}:`, typed, "projet");
+        } else if (key === "waiting") {
+          addValues(availableWaitingPeople(), `${key}:`, typed, "attente");
+        } else if (staticValues[key]) {
+          addValues(staticValues[key].map((label) => ({ label, count: 0 })), `${key}:`, typed, key);
+        }
+      }
+    }
+
+    if (!input.value.trim() && !fragment) {
+      return loadRecentSearches().map((query) => ({ label: query, detail: "recherche recente", replacement: query, replaceAll: true }));
+    }
+    return results;
+  }
+
   function bindFilters() {
     const statusFilter = document.getElementById("statusFilter");
     const searchInput = document.getElementById("searchInput");
-    const searchScope = document.getElementById("searchScope");
     const clearSearchButton = document.getElementById("clearSearchButton");
+    const suggestions = document.getElementById("searchSuggestions");
+    let suggestionItems = [];
+    let selectedSuggestion = 0;
     window.CockpitModels.STATUSES.forEach((status) => statusFilter.append(new Option(status, status)));
 
-    const syncSearchClearButton = () => {
-      clearSearchButton.hidden = !searchInput.value;
+    const renderSuggestions = () => {
+      suggestionItems = searchSuggestions(searchInput);
+      selectedSuggestion = Math.min(selectedSuggestion, Math.max(0, suggestionItems.length - 1));
+      suggestions.innerHTML = suggestionItems
+        .map((item, index) => `<button type="button" class="${index === selectedSuggestion ? "active" : ""}" data-search-suggestion="${index}"><span>${escapeHtml(item.label)}</span><small>${escapeHtml(item.detail || "")}</small></button>`)
+        .join("");
+      suggestions.hidden = !suggestionItems.length;
+    };
+
+    const chooseSuggestion = (index) => {
+      const suggestion = suggestionItems[index];
+      if (!suggestion) return;
+      let value;
+      let cursor;
+      if (suggestion.replaceAll) {
+        value = suggestion.replacement;
+        cursor = value.length;
+      } else {
+        const fragment = window.CockpitSearch.currentFragment(searchInput);
+        const suffix = searchInput.value.slice(fragment.end);
+        const inserted = `${suggestion.replacement} `;
+        value = `${searchInput.value.slice(0, fragment.start)}${inserted}${suffix}`;
+        cursor = fragment.start + inserted.length;
+      }
+      applySearchQuery(value);
+      searchInput.focus();
+      searchInput.setSelectionRange(cursor, cursor);
+      suggestions.hidden = true;
     };
 
     searchInput.addEventListener("input", (event) => {
-      app.filters.search = event.target.value;
-      syncSearchClearButton();
-      app.refresh();
+      applySearchQuery(event.target.value);
+      selectedSuggestion = 0;
+      renderSuggestions();
     });
     clearSearchButton.addEventListener("click", () => {
-      searchInput.value = "";
-      app.filters.search = "";
-      syncSearchClearButton();
-      app.refresh();
-      searchInput.focus();
-    });
-    searchScope.addEventListener("change", (event) => {
-      setSearchScope(event.target.value);
-      app.refresh();
-      searchInput.focus();
+      applySearchQuery("", { focus: true });
+      renderSuggestions();
     });
     document.getElementById("typeFilter").addEventListener("change", (event) => {
-      app.filters.type = event.target.value;
-      app.refresh();
+      applySearchQuery(window.CockpitSearch.setProperty(app.filters.search, "type", event.target.value), { focus: true });
     });
     statusFilter.addEventListener("change", (event) => {
-      app.filters.status = event.target.value;
-      app.refresh();
+      applySearchQuery(window.CockpitSearch.setProperty(app.filters.search, "status", event.target.value), { focus: true });
     });
-    document.getElementById("tagFilter").addEventListener("change", (event) => {
-      app.filters.tag = event.target.value;
-      app.refresh();
+    searchInput.addEventListener("focus", renderSuggestions);
+    searchInput.addEventListener("blur", () => setTimeout(() => { suggestions.hidden = true; }, 120));
+    searchInput.addEventListener("keydown", (event) => {
+      if (!suggestions.hidden && event.key === "ArrowDown") {
+        event.preventDefault();
+        selectedSuggestion = (selectedSuggestion + 1) % suggestionItems.length;
+        renderSuggestions();
+      } else if (!suggestions.hidden && event.key === "ArrowUp") {
+        event.preventDefault();
+        selectedSuggestion = (selectedSuggestion - 1 + suggestionItems.length) % suggestionItems.length;
+        renderSuggestions();
+      } else if (!suggestions.hidden && ["Enter", "Tab"].includes(event.key)) {
+        event.preventDefault();
+        chooseSuggestion(selectedSuggestion);
+      } else if (event.key === "Enter") {
+        rememberSearch(searchInput.value);
+        suggestions.hidden = true;
+      } else if (event.key === "Escape") {
+        suggestions.hidden = true;
+      }
+    });
+    suggestions.addEventListener("pointerdown", (event) => {
+      const button = event.target.closest("[data-search-suggestion]");
+      if (!button) return;
+      event.preventDefault();
+      chooseSuggestion(Number(button.dataset.searchSuggestion));
     });
     document.querySelectorAll("[data-task-filter]").forEach((button) => {
       button.addEventListener("click", () => {
