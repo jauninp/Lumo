@@ -2728,7 +2728,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.16.1</span></p>
+            <p><span id="appVersion">v0.16.2</span></p>
           </div>
         </div>
 
@@ -3279,24 +3279,6 @@ button {
     return `---\n${stringifyYaml(props)}\n---\n${String(body || "").replace(/^\s+/, "")}`;
   }
 
-  function completeProjectBody(body) {
-    let result = String(body || "").trim();
-    const title = firstHeading(result) || "Nouveau projet";
-    if (!result) result = `# ${title}`;
-    const sections = [
-      ["Info", "Info", ""],
-      ["Contexte", "Contexte", ""],
-      ["Avancement", "Avancement", ""],
-      ["Questions ouvertes", "Questions\\s+ouvertes", ""],
-      ["Décisions", "D[eé]cisions", ""],
-    ];
-    sections.forEach(([heading, headingPattern, fallback]) => {
-      const pattern = new RegExp(`^#\\s+${headingPattern}\\s*$`, "im");
-      if (!pattern.test(result)) result += `\n\n\n# ${heading}${fallback ? `\n\n${fallback}` : ""}`;
-    });
-    return result;
-  }
-
   function markdownFromLegacy(raw) {
     const title = raw.title || "Sans titre";
     const props = {
@@ -3357,7 +3339,7 @@ button {
       ...(raw.properties && typeof raw.properties === "object" ? raw.properties : {}),
       type: raw.type || raw.properties?.type || source.props.type,
     });
-    const body = cleanProps.type === "project" ? completeProjectBody(source.body) : source.body;
+    const body = source.body;
     const title = firstHeading(body) || raw.title || "Sans titre";
     return {
       id: raw.id || createId(),
@@ -3463,17 +3445,11 @@ button {
     }
     const props = propsForType({ ...parsed.props, ...doc.properties, ...normalizedPatch, type: normalizedPatch.type || parsed.type });
     if (props.tags !== undefined) props.tags = normalizeTags(props.tags);
-    let body = parsed.body;
-    if (normalizedPatch.type === "project" && !/^#\s+Info\s*$/im.test(body)) {
-      const title = firstHeading(body) || "Nouveau projet";
-      const existing = body.replace(/^#\s+.+$/m, "").trim();
-      body = completeProjectBody(`# ${title}\n\n\n# Contexte${existing ? `\n\n${existing}` : ""}`);
-    }
     return normalizeDocument({
       ...doc,
       type: props.type,
       properties: storedProperties(props),
-      markdown: body,
+      markdown: parsed.body,
       updatedAt: isoNow(),
     });
   }
@@ -7115,7 +7091,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.16.1";
+  const APP_VERSION = "0.16.2";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
