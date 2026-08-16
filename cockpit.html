@@ -1221,6 +1221,36 @@ button {
   overflow: hidden;
 }
 
+.portfolio-summary {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 38px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.portfolio-summary[hidden] {
+  display: none;
+}
+
+.portfolio-metric {
+  white-space: nowrap;
+}
+
+.portfolio-metric strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.portfolio-metric.alert,
+.portfolio-metric.alert strong {
+  color: var(--danger);
+}
+
 .table-wrap .tabulator-tableholder {
   scrollbar-gutter: stable;
 }
@@ -1862,12 +1892,14 @@ button {
   color: var(--warn);
 }
 
-.pill.paused {
+.pill.paused,
+.pill.later {
   background: #ece8f3;
   color: #65557a;
 }
 
 .pill.next,
+.pill.current,
 .pill.active {
   background: var(--accent-soft-strong);
   color: var(--accent-dark);
@@ -2910,7 +2942,7 @@ button {
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div>
             <h1>Cockpit</h1>
-            <p><span id="appVersion">v0.17.2</span></p>
+            <p><span id="appVersion">v0.18.0</span></p>
           </div>
         </div>
 
@@ -3029,6 +3061,7 @@ button {
           </div>
         </header>
 
+        <div class="portfolio-summary" id="portfolioSummary" hidden></div>
         <div class="table-wrap">
           <div id="mainTable"></div>
         </div>
@@ -3158,24 +3191,28 @@ button {
     <script src="https://unpkg.com/vditor@3.11.2/dist/index.min.js"></script>
     <script>
 (function () {
-  const STATUSES = ["active", "waiting", "done", "archived"];
+  const STATUSES = ["current", "active", "waiting", "later", "done", "archived"];
   const TYPES = ["project", "task", "journal", "divers"];
   const LEGACY_TYPES = ["followup", "note"];
   const ROW_COLORS = ["", "yellow", "green", "blue", "red", "violet"];
   const PROJECT_CATEGORIES = ["project", "incident", "improvement", "recurring", "other"];
 
   function statusesForType(type) {
-    if (type === "project") return ["active", "waiting", "done"];
+    if (type === "project") return ["current", "waiting", "later", "done"];
     if (type === "journal") return ["active", "done"];
     if (type === "divers") return ["active"];
     return ["active", "waiting", "done"];
   }
 
-  function normalizeStatus(value) {
+  function normalizeStatus(value, type = "task") {
     const status = String(value || "active").toLowerCase();
-    if (status === "inbox" || status === "next") return "active";
-    if (["blocked", "someday", "dormant", "paused"].includes(status)) return "active";
-    return STATUSES.includes(status) ? status : "active";
+    if (type === "project") {
+      if (["active", "inbox", "next", "blocked"].includes(status)) return "current";
+      if (["someday", "dormant", "paused"].includes(status)) return "later";
+      return ["current", "waiting", "later", "done", "archived"].includes(status) ? status : "current";
+    }
+    if (["inbox", "next", "current", "later", "blocked", "someday", "dormant", "paused"].includes(status)) return "active";
+    return ["active", "waiting", "done", "archived"].includes(status) ? status : "active";
   }
 
   function isTrue(value) {
@@ -3360,13 +3397,14 @@ button {
     const type = props.type === "note" ? "divers" : props.type === "followup" ? "task" : props.type;
     const legacyStatus = String(props.status || "");
     const legacyNext = legacyStatus === "next" || isTrue(props.next);
-    const validStatus = normalizeStatus(legacyStatus);
+    const normalizedType = TYPES.includes(type) ? type : "task";
+    const validStatus = normalizeStatus(legacyStatus, normalizedType);
     const deadline = props.deadline || props.due || props.dueDate || "";
     const reviewDate = props.reviewDate || props.revoir || props.rel || props.relance || props.followup || props.followupDate || "";
     const focusDate = props.focusDate || (legacyNext ? todayIsoDate() : "");
     const waiting = props.waiting || "";
     const common = {
-      type: TYPES.includes(type) ? type : "task",
+      type: normalizedType,
       status: validStatus,
       focusDate,
       focusOrder: Number(props.focusOrder) > 0 ? Number(props.focusOrder) : "",
@@ -3459,7 +3497,7 @@ button {
     const title = raw.title || "Sans titre";
     const props = {
       type: TYPES.includes(raw.type) || LEGACY_TYPES.includes(raw.type) ? raw.type : "task",
-      status: normalizeStatus(raw.status),
+      status: normalizeStatus(raw.status, raw.type),
       focusDate: raw.focusDate || (isTrue(raw.next) || raw.status === "next" ? todayIsoDate() : ""),
       focusOrder: raw.focusOrder || "",
       important: isTrue(raw.important) || ["urgent", "high"].includes(String(raw.priority || "").toLowerCase()),
@@ -3541,7 +3579,7 @@ button {
     const title = firstHeading(body) || doc.title || source.props.title || "Sans titre";
     const rawType = doc.type || props.type;
     const type = TYPES.includes(rawType) ? rawType : "task";
-    const status = normalizeStatus(props.status);
+    const status = normalizeStatus(props.status, type);
     const focusDate = props.focusDate || (props.status === "next" || isTrue(props.next) ? todayIsoDate() : "");
     const deadline = props.deadline || props.due || props.dueDate || "";
     const reviewDate = props.reviewDate || props.revoir || props.rel || props.relance || props.followup || props.followupDate || "";
@@ -3617,7 +3655,6 @@ button {
     if ("revoir" in normalizedPatch && !("reviewDate" in normalizedPatch)) normalizedPatch.reviewDate = normalizedPatch.revoir;
     if ("rel" in normalizedPatch && !("reviewDate" in normalizedPatch)) normalizedPatch.reviewDate = normalizedPatch.rel;
     if ("followupDate" in normalizedPatch && !("reviewDate" in normalizedPatch)) normalizedPatch.reviewDate = normalizedPatch.followupDate;
-    if (normalizedPatch.status === "paused") normalizedPatch.status = "active";
     if ("reminderAt" in normalizedPatch && !("rappel" in normalizedPatch)) normalizedPatch.rappel = normalizedPatch.reminderAt;
     if ("alarmAt" in normalizedPatch && !("rappel" in normalizedPatch)) normalizedPatch.rappel = normalizedPatch.alarmAt;
     if (normalizedPatch.status === "done" && !normalizedPatch.completedAt && !parsed.completedAt) normalizedPatch.completedAt = todayIsoDate();
@@ -3727,7 +3764,7 @@ button {
     const title = fields.title || "Nouvelle page";
     const props = {
       type: fields.type || "task",
-      status: fields.status || "active",
+      status: fields.status || (fields.type === "project" ? "current" : "active"),
       focusDate: fields.focusDate || (isTrue(fields.next) || fields.status === "next" ? todayIsoDate() : ""),
       focusOrder: fields.focusOrder || "",
       important: isTrue(fields.important) || ["urgent", "high"].includes(String(fields.priority || "").toLowerCase()),
@@ -3767,7 +3804,7 @@ button {
     let project = createItem({
       type: "project",
       title: "Cockpit personnel",
-      status: "active",
+      status: "current",
       tags: ["prototype", "local"],
       body: "# Info\n\n\n# Contexte\n\n\n# Avancement\n\n## 24.05.2026\n- J'ai ecrit a Jean pour lui demander de verifier le projet.\n\n## 22.04.2026\nLancement du projet.\n\n\n# Questions ouvertes\n\n\n# Decisions",
     });
@@ -4011,11 +4048,21 @@ button {
     const items = parsedItems(rawItems);
     const issues = [];
     items.filter(isOpen).forEach((item) => {
+      const linkedProject = item.type === "project" ? null : resolveProject(items, item);
+      if (item.type !== "project" && item.project && !linkedProject) {
+        issues.push({ item, reason: "Projet lie introuvable", severity: "issue", action: "Relier a un projet existant ou retirer le lien" });
+      }
+      if (item.type === "task" && linkedProject && !isOpen(linkedProject)) {
+        issues.push({ item, reason: "Tache ouverte liee a un projet termine", severity: "issue", action: "Terminer la tache ou rouvrir le projet" });
+      }
       if (item.type === "project" && item.nextActionId && !resolveNextAction(items, item)) {
         issues.push({ item, reason: "Prochaine action introuvable ou terminee", severity: "warning", action: "Choisir une tache ouverte liee au projet" });
       }
-      if (item.type === "project" && item.status === "active" && !resolveNextAction(items, item) && !item.reviewDate && !item.deadline && !item.inFocus) {
-        issues.push({ item, reason: "Projet actif sans prochaine action ni date de revue", severity: "warning", action: "Choisir une prochaine action ou une date de revue" });
+      if (item.type === "project" && item.status === "current" && !resolveNextAction(items, item) && !item.inFocus) {
+        issues.push({ item, reason: "Projet en cours sans prochaine action", severity: "warning", action: "Choisir une prochaine action ou le passer En attente / Plus tard" });
+      }
+      if (item.type === "project" && item.status === "later" && !item.reviewDate) {
+        issues.push({ item, reason: "Projet plus tard sans date de revue", severity: "warning", action: "Ajouter une date pour le faire revenir" });
       }
       if (item.type === "journal" && !window.CockpitModels.journalDate(item)) {
         issues.push({ item, reason: "Journal sans date dans le titre", severity: "warning", action: "Renommer en YYYY-MM-DD - titre" });
@@ -4793,8 +4840,8 @@ button {
   const viewMeta = {
     today: ["Focus", "Ta selection volontaire pour aujourd'hui, limitee a quelques actions."],
     review: ["Revue du matin", "Ce qui merite une decision maintenant ; Plus tard reste replie."],
-    projects: ["Projets", "Pages projet et contenu rattache."],
-    tasks: ["Taches", "Toutes les pages task filtrables."],
+    projects: ["Projets", "Ton portefeuille : ce sur quoi tu travailles, attends ou reviendras plus tard."],
+    tasks: ["Taches", "Inventaire complet des actions, y compris le backlog des projets."],
     completed: ["Terminees", "Elements termines ou archives."],
     journal: ["Journal", "Faits du jour, seances passees et preparations futures."],
     divers: ["Divers", "Informations et notes qui ne sont ni des taches ni des projets."],
@@ -4818,7 +4865,9 @@ button {
       ? { active: "A faire", waiting: "En attente", done: "Terminee", archived: "Archivee" }
       : type === "journal"
         ? { active: "A traiter", done: "Traite" }
-        : { active: "Actif", waiting: "En attente", done: "Termine", archived: "Archive" };
+        : type === "project"
+          ? { current: "En cours", waiting: "En attente", later: "Plus tard", done: "Termine", archived: "Archive" }
+          : { active: "Actif", waiting: "En attente", done: "Termine", archived: "Archive" };
     return `<span class="pill ${String(value).toLowerCase()}">${labels[value] || value}</span>`;
   }
 
@@ -4827,7 +4876,9 @@ button {
       ? { active: "A faire", waiting: "En attente", done: "Terminee", archived: "Archivee" }
       : type === "journal"
         ? { active: "A traiter", done: "Traite" }
-        : { active: "Actif", waiting: "En attente", done: "Termine", archived: "Archive" };
+        : type === "project"
+          ? { current: "En cours", waiting: "En attente", later: "Plus tard", done: "Termine", archived: "Archive" }
+          : { active: "Actif", waiting: "En attente", done: "Termine", archived: "Archive" };
     return Object.fromEntries(window.CockpitModels.statusesForType(type).map((value) => [value, labels[value] || value]));
   }
 
@@ -5186,9 +5237,7 @@ button {
   function projectColumns() {
     return [
       { title: "", field: "_drag", width: 34, hozAlign: "center", headerSort: false, formatter: dragFormatter, titleFormatter: manualOrderHeaderFormatter },
-      { title: "ID", field: "id", width: 78, responsive: 3, formatter: idFormatter },
-      { title: "Projet / element lie", field: "title", minWidth: 310, formatter: projectTitleFormatter },
-      { title: "Categorie", field: "category", width: 112, formatter: projectOnlyFormatter, editor: "list", editable: (cell) => cell.getRow().getData().type === "project", editorParams: { values: window.CockpitModels.PROJECT_CATEGORIES } },
+      { title: "Projet / element lie", field: "title", minWidth: 280, formatter: projectTitleFormatter },
       {
         title: "Statut",
         field: "status",
@@ -5202,17 +5251,20 @@ button {
               : statusEditorValues(cell.getRow().getData().type),
         }),
       },
-      { title: "Rappel", field: "reminderAt", width: 78, hozAlign: "center", sorter: "string", formatter: reminderFormatter },
-      { title: "Date de revue", field: "reviewDate", width: 124, sorter: isoDateSorter, formatter: projectFollowupFormatter, editor: dateEditor, cellClick: openDateEditor, editable: (cell) => cell.getRow().getData().type === "project" },
-      { title: "Deadline", field: "deadline", width: 112, sorter: isoDateSorter, formatter: deadlineFormatter, editor: dateEditor, cellClick: openDateEditor, editable: (cell) => cell.getRow().getData().type === "project" },
-      { title: "Prochaine action", field: "nextActionTitle", minWidth: 220, formatter: nextActionFormatter },
-      { title: "Todos", field: "openTaskCount", width: 78, hozAlign: "center", formatter: projectOnlyFormatter },
       { title: "Dernier avancement", field: "lastProgressDate", width: 132, formatter: projectOnlyFormatter },
       { title: "Depuis", field: "progressAgeDays", width: 82, hozAlign: "center", formatter: progressAgeFormatter },
+      { title: "Prochaine action", field: "nextActionTitle", minWidth: 220, formatter: nextActionFormatter },
+      { title: "Attente", field: "waiting", width: 140, formatter: projectOnlyFormatter },
+      { title: "Date de revue", field: "reviewDate", width: 124, sorter: isoDateSorter, formatter: projectFollowupFormatter, editor: dateEditor, cellClick: openDateEditor, editable: (cell) => cell.getRow().getData().type === "project" },
+      { title: "Deadline", field: "deadline", width: 112, sorter: isoDateSorter, formatter: deadlineFormatter, editor: dateEditor, cellClick: openDateEditor, editable: (cell) => cell.getRow().getData().type === "project" },
+      { title: "Todos", field: "openTaskCount", width: 78, hozAlign: "center", formatter: projectOnlyFormatter },
       { title: "Contexte recent", field: "lastProgressContext", minWidth: 300, formatter: projectOnlyFormatter },
       { title: "Activite liee", field: "lastRelatedActivityLabel", minWidth: 220, formatter: projectOnlyFormatter },
+      { title: "Categorie", field: "category", width: 112, formatter: projectOnlyFormatter, editor: "list", editable: (cell) => cell.getRow().getData().type === "project", editorParams: { values: window.CockpitModels.PROJECT_CATEGORIES } },
       { title: "Tags", field: "tags", minWidth: 160, responsive: 2, formatter: tagFormatter, editor: tagEditor },
       { title: "Modifie", field: "updatedAt", width: 142, sorter: "string", formatter: updatedAtFormatter },
+      { title: "Rappel", field: "reminderAt", width: 78, hozAlign: "center", sorter: "string", formatter: reminderFormatter },
+      { title: "ID", field: "id", width: 78, responsive: 3, formatter: idFormatter },
     ];
   }
 
@@ -5342,9 +5394,10 @@ button {
     if (item.reviewDate && item.reviewDate <= today) return "04|A revoir maintenant";
     if (item.clarify || criticalIssueIds.has(item.id)) return "05|A clarifier";
     if (isPastActiveJournal(item) || (item.type === "journal" && window.CockpitModels.journalDate(item) === today && item.status === "active")) return "06|Journaux a traiter";
-    if (item.type === "project" && item.status === "active" && !item.nextAction && !item.reviewDate) return "07|Projets sans prochaine action";
+    if (item.type === "project" && item.status === "current" && !item.nextAction) return "07|Projets sans prochaine action";
     if (item.type === "task" && item.status === "active" && nextActionIds.has(item.id) && (!item.reviewDate || item.reviewDate <= today) && !parentIsBlocking(item)) return "08|Prochaines actions des projets";
-    if (["task", "divers"].includes(item.type) && item.status === "active" && !item.reviewDate && !parentIsBlocking(item)) return "90|Plus tard";
+    if (item.type === "task" && item.status === "active" && !item.projectId && !item.reviewDate && !parentIsBlocking(item)) return "90|Plus tard";
+    if (item.type === "divers" && item.status === "active" && !item.reviewDate && !parentIsBlocking(item)) return "90|Plus tard";
     return "";
   }
 
@@ -5359,7 +5412,7 @@ button {
     if (isPastActiveJournal(item)) return `Journal actif a traiter depuis le ${journalDate}`;
     if (item.clarify) return "Capture a clarifier";
     if (nextActionIds.has(item.id)) return "Prochaine action du projet";
-    if (item.type === "project" && !item.nextAction) return "Definir une prochaine action ou une date de revue";
+    if (item.type === "project" && item.status === "current" && !item.nextAction) return "Definir une prochaine action ou passer le projet En attente / Plus tard";
 
     const reasons = [...(issuesByItemId.get(item.id) || [])];
     return reasons.join(" · ") || "Disponible, sans urgence";
@@ -5410,11 +5463,14 @@ button {
           .filter(
             (issue) =>
               ["Attente sans date de revue", "Attente sans personne/source", "Journal sans date dans le titre"].includes(issue.reason) ||
-              issue.reason.startsWith("Prochaine action")
+              issue.reason.startsWith("Prochaine action") ||
+              issue.reason.startsWith("Projet plus tard") ||
+              issue.reason.startsWith("Projet lie") ||
+              issue.reason.startsWith("Tache ouverte")
           )
           .map((issue) => issue.item.id)
       );
-      const nextActionIds = new Set(open.filter((item) => item.type === "project" && item.nextAction).map((item) => item.nextAction.id));
+      const nextActionIds = new Set(open.filter((item) => item.type === "project" && item.status === "current" && item.nextAction).map((item) => item.nextAction.id));
       return open
         .map((item) => {
           const progress = item.type === "project" ? window.CockpitModels.extractLatestProgress(item.markdown) : null;
@@ -5447,6 +5503,7 @@ button {
           const activity = latestRelatedActivity(allRelated);
           return {
             ...project,
+            portfolioGroup: project.status === "current" ? "01|En cours" : project.status === "waiting" ? "02|En attente" : "03|Plus tard",
             openTaskCount: children.filter((item) => item.type === "task").length,
             lastProgressDate: progress.date,
             lastProgressContext: progress.context || "Aucun contexte d'avancement",
@@ -5545,6 +5602,24 @@ button {
     document.getElementById("finalVersionButton")?.classList.toggle("hidden", globalSearch || view !== "review");
     document.querySelector(".topbar-tools")?.classList.toggle("tasks-view", !globalSearch && view === "tasks");
     document.querySelector(".topbar-tools")?.classList.toggle("review-view", !globalSearch && view === "review");
+    const summary = document.getElementById("portfolioSummary");
+    if (summary) {
+      const projects = window.CockpitRules.decorateItems(app.items).filter((item) => item.type === "project" && window.CockpitRules.isOpen(item));
+      const current = projects.filter((item) => item.status === "current");
+      const waiting = projects.filter((item) => item.status === "waiting");
+      const later = projects.filter((item) => item.status === "later");
+      const missingAction = current.filter((item) => !item.nextAction).length;
+      const limit = window.CockpitModels.todayIsoDate(7);
+      const closeDeadlines = projects.filter((item) => item.deadline && item.deadline <= limit).length;
+      summary.hidden = globalSearch || view !== "projects";
+      summary.innerHTML = [
+        ["En cours", current.length, current.length > 5],
+        ["En attente", waiting.length, false],
+        ["Plus tard", later.length, false],
+        ["Sans prochaine action", missingAction, missingAction > 0],
+        ["Deadline sous 7 j", closeDeadlines, closeDeadlines > 0],
+      ].map(([label, value, alert]) => `<span class="portfolio-metric${alert ? " alert" : ""}"><strong>${value}</strong> ${label}</span>`).join("");
+    }
   }
 
   function loadColumnPrefs() {
@@ -5958,8 +6033,8 @@ button {
       movableColumns: true,
       dataTree: !searching && app.currentView === "projects",
       dataTreeStartExpanded: false,
-      groupBy: searching ? false : app.currentView === "journal" ? "journalGroup" : app.currentView === "review" ? "reviewGroup" : app.currentView === "today" ? "todayGroup" : false,
-      groupStartOpen: (value) => !String(value).startsWith("90|"),
+      groupBy: searching ? false : app.currentView === "journal" ? "journalGroup" : app.currentView === "review" ? "reviewGroup" : app.currentView === "today" ? "todayGroup" : app.currentView === "projects" ? "portfolioGroup" : false,
+      groupStartOpen: (value) => !String(value).startsWith("90|") && !String(value).startsWith("03|"),
       groupHeader: (value, count) => `${String(value).split("|").slice(1).join("|")} · ${count}`,
       initialSort: tableSort(viewKey),
       rowFormatter: (row) => {
@@ -6382,7 +6457,7 @@ button {
       const date = dateInput.value;
       if (!title || !date) return;
       if (intent === "reminder") {
-        await app.updateProps(doc.id, { reviewDate: date });
+        await app.updateProps(doc.id, { status: "later", reviewDate: date, focusDate: "" });
         closePlanNextModal();
         return;
       }
@@ -6404,7 +6479,7 @@ button {
         project: doc.id,
         reviewDate: date,
       });
-      await app.updateProps(doc.id, { nextActionId: taskDoc.id }, { quiet: true });
+      await app.updateProps(doc.id, { status: "current", nextActionId: taskDoc.id, waiting: "", reviewDate: "" }, { quiet: true });
       closePlanNextModal();
     };
 
@@ -7086,7 +7161,7 @@ button {
   function exportPayload(app) {
     return {
       app: "tabulator-cockpit",
-      version: 7,
+      version: 8,
       format: "markdown-with-properties",
       exportedAt: new Date().toISOString(),
       items: app.items,
@@ -7189,12 +7264,31 @@ button {
     return "";
   }
 
+  function projectLine(project) {
+    const details = [];
+    const progress = window.CockpitModels.extractLatestProgress(project.markdown);
+    if (progress.date) details.push(`dernier avancement ${displayDate(progress.date)}${progress.context ? ` : ${cleanInline(progress.context)}` : ""}`);
+    if (project.nextActionTitle) details.push(`prochaine action : ${cleanInline(project.nextActionTitle)}`);
+    if (project.deadline) details.push(`deadline ${displayDate(project.deadline)}`);
+    if (project.reviewDate) details.push(`revoir ${displayDate(project.reviewDate)}`);
+    return `- **${cleanInline(project.title)}**${details.length ? ` - ${details.join(" ; ")}` : " - prochaine action a definir"}`;
+  }
+
+  function waitingProjectLine(project) {
+    const details = [];
+    if (project.waiting) details.push(`attente : ${cleanInline(project.waiting)}`);
+    if (project.reviewDate) details.push(`revoir ${displayDate(project.reviewDate)}`);
+    if (project.deadline) details.push(`deadline ${displayDate(project.deadline)}`);
+    return `- **${cleanInline(project.title)}**${details.length ? ` - ${details.join(" ; ")}` : ""}`;
+  }
+
   function generate(rawItems, startDate, endDate) {
     const items = window.CockpitRules.decorateItems(rawItems);
     const tasks = items.filter((item) => item.type === "task");
     const projects = items.filter((item) => item.type === "project");
 
-    const completed = tasks
+    const completed = items
+      .filter((item) => ["task", "project"].includes(item.type))
       .map((item) => ({ item, date: completedDate(item) }))
       .filter(({ date }) => inRange(date, startDate, endDate))
       .sort((a, b) => b.date.localeCompare(a.date) || a.item.title.localeCompare(b.item.title, "fr"))
@@ -7220,20 +7314,20 @@ button {
       .sort((a, b) => b.date.localeCompare(a.date) || a.item.title.localeCompare(b.item.title, "fr"))
       .map(({ item }) => `- ${cleanInline(item.title)}${projectSuffix(item)}`);
 
-    const active = tasks
-      .filter((item) => item.status === "active" && !item.inFocus && inRange(String(item.updatedAt || "").slice(0, 10), startDate, endDate))
-      .sort((a, b) => a.title.localeCompare(b.title, "fr"))
-      .map((item) => `- ${cleanInline(item.title)}${projectSuffix(item)}`);
+    const currentProjects = projects
+      .filter((item) => item.status === "current")
+      .sort((a, b) => String(a.deadline || "9999").localeCompare(String(b.deadline || "9999")) || a.title.localeCompare(b.title, "fr"))
+      .map(projectLine);
 
-    const waiting = tasks
+    const waitingProjects = projects
       .filter((item) => item.status === "waiting")
       .sort((a, b) => String(a.reviewDate || "9999").localeCompare(String(b.reviewDate || "9999")) || a.title.localeCompare(b.title, "fr"))
-      .map(
-        (item) =>
-          `- ${cleanInline(item.title)}${projectSuffix(item)}${item.waiting ? ` - attente : ${cleanInline(item.waiting)}` : ""}${
-            item.reviewDate ? ` - revoir ${displayDate(item.reviewDate)}` : ""
-          }`
-      );
+      .map(waitingProjectLine);
+
+    const standalone = tasks
+      .filter((item) => !item.projectId && window.CockpitRules.isOpen(item))
+      .sort((a, b) => a.title.localeCompare(b.title, "fr"))
+      .map((item) => `- ${cleanInline(item.title)}${item.status === "waiting" ? " _(en attente)_" : ""}${item.deadline ? ` - deadline ${displayDate(item.deadline)}` : ""}`);
 
     const next = items
       .filter((item) => item.inFocus && window.CockpitRules.isOpen(item))
@@ -7249,7 +7343,8 @@ button {
     const summaryParts = [];
     if (completed.length) summaryParts.push(`${completed.length} tache${completed.length > 1 ? "s" : ""} terminee${completed.length > 1 ? "s" : ""}`);
     if (progress.length) summaryParts.push(`${progress.length} avancement${progress.length > 1 ? "s" : ""} projet`);
-    if (waiting.length) summaryParts.push(`${waiting.length} attente${waiting.length > 1 ? "s" : ""} en cours`);
+    if (currentProjects.length) summaryParts.push(`${currentProjects.length} projet${currentProjects.length > 1 ? "s" : ""} en cours`);
+    if (waitingProjects.length) summaryParts.push(`${waitingProjects.length} projet${waitingProjects.length > 1 ? "s" : ""} en attente`);
 
     return [
       "## Resume",
@@ -7258,25 +7353,25 @@ button {
       "",
       summaryParts.length ? `- ${summaryParts.join(" ; ")}.` : "- Periode a completer.",
       "",
-      "## Realise",
+      "## Projets en cours",
       "",
-      bullets(completed),
+      bullets(currentProjects, "Aucun projet en cours."),
       "",
-      "## Avancement des projets",
+      "## Projets en attente",
+      "",
+      bullets(waitingProjects, "Aucun projet en attente."),
+      "",
+      "## Avancement depuis le dernier point",
       "",
       bullets(progress),
       "",
-      "## Journaux et seances",
+      "## Realise depuis le dernier point",
       "",
-      bullets(journals),
+      bullets(completed),
       "",
-      "## En cours",
+      "## Taches hors projet",
       "",
-      bullets(active),
-      "",
-      "## Attentes et points de vigilance",
-      "",
-      bullets(waiting),
+      bullets(standalone, "Aucune tache hors projet a signaler."),
       "",
       "## Focus actuel",
       "",
@@ -7285,6 +7380,10 @@ button {
       "## Deadlines a venir",
       "",
       bullets(upcoming),
+      "",
+      "## Journaux et seances",
+      "",
+      bullets(journals),
       "",
       "## Decisions ou aide attendue",
       "",
@@ -7304,7 +7403,7 @@ button {
 
 
 (function () {
-  const APP_VERSION = "0.17.2";
+  const APP_VERSION = "0.18.0";
   const FAVORITES_KEY = "tabulator-cockpit-favorite-tabs";
   const HIDE_BLOCKED_CHILDREN_KEY = "tabulator-cockpit-hide-blocked-children";
   const CONFIG_KEY = "tabulator-cockpit-config";
@@ -7832,7 +7931,7 @@ button {
     const suggestions = document.getElementById("searchSuggestions");
     let suggestionItems = [];
     let selectedSuggestion = 0;
-    const statusLabels = { active: "Actif / a faire", waiting: "En attente", done: "Termine", archived: "Archive" };
+    const statusLabels = { current: "Projet en cours", active: "Tache active", waiting: "En attente", later: "Projet plus tard", done: "Termine", archived: "Archive" };
     window.CockpitModels.STATUSES.forEach((status) => statusFilter.append(new Option(statusLabels[status] || status, status)));
 
     const renderSuggestions = () => {
@@ -8234,7 +8333,7 @@ button {
             const projectDoc = window.CockpitModels.createItem({
               type: "project",
               title: capture.projectName,
-              status: "active",
+              status: "current",
             });
             const savedProject = await window.CockpitStorage.saveItem(projectDoc);
             project = window.CockpitModels.parseDocument(savedProject);
@@ -8302,7 +8401,7 @@ button {
       app.addItem({
         type: "project",
         title: "Nouveau projet",
-        status: "active",
+        status: "current",
         category: "project",
       });
       document.querySelector(".top-create-menu")?.removeAttribute("open");
