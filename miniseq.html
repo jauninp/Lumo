@@ -109,6 +109,12 @@
 .block-menu{position:fixed;z-index:110;width:265px;max-height:330px;overflow:auto;padding:7px;background:var(--bg);border:1px solid var(--line);border-radius:8px;box-shadow:0 5px 22px #0002}.block-menu-title{font-size:12px;color:var(--muted);padding:6px 8px}.block-menu>button{display:block;width:100%;text-align:left;font-size:14px}.status-option[aria-pressed=true]{background:var(--tint)}.status-BACKLOG{color:#9aa0a4}.status-TODO{color:#4f595e}.status-DOING{color:#c19d00}.status-REVIEW{color:#269fe3}.status-DONE{color:#54ad85}.status-CANCELED{color:#dc7a82}.task-toggle{font-size:21px;vertical-align:middle}.format-options{display:flex;gap:3px;flex-wrap:wrap;padding:5px 0}.format-options button{padding:5px}.color-choice{font-size:24px;line-height:22px}.color-choice[data-color=yellow]{color:#e8c65e}.color-choice[data-color=red]{color:#efa1a1}.color-choice[data-color=pink]{color:#dfa0cf}.color-choice[data-color=green]{color:#8ccbb0}.color-choice[data-color=blue]{color:#8bc7f4}.color-choice[data-color=purple]{color:#c3a6e8}.color-choice[data-color=gray]{color:#8c929e}.block-row[data-color=yellow]>.block-body{background:#fff3c7}.block-row[data-color=red]>.block-body{background:#ffe2df}.block-row[data-color=pink]>.block-body{background:#f8e0f0}.block-row[data-color=green]>.block-body{background:#d7f0e2}.block-row[data-color=blue]>.block-body{background:#dceeff}.block-row[data-color=purple]>.block-body{background:#eee0fb}.block-row[data-color=gray]>.block-body{background:#e8e9ec}.block-icon{line-height:28px;padding-right:5px;flex-shrink:0}
 
 .task-metadata-below{display:block;margin:2px 0 3px 25px;line-height:22px}.task-metadata-below .task-badges{margin-left:0}.scheduled-pill{border:1px solid #d7dcd6;border-radius:14px;background:#f4f5f2;padding:1px 9px;font-size:12px;gap:7px;color:var(--ink)}.scheduled-pill .deadline{color:#2878ae}.scheduled-pill .deadline.overdue{color:#aa6945}.scheduled-pill .task-adjust{font-size:14px;color:#879189}
+
+.project-overview{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:12px}.project-overview .section-title{margin:0}.project-overview button{font-size:12px;color:var(--accent)}.project-tasks{border-top:1px solid var(--line);padding-top:22px;margin-top:10px}.project-alert{color:#9a5b27;font-weight:600}#project-filter{border:1px solid var(--line);background:var(--bg);padding:7px;color:var(--ink);border-radius:5px}#project-settings{font-size:12px}
+
+.retained-notes{border:1px solid var(--line);border-radius:8px;padding:18px 16px;margin:0 0 28px;background:#f7f9f3}.pinned-branch{margin-bottom:14px}.pinned-branch:last-child{margin-bottom:0}.pin-heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px}.pin-heading button{font-size:11px;color:var(--muted);padding:3px 6px}.project-history{border-top:1px solid var(--line);margin-top:26px;padding-top:16px}.project-history>summary{cursor:pointer;font-size:14px;font-weight:600}.project-history .backlinks{border-top:0;margin-top:16px;padding-top:0}.project-search-label{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--muted);margin-top:18px}.project-search-label input{padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+
+.retained-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.retained-heading .section-title{margin:0}.retained-heading button{font-size:11px;color:var(--accent);padding:4px 7px}#pinned-blocks .fold{opacity:1}
 </style>
 </head>
 <body>
@@ -136,7 +142,7 @@
   <div class="workspace">
     <header class="topbar">
       <div><button data-action="menu" title="Afficher ou masquer le menu" aria-label="Afficher ou masquer le menu">☰</button><span class="breadcrumb">Mon espace <span>/</span> <span id="crumb">Journal</span></span></div>
-      <div class="top-actions"><button id="reminder-indicator" data-action="reminders" aria-label="Rappels à traiter">Rappels <span id="reminder-count">0</span></button><span id="save-status" role="status">Ouverture…</span><button id="favorite-toggle" data-action="toggle-favorite" aria-pressed="false" title="Ajouter aux favoris">☆ Favori</button></div>
+      <div class="top-actions"><button id="reminder-indicator" data-action="reminders" aria-label="Rappels à traiter">Rappels <span id="reminder-count">0</span></button><span id="save-status" role="status">Ouverture…</span><button id="project-settings" data-action="project-settings" hidden>Projet</button><button id="favorite-toggle" data-action="toggle-favorite" aria-pressed="false" title="Ajouter aux favoris">☆ Favori</button></div>
     </header>
     <div id="notice" role="alert" hidden></div>
     <main id="main" tabindex="-1"><p class="loading">Ouverture de votre espace…</p></main>
@@ -3247,13 +3253,13 @@ if(__exports != exports)module.exports = exports;return module.exports}));
     normalize(list) { list.forEach((b, i) => { b.order = i; }); }
     add(pageId, parentId = null, afterId = null, text = '') {
       const list = this.children(pageId, parentId);
-      const block = { id: uid(), text, pageId, parentId, order: 0, collapsed: false };
+      const block = { id: uid(), text, pageId, parentId, order: 0, collapsed: false, updatedAt: new Date().toISOString() };
       const position = afterId ? list.findIndex(b => b.id === afterId) + 1 : list.length;
       list.splice(position, 0, block); this.blocks.push(block); this.normalize(list);
       this.indexLinks(block); return block;
     }
     indexLinks(block) { for (const name of references(block.text).links) this.ensurePage(name); }
-    setText(id, text) { const b = this.block(id); b.text = text; this.indexLinks(b); }
+    setText(id, text, { indexLinks = true } = {}) { const b = this.block(id); if (b.text !== text) b.updatedAt = new Date().toISOString(); b.text = text; if (indexLinks) this.indexLinks(b); }
     insertBefore(id, text = '') {
       const target = this.block(id), siblings = this.children(target.pageId, target.parentId);
       const added = this.add(target.pageId, target.parentId, null, text);
@@ -3389,7 +3395,7 @@ if(__exports != exports)module.exports = exports;return module.exports}));
     }
     for (const b of data.blocks) {
       if (!b || !goodId(b.id) || blocks.has(b.id) || !pages.has(b.pageId) || typeof b.text !== 'string' || !Number.isSafeInteger(b.order) || b.order < 0 || typeof b.collapsed !== 'boolean' || !(b.parentId === null || goodId(b.parentId))) fail('bloc incorrect.');
-      blocks.set(b.id, { ...(typeof b.icon === 'string' && b.icon.length <= 16 ? { icon: b.icon } : {}), ...(['', 'yellow', 'red', 'pink', 'green', 'blue', 'purple', 'gray'].includes(b.color) ? { color: b.color } : {}), id: b.id, text: b.text, pageId: b.pageId, parentId: b.parentId, order: b.order, collapsed: b.collapsed });
+      blocks.set(b.id, { ...(typeof b.updatedAt === 'string' && Number.isFinite(Date.parse(b.updatedAt)) ? { updatedAt: b.updatedAt } : {}), ...(typeof b.icon === 'string' && b.icon.length <= 16 ? { icon: b.icon } : {}), ...(['', 'yellow', 'red', 'pink', 'green', 'blue', 'purple', 'gray'].includes(b.color) ? { color: b.color } : {}), id: b.id, text: b.text, pageId: b.pageId, parentId: b.parentId, order: b.order, collapsed: b.collapsed });
     }
     const visited = new Set();
     for (const b of blocks.values()) {
@@ -3406,6 +3412,9 @@ if(__exports != exports)module.exports = exports;return module.exports}));
       path.forEach(id => visited.add(id));
     }
     const settings = {};
+    if (data.settings?.pagePins && typeof data.settings.pagePins === 'object') {
+      settings.pagePins = Object.fromEntries(Object.entries(data.settings.pagePins).filter(([id, pins])=>pages.has(id)&&Array.isArray(pins)).map(([id,pins])=>[id,[...new Set(pins.filter(pin=>typeof pin==='string'&&blocks.has(pin)))]]));
+    }
     if (Array.isArray(data.settings?.favorites)) settings.favorites = [...new Set(data.settings.favorites.filter(id => typeof id === 'string' && pages.has(id)))];
     if (typeof data.settings?.recentsCollapsed === 'boolean') settings.recentsCollapsed = data.settings.recentsCollapsed;
     return { pages: [...pages.values()], blocks: [...blocks.values()], settings };
@@ -3660,14 +3669,19 @@ const Storage = {
   save(data) {
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction(['pages', 'blocks', 'settings'], 'readwrite');
-      for (const name of ['pages', 'blocks']) {
-        const table = tx.objectStore(name); table.clear();
-        for (const row of data[name]) table.put(row);
-      }
-      tx.objectStore('settings').put({ id: 'preferences', value: data.settings || {} });
-      tx.objectStore('settings').put({ id: 'meta', version: 1, savedAt: new Date().toISOString() });
       tx.oncomplete = resolve;
       tx.onabort = tx.onerror = () => reject(tx.error || new Error('Écriture interrompue.'));
+      try {
+        for (const name of ['pages', 'blocks']) {
+          const table = tx.objectStore(name); table.clear();
+          for (const row of data[name]) table.put(row);
+        }
+        tx.objectStore('settings').put({ id: 'preferences', value: data.settings || {} });
+        tx.objectStore('settings').put({ id: 'meta', version: 1, savedAt: new Date().toISOString() });
+      } catch (error) {
+        // Even a synchronous cloning error must roll back the preceding clear/put operations.
+        tx.abort(); reject(error);
+      }
     });
   }
 };
@@ -3682,6 +3696,7 @@ const Storage = {
   let undo = [], redo = [], editCheckpoint = null, renderTimer, saveTimer, dirtySince = 0;
   const dialog = $('#dialog');
   let queryIndex = null, queryRevision = -1, taskFilter = { state: 'task:open', deadline: '', priority: '' };
+  let projectFilter = 'active';
   let explorerQuery = 'task:open';
   const pagesView = { search: '', kind: 'all' };
   let pageTable = null, blockTable = null;
@@ -3690,7 +3705,7 @@ const Storage = {
   const taskLabel = status => taskStates.find(s => s[0] === status)?.[1] || status;
   const pendingDeletions = new Map();
   let completion = null, activeHost = null;
-  let backlinkRoots = new Set(), referenceFolds = new Map();
+  let backlinkRoots = new Set(), referenceFolds = new Map(), pinFolds = new Map();
   let historyPages = [], historyCount = 0, historyFrame = null, zoomRootCollapsed = false;
   function index() {
     if (queryRevision !== revision || queryIndex?.today !== dateKey()) { queryIndex = new MiniQuery.Index(graph); queryRevision = revision; }
@@ -3704,15 +3719,15 @@ const Storage = {
     clearTimeout(saveTimer);
     saveTimer = setTimeout(flush, Math.max(0, Math.min(300, 1500 - (performance.now() - dirtySince))));
     clearTimeout(renderTimer);
-    renderTimer = setTimeout(() => { renderSidebar(); renderBacklinks(); renderHistoryRows(); refreshQueries(); }, 250);
+    renderTimer = setTimeout(() => { renderSidebar(); renderBacklinks(); renderPins(); renderProjectSearch(); renderHistoryRows(); refreshQueries(); }, 250);
   }
   async function flush() {
     clearTimeout(saveTimer);
-    if (saving || savedRevision === revision) return;
+    if (importing || saving || savedRevision === revision) return;
     if (!storageAvailable) { $('#save-status').textContent = 'Non enregistré · exportez vos notes'; return; }
     saving = true;
     try {
-      while (savedRevision !== revision) {
+      while (savedRevision !== revision && !importing) {
         const savingRevision = revision;
         await Storage.save(graph.snapshot()); savedRevision = savingRevision;
       }
@@ -3789,6 +3804,8 @@ const Storage = {
     if ($('#tag-blocks')) blockTable?.replace(blockRows(directTagResults()));
     if ($('#tags-table')) blockTable?.replace(tagRows());
     refreshPages();
+    if ($('#projects-table')) blockTable?.replace(projectRows());
+    renderProjectTasks();
   }
   function taskExpression() { return [taskFilter.state, taskFilter.deadline, taskFilter.priority].filter(Boolean).join(' '); }
   function optionHTML(options, selected) { return options.map(([value, label]) => `<option value="${esc(value)}" ${value === selected ? 'selected' : ''}>${esc(label)}</option>`).join(''); }
@@ -3852,6 +3869,56 @@ const Storage = {
     $('#main').innerHTML = `<div class="eyebrow">Une information · plusieurs vues</div><h1>Explorer mes notes</h1><p class="page-subtitle">Combinez des critères, puis gardez la requête dans une page pour la retrouver.</p><label class="query-label" for="query-input">Requête</label><textarea id="query-input" rows="2" spellcheck="false" placeholder="(TODO OR DOING) #atm">${esc(explorerQuery)}</textarea><div class="query-caption"><button data-action="query-help">Syntaxe & exemples</button><button class="primary" data-action="save-query">Garder dans une page</button></div><div class="query-examples"><button data-query-example="task:open">Tâches ouvertes</button><button data-query-example="task:open deadline:overdue">En retard</button><button data-query-example="#idée">#idée</button><button data-query-example="pages type:project status:active">Projets actifs</button></div><div id="explorer-results"></div>`;
     $('#query-input').addEventListener('input', e => { explorerQuery = e.target.value; refreshQueries(); }); refreshQueries();
   }
+  const projectStates = [['active', 'En cours'], ['waiting', 'En attente'], ['done', 'Terminé'], ['canceled', 'Annulé']];
+  function isProject(id) { return key(index().pageProperties.get(id)?.type || '') === 'project'; }
+  function projectInfo(page) {
+    const idx = index(), properties = idx.pageProperties.get(page.id) || {};
+    const related = graph.blocks.filter(b => MiniQuery.queryText(b.text) === null && (b.pageId === page.id || idx.context(b).links.has(key(page.title))));
+    const open = related.filter(b => ['BACKLOG', 'TODO', 'DOING', 'REVIEW'].includes(idx.meta.get(b.id).status))
+      .sort((a,b) => (idx.meta.get(a.id).deadline || '9999').localeCompare(idx.meta.get(b.id).deadline || '9999') || (idx.meta.get(a.id).priority || 'Z').localeCompare(idx.meta.get(b.id).priority || 'Z') || a.order-b.order);
+    const next = open[0], deadline = next ? idx.meta.get(next.id).deadline || '' : '';
+    const activity = related.filter(b => b.text.trim()).map(b => b.updatedAt?.slice(0,10) || graph.page(b.pageId)?.journalDate || '').filter(Boolean).sort().at(-1) || '';
+    const overdue = open.some(b => { const d = idx.meta.get(b.id).deadline; return d && d < dateKey(); });
+    return { id: page.id, title: page.title, status: properties.status || 'active', next: next?.text.split('\n')[0].replace(/^(BACKLOG|TODO|DOING|REVIEW)\s+(?:\[#[ABC]\]\s*)?/, '') || '', nextId: next?.id, deadline, activity, open, alert: overdue ? 'Relance dépassée' : !next ? 'Sans prochaine action' : !deadline ? 'Sans échéance' : '' };
+  }
+  function projectRows() {
+    return graph.pages.filter(p => isProject(p.id)).map(projectInfo).filter(p => projectFilter === 'all' || !['done', 'canceled'].includes(p.status));
+  }
+  function renderProjects() {
+    $('#crumb').textContent = 'Projets';
+    $('#main').innerHTML = `<div class="pages-heading"><h1>Projets en cours</h1><select id="project-filter" aria-label="Afficher les projets">${optionHTML([['active','En cours et en attente'],['all','Tous, y compris terminés']],projectFilter)}</select></div><p class="page-subtitle">Ouvrez une page puis cliquez sur « Projet » en haut pour la suivre ici. La prochaine action est la tâche ouverte avec l’échéance la plus proche.</p><div id="projects-table"></div><p class="table-hint">La dernière activité utilise la date de modification lorsqu’elle est connue, sinon la date du journal lié.</p>`;
+    $('#project-filter').onchange = e => { projectFilter=e.target.value; blockTable?.replace(projectRows()); };
+    blockTable = MiniTables.mount('#projects-table','projects',[
+      {title:'Projet',field:'title',widthGrow:2,minWidth:170,formatter:cell=>MiniTables.action(cell.getValue(),'data-page',cell.getRow().getData().id)},
+      {title:'État',field:'status',formatter:cell=>projectStates.find(s=>s[0]===cell.getValue())?.[1] || cell.getValue()},
+      {title:'Prochaine action',field:'next',widthGrow:3,minWidth:210,formatter:cell=>cell.getValue()?MiniTables.action(cell.getValue(),'data-jump',cell.getRow().getData().nextId):'—'},
+      {title:'Échéance',field:'deadline',formatter:cell=>cell.getValue()||'—'},
+      {title:'Dernière activité',field:'activity',minWidth:140,formatter:cell=>cell.getValue()||'Non renseignée'},
+      {title:'À surveiller',field:'alert',minWidth:160,formatter:cell=>{const el=document.createElement('span');el.className=cell.getValue()?'project-alert':'';el.textContent=cell.getValue()||'—';return el;}},
+      {title:'',field:'actions',headerFilter:false,headerSort:false,width:110,formatter:cell=>MiniTables.action('Supprimer','data-delete-page',cell.getRow().getData().id)}
+    ],projectRows(),[{column:'deadline',dir:'asc'}]);
+  }
+  function renderProjectTasks() {
+    const host = $('#project-tasks'); if (!host || view.type !== 'page') return;
+    const info = projectInfo(graph.page(view.id));
+    host.innerHTML = `<h2 class="section-title">Tâches ouvertes <span class="count">${info.open.length}</span></h2>${info.open.length ? queryResults('task:open (page:' + JSON.stringify(graph.page(view.id).title) + ' OR [[' + graph.page(view.id).title + ']])') : '<p class="empty">Aucune prochaine action définie.</p>'}`;
+  }
+  function projectSettings() {
+    const page = graph.page(view.id); if (!page || page.journalDate) return;
+    const props = index().pageProperties.get(page.id) || {}, tracked = isProject(page.id);
+    showDialog('Suivi du projet', `<form id="project-form"><p>${esc(page.title)}</p><label>État<select id="project-status">${optionHTML(projectStates,props.status||'active')}</select></label><p class="empty">La synthèse reste dans cette page. Les notes de journal contenant [[${esc(page.title)}]] et leurs tâches seront regroupées ici.</p><div class="dialog-actions"><button type="button" data-action="close">Annuler</button><button class="primary" type="submit">${tracked?'Enregistrer':'Suivre ce projet'}</button></div></form>`);
+    $('#project-form').onsubmit = e => {
+      e.preventDefault(); checkpoint(); const status=$('#project-status').value;
+      const roots=graph.children(page.id);
+      for (const name of ['type','status']) {
+        const value=name==='type'?'project':status;
+        const candidates=roots.filter(b => MiniQuery.queryText(b.text) === null && new RegExp('^'+name+'::', 'mi').test(b.text));
+        if(candidates.length) for(const b of candidates) graph.setText(b.id,b.text.replace(new RegExp('^'+name+'::[^\n]*','gmi'),name+':: '+value));
+        else graph.add(page.id,null,null,name+':: '+value);
+      }
+      changed();dialog.close();render();
+    };
+  }
   function renderPages() {
     $('#crumb').textContent = 'Toutes les pages';
     $('#main').innerHTML = `<div class="pages-heading"><h1>Toutes les pages</h1></div>
@@ -3873,6 +3940,7 @@ const Storage = {
     finishEdit(); checkpoint();
     const deleted = graph.removePage(id); if (!deleted) return;
     changed(); renderSidebar(); refreshPages();
+    if (view.type === 'projects') blockTable?.replace(projectRows());
     const toast = document.createElement('div'); toast.className = 'undo-toast';
     const label = document.createElement('span'); label.textContent = `« ${page.title} » supprimée.`;
     const button = document.createElement('button'); button.textContent = 'Annuler'; button.dataset.restorePage = id;
@@ -3886,9 +3954,14 @@ const Storage = {
     if (graph.page(id)) return;
     checkpoint(); graph.restorePage(pending.deleted); changed();
     if (view.type === 'page' && !graph.page(view.id)) openPage(id);
-    else { renderSidebar(); refreshPages(); }
+    else { renderSidebar(); refreshPages(); if (view.type === 'projects') blockTable?.replace(projectRows()); }
+  }
+  function listedPages() {
+    const nonempty = new Set(graph.blocks.filter(b => b.text.trim()).map(b => b.pageId));
+    return graph.pages.filter(page => !page.journalDate || nonempty.has(page.id));
   }
   function pageRows() {
+    const pages = listedPages();
     const blockCounts = new Map(), linkCounts = new Map();
     for (const b of graph.blocks) {
       blockCounts.set(b.pageId, (blockCounts.get(b.pageId) || 0) + 1);
@@ -3896,13 +3969,13 @@ const Storage = {
       for (const title of new Set(references(b.text).links.map(key))) linkCounts.set(title, (linkCounts.get(title) || 0) + 1);
     }
     const normalize = value => key(value).normalize('NFD').replace(/\p{M}/gu, '');
-    const rows = graph.pages.map(page => {
+    const rows = pages.map(page => {
       const project = key(index().pageProperties.get(page.id)?.type || '') === 'project';
       return { id: page.id, title: page.title, blocks: blockCounts.get(page.id) || 0, links: linkCounts.get(key(page.title)) || 0,
         kind: page.journalDate ? 'Journal' : project ? 'Projet' : 'Page', project, journal: !!page.journalDate };
     }).filter(row => normalize(row.title).includes(normalize(pagesView.search)) &&
       (pagesView.kind === 'all' || pagesView.kind === 'pages' && !row.journal || pagesView.kind === 'journals' && row.journal || pagesView.kind === 'projects' && row.project));
-    $('#pages-count').textContent = `${rows.length} pages sur ${graph.pages.length}`;
+    $('#pages-count').textContent = `${rows.length} pages sur ${pages.length}`;
     return rows;
   }
   function refreshPages() { if ($('#pages-table')) pageTable?.replace(pageRows()); }
@@ -3915,7 +3988,8 @@ const Storage = {
   }
   function renderSidebar() {
     refreshReminders();
-    $('#page-count').textContent = graph.pages.length;
+    $('#project-settings').hidden = view.type !== 'page' || !!graph.page(view.id)?.journalDate;
+    $('#page-count').textContent = listedPages().length;
     $('#recent-pages').innerHTML = graph.pages.slice(-7).reverse().map(p => `<button class="recent-link" data-page="${p.id}" title="${esc(p.title)}">${esc(p.title)}</button>`).join('');
     const favorites = graph.settings.favorites || [];
     $('#favorite-pages').innerHTML = favorites.map(id => graph.page(id)).filter(Boolean).map(p => `<button class="recent-link favorite-link" data-page="${p.id}" title="${esc(p.title)}">${esc(p.title)}</button>`).join('') || '<span class="favorites-empty">Aucune page favorite</span>';
@@ -3931,6 +4005,7 @@ const Storage = {
     document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.action === (view.type === 'tag' ? 'tags' : view.type === 'page' ? (graph.page(view.id)?.journalDate ? 'today' : 'pages') : view.type)));
   }
   function toggleFold(id, element) {
+    if (element.closest('#pinned-blocks')) { pinFolds.set(id, !(pinFolds.get(id) ?? graph.block(id).collapsed)); return; }
     if (id === view.rootId && element.closest('#blocks')) { zoomRootCollapsed = !zoomRootCollapsed; return; }
     if (element.closest('#backlink-results')) {
       const button = element.closest('.block-row').querySelector('[data-fold]');
@@ -3972,6 +4047,49 @@ const Storage = {
       if (more && !more.hidden && more.getBoundingClientRect().top < innerHeight + 350) loadOlderJournals();
     });
   }, { passive: true });
+  function pinIds(pageId) { return (graph.settings.pagePins?.[pageId] || []).filter(id => graph.block(id)); }
+  function renderPins() {
+    const host = $('#pinned-blocks'); if (!host) return;
+    const ids = pinIds(view.id), remaining = new Map([...host.querySelectorAll(':scope > [data-pin]')].map(el => [el.dataset.pin, el]));
+    host.querySelector(':scope > .empty')?.remove();
+    for (const id of ids) {
+      const b = graph.block(id); let group = remaining.get(id); remaining.delete(id);
+      if (!group) {
+        group = document.createElement('section'); group.className = 'pinned-branch'; group.dataset.pin = id;
+        group.innerHTML = `<div class="pin-heading"><button data-context="${b.id}"></button><button data-unpin="${id}" title="Retirer de À retenir sans supprimer la note">Désépingler</button></div><div class="reference-blocks"></div>`;host.append(group);
+      }
+      const source = group.querySelector('[data-context]'); source.dataset.context = b.id; source.textContent = pageLabel(graph.page(b.pageId)) + ' · Voir le contexte';
+      const visible = [], stack = [{block:b,depth:0}];
+      while(stack.length) { const item=stack.pop(); visible.push(item); if(!(pinFolds.get(item.block.id) ?? item.block.collapsed)) for(const child of graph.children(b.pageId,item.block.id).slice().reverse()) stack.push({block:child,depth:item.depth+1}); }
+      renderBlockRows(group.querySelector('.reference-blocks'),visible,b=>pinFolds.get(b.id) ?? b.collapsed);
+    }
+    remaining.forEach(el=>el.remove());
+    if (!ids.length) host.innerHTML='<p class="empty">Épinglez ici les décisions et informations importantes depuis le menu de la puce d’une note.</p>';
+  }
+  function foldAllPins(collapsed) {
+    finishEdit();
+    const stack = pinIds(view.id).map(id=>graph.block(id)), visited = new Set();
+    while(stack.length) { const b=stack.pop();if(visited.has(b.id))continue;visited.add(b.id);pinFolds.set(b.id,collapsed);stack.push(...graph.children(b.pageId,b.id)); }
+    renderPins();
+  }
+  function choosePin(id) {
+    closeBlockMenu();finishEdit(); const b=graph.block(id);if(!b)return;
+    const pages=graph.pages.filter(p=>!p.journalDate), links=index().context(b).links;
+    pages.sort((a,b)=>Number(links.has(key(b.title)))-Number(links.has(key(a.title))) || a.title.localeCompare(b.title));
+    showDialog('Épingler à une page', `<form id="pin-form"><p>La note reste à sa place. Elle sera aussi visible et modifiable dans « À retenir ».</p><label>Page / projet<select id="pin-page">${pages.map(p=>`<option value="${p.id}">${esc(p.title)}</option>`).join('')}</select></label>${pages.length?'':'<p class="empty">Créez d’abord une page avec [[Nom du projet]].</p>'}<div class="dialog-actions"><button type="button" data-action="close">Annuler</button><button class="primary" ${pages.length?'':'disabled'}>Épingler</button></div></form>`);
+    if(view.type==='page'&&!graph.page(view.id)?.journalDate) $('#pin-page').value=view.id;
+    $('#pin-form').onsubmit=e=>{e.preventDefault();const pageId=$('#pin-page').value;if(!graph.page(pageId))return;checkpoint();graph.settings.pagePins ||= {};graph.settings.pagePins[pageId]=[...new Set([...pinIds(pageId),id])];changed();dialog.close();openPage(pageId);};
+  }
+  function renderProjectSearch() {
+    const input=$('#project-note-search');if(!input)return;
+    const term=key(input.value).normalize('NFD').replace(/\p{M}/gu,''), host=$('#project-search-results');
+    $('#backlink-results').hidden=!!term;host.hidden=!term;
+    if(!term){host.innerHTML='';return;}
+    const title=key(graph.page(view.id).title), pins=new Set(pinIds(view.id));
+    const related=b=>{if(b.pageId===view.id||index().context(b).links.has(title))return true;let a=b;while(a){if(pins.has(a.id))return true;a=graph.block(a.parentId);}return false;};
+    const matches=graph.blocks.filter(b=>related(b)&&key(b.text).normalize('NFD').replace(/\p{M}/gu,'').includes(term));
+    host.innerHTML=matches.length?`<p class="empty">${matches.length} résultat(s) dans cette page et ses notes liées</p>`+resultsHTML(matches):'<p class="empty">Aucun résultat dans ce projet.</p>';
+  }
   function renderBacklinks(preserveRoots = false) {
     const container = $('#backlink-results'); if (!container || view.type !== 'page') return;
     const list = graph.backlinks(view.id).filter(b => MiniQuery.queryText(b.text) === null);
@@ -4009,8 +4127,13 @@ const Storage = {
   }
   function renderBlocks(focusId = null, cursor = null) {
     const container = $('#blocks'); if (!container) return;
+    const inPins = !!activeHost?.closest('#pinned-blocks');
     const inReferences = !!activeHost?.closest('#backlink-results');
     const historyContainer = activeHost?.closest('[data-journal-blocks]');
+    if (inPins && focusId) {
+      let parent=graph.block(graph.block(focusId)?.parentId);
+      while(parent) { pinFolds.set(parent.id,false);parent=graph.block(parent.parentId); }
+    }
     if (inReferences && focusId) {
       backlinkRoots.add(focusId);
       let parent = graph.block(graph.block(focusId)?.parentId);
@@ -4025,9 +4148,10 @@ const Storage = {
     renderBlockRows(container, pageBlocks(), b => b.id === view.rootId ? zoomRootCollapsed : b.collapsed); renderBreadcrumb();
     // Preserve the branch across structural edits, including a new sibling.
     renderBacklinks(inReferences);
-    renderHistoryRows();
+    renderHistoryRows(); renderPins(); renderProjectSearch();
     if (focusId) {
-      const scope = inReferences ? $('#backlink-results') : historyContainer || container;
+      const scope = inPins ? $('#pinned-blocks') : inReferences ? $('#backlink-results') : historyContainer || container;
+      if (inPins && !scope.querySelector(`[data-block="${focusId}"]`)) { openBlock(focusId); edit(focusId,cursor); return; }
       edit(focusId, cursor, scope.querySelector(`[data-block="${focusId}"] .block-body`));
       const input = activeHost?.querySelector('.editor');
       if (input) { input.focus({ preventScroll: true }); if (cursor !== null) input.setSelectionRange(cursor, cursor); }
@@ -4091,7 +4215,7 @@ const Storage = {
       if (graph.block(parts[1])) { openBlock(parts[1]); return true; }
       if (graph.page(parts[1])) { openPage(parts[1]); return true; }
     }
-    if (['pages', 'tasks', 'tags', 'queries'].includes(parts[0])) { view = { type: parts[0] }; render(); return true; }
+    if (['pages', 'tasks', 'tags', 'queries', 'projects'].includes(parts[0])) { view = { type: parts[0] }; render(); return true; }
     if (parts[0] === 'tag' && parts[1]) { try { view = { type: 'tag', tag: decodeURIComponent(parts[1]) }; render(); return true; } catch {} }
     return false;
   }
@@ -4104,7 +4228,7 @@ const Storage = {
     finishEdit(); closeBlockMenu();
     if (view.rootId && !graph.block(view.rootId)) delete view.rootId;
     syncRoute(); zoomRootCollapsed = false;
-    historyPages = []; historyCount = 0; referenceFolds = new Map();
+    historyPages = []; historyCount = 0; referenceFolds = new Map(); pinFolds = new Map();
     if (historyFrame !== null) cancelAnimationFrame(historyFrame); historyFrame = null;
     MiniTables.destroy(); pageTable = null; blockTable = null;
     clearTimeout(renderTimer); activeId = null; activeHost = null; backlinkRoots = new Set(); editCheckpoint = null; renderSidebar();
@@ -4113,6 +4237,7 @@ const Storage = {
     if (view.type === 'tags') { renderTags(); return; }
     if (view.type === 'tag') { renderTag(); return; }
     if (view.type === 'tasks') { renderTasks(); return; }
+    if (view.type === 'projects') { renderProjects(); return; }
     if (view.type === 'queries') { renderExplorer(); return; }
     if (view.type === 'page') {
       const page = graph.page(view.id);
@@ -4125,7 +4250,21 @@ const Storage = {
         main.innerHTML = '<nav id="block-breadcrumb" aria-label="Parents du bloc"></nav><section id="blocks" aria-label="Bloc et descendants"></section><button class="add-block" data-action="add-block" aria-label="Ajouter un enfant"></button>';
         renderBreadcrumb();
       }
-      renderBlocks(); renderBacklinks();
+      if (!view.rootId && isProject(page.id)) {
+        const summary = document.createElement('div'); summary.className = 'project-overview';
+        summary.innerHTML = '<h2 class="section-title">Synthèse du projet</h2><button data-action="project-settings">État du projet…</button>';
+        $('#blocks').before(summary);
+        const tasks = document.createElement('section'); tasks.id = 'project-tasks'; tasks.className = 'project-tasks';
+        $('.backlinks').before(tasks);
+      }
+      if (!page.journalDate && !view.rootId) {
+        const retained=document.createElement('section');retained.className='retained-notes';
+        retained.innerHTML='<div class="retained-heading"><h2 class="section-title">📌 À retenir</h2><div><button data-action="expand-pins">Tout déplier</button><button data-action="collapse-pins">Tout replier</button></div></div><div id="pinned-blocks"></div>';main.querySelector('.note-heading').after(retained);
+        const backlinks=$('.backlinks'), details=document.createElement('details');details.className='project-history';
+        details.innerHTML='<summary>Historique et notes liées</summary><label class="project-search-label">Rechercher dans ce projet<input type="search" id="project-note-search" placeholder="Décision, personne, mot-clé…"></label><div id="project-search-results" hidden></div>';
+        backlinks.before(details);details.append(backlinks);$('#project-note-search').oninput=renderProjectSearch;
+      }
+      renderBlocks(); renderBacklinks(); renderPins();
       if (view.home) initJournalHistory(page);
       refreshQueries();
     } else {
@@ -4173,7 +4312,11 @@ const Storage = {
         activeId = null; activeHost = null; editCheckpoint = null; changed(); return;
       }
     }
-    if (b) { const converted = MiniQuery.convertTodo(b.text); if (converted !== b.text) { graph.setText(b.id, converted); changed(); } }
+    if (b) {
+      const pageCount = graph.pages.length, converted = MiniQuery.convertTodo(b.text), textChanged = converted !== b.text;
+      graph.setText(b.id, converted);
+      if (textChanged || graph.pages.length !== pageCount) changed();
+    }
     if (b) document.querySelectorAll(`[data-block="${b.id}"] .block-body`).forEach(body => {
       body.innerHTML = renderedHTML(b); body.parentElement._sourceText = b.text;
     });
@@ -4194,7 +4337,7 @@ const Storage = {
     input.scrollIntoView({ block: 'nearest' });
     input.addEventListener('input', () => {
       if (editCheckpoint !== id) { checkpoint(); editCheckpoint = id; }
-      graph.setText(id, input.value); resize(input); changed(); showCompletions(input, id);
+      graph.setText(id, input.value, { indexLinks: false }); resize(input); changed(); showCompletions(input, id);
     });
     input.addEventListener('click', () => showCompletions(input, id));
     input.addEventListener('keydown', e => editorKey(e, id));
@@ -4388,15 +4531,14 @@ const Storage = {
           if (!storageAvailable) throw new Error('IndexedDB indisponible : restauration impossible.');
           // Wait for preceding saves before committing the replacement atomically.
           while (saving) await new Promise(resolve => setTimeout(resolve, 20));
-          const replacement = new Graph(data);
-          replacement.blocks.forEach(b => replacement.indexLinks(b));
-          const today = replacement.journal();
-          if (!replacement.children(today.id).length) replacement.add(today.id);
+          const replacement = new Graph(structuredClone(data));
           await Storage.save(replacement.snapshot());
           graph = replacement; revision++; savedRevision = revision; undo = []; redo = [];
-          $('#save-status').textContent = '✓ Restauration enregistrée'; notice(''); dialog.close(); openPage(today.id);
+          $('#save-status').textContent = '✓ Restauration enregistrée'; notice(''); dialog.close();
+          pendingDeletions.forEach(p => { clearTimeout(p.timer); p.toast.remove(); }); pendingDeletions.clear();
+          openJournal();
         } catch (error) { notice('Restauration non effectuée. ' + error.message); button.disabled = false; button.textContent = 'Réessayer'; }
-        finally { importing = false; }
+        finally { importing = false; if (revision !== savedRevision) saveTimer = setTimeout(flush, 0); }
       };
     } catch (error) { showDialog('Import impossible', `<p>${esc(error.message)}</p><p>Votre espace actuel est conservé.</p><div class="dialog-actions"><button data-action="close" class="primary">Fermer</button></div>`); }
   }
@@ -4406,6 +4548,10 @@ const Storage = {
       <p><code>[[Nom de page]]</code> propose les pages existantes ; <code>#tag</code> classe vos notes. Tapez <code>/</code> en début de bloc pour les commandes. Titres, gras, italique, barré, citations, listes, tableaux, liens Markdown et blocs de code sont reconnus. Dans un bloc de code délimité par trois accents graves, Entrée conserve les lignes dans le même bloc.</p><p>Commencez par <code>TODO [#A]</code>, puis ajoutez <code>deadline:: 2026-09-15</code> sur une seconde ligne avec Maj+Entrée. Le bouton ☑ au survol permet aussi de régler l’état, la priorité et l’échéance à la souris.</p><p><code>{{query task:open #atm}}</code> affiche des résultats dynamiques. L’onglet Requêtes contient les exemples et permet de garder une recherche dans une page. <kbd>Ctrl Maj N</kbd> revient au journal pour noter une idée. Le bouton ↗ au survol déplace un bloc et ses enfants vers une autre page.</p><button data-action="query-help" class="primary">Découvrir les requêtes</button>`);
   }
   const actions = {
+    'expand-pins': () => foldAllPins(false),
+    'collapse-pins': () => foldAllPins(true),
+    projects: () => { view = { type: 'projects' }; render(); },
+    'project-settings': projectSettings,
     reminders: () => { taskFilter = { state: 'task:open', deadline: '(deadline:today OR deadline:overdue)', priority: '' }; view = { type: 'tasks' }; render(); },
     'toggle-recents': () => { graph.settings.recentsCollapsed = !graph.settings.recentsCollapsed; changed(); renderSidebar(); },
     'toggle-favorite': () => {
@@ -4426,7 +4572,7 @@ const Storage = {
     },
     close: () => { if (!importing) dialog.close(); },
     menu: () => document.body.classList.toggle(innerWidth <= 650 ? 'mobile-menu' : 'menu-hidden'),
-    export: () => download(graph.snapshot()), import: () => $('#import-file').click(),
+    export: () => { finishEdit(); download(graph.snapshot()); }, import: () => $('#import-file').click(),
     'add-block': appendBlock,
     'older-journals': loadOlderJournals,
     previous: () => shiftDay(-1), next: () => shiftDay(1)
@@ -4475,6 +4621,7 @@ const Storage = {
     }
     const icons = document.createElement('div'); icons.className = 'format-options'; menu.append(icons);
     for (const icon of ['⭐', '💡', '📌', '⚠️', '✅', '📅', '']) menuButton(icons, icon || 'Sans icône', () => apply(b => { b.icon = icon; }));
+    menuButton(menu, '📌 Épingler à une page / projet…', () => choosePin(id));
     menuButton(menu, 'Définir un statut…', () => showStatusMenu(id, bullet.getBoundingClientRect()));
     menu.querySelector('button').focus();
   });
@@ -4544,6 +4691,8 @@ const Storage = {
       else if (d.pageName) { const before = graph.pages.length, p = graph.ensurePage(d.pageName); if (before !== graph.pages.length) changed(); openPage(p.id); }
       else openPage(d.page);
     } else if (d.tag) { dialog.close(); view = { type: 'tag', tag: d.tag }; render(); }
+    else if (d.context) { const b=graph.block(d.context); if(b) openPage(b.pageId,b.id); }
+    else if (d.unpin) { checkpoint(); graph.settings.pagePins[view.id]=pinIds(view.id).filter(id=>id!==d.unpin);changed();renderPins(); }
     else if (d.deletePage) deletePage(d.deletePage);
     else if (d.restorePage) restoreDeletedPage(d.restorePage);
     else if (d.zoom) { if (performance.now() >= suppressBulletClickUntil) openBlock(d.zoom); }
