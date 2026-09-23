@@ -123,6 +123,8 @@
 .person-heading input{font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper,#fff);color:var(--ink)}.person-heading input:focus{outline:2px solid var(--accent,#397e6a);outline-offset:1px}
 
 .topbar{gap:18px}.topbar>div:first-child{min-width:0}.global-search{display:flex;align-items:center;gap:8px;flex:1;max-width:650px;min-width:220px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--muted)}.global-search:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px #397e6a18}.global-search input{width:100%;min-width:0;border:0;background:transparent;outline:0;font:inherit;font-size:13px;color:var(--ink)}.global-search kbd{white-space:nowrap;font-size:10px}.top-actions{flex-shrink:0}.search-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;margin:20px 0}.search-controls label{display:flex;align-items:center;gap:8px}.search-controls select{font:inherit;border:1px solid var(--line);border-radius:5px;padding:7px;color:var(--ink);background:var(--bg)}#search-kind{color:var(--muted);flex:1}.search-controls button:disabled{opacity:.45;cursor:default}.search-pages{margin-bottom:24px}#explorer-results .result:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}@media(max-width:1200px){.topbar .breadcrumb{display:none}.global-search kbd{display:none}}
+
+#search-dialog{width:min(1040px,90vw);max-height:85vh;padding:24px;overscroll-behavior:contain}#search-dialog .dialog-header{margin-bottom:14px}#search-dialog .search-controls{gap:12px;margin:14px 0}#search-dialog #explorer-results{max-height:51vh;overflow:auto;overscroll-behavior:contain}#search-dialog .query-examples{margin-bottom:16px}#search-dialog .block-menu{position:fixed}#search-dialog::backdrop{background:#26362b44;backdrop-filter:blur(1px)}
 </style>
 </head>
 <body>
@@ -158,6 +160,7 @@
     <footer><span>Une idée. Un bloc. Des liens.</span><span><kbd>Entrée</kbd> nouveau bloc <span class="dot">·</span> <kbd>Tab</kbd> indenter</span></footer>
   </div>
   <div id="toast-region" aria-live="polite" aria-label="Notifications"></div>
+  <dialog id="search-dialog" aria-label="Recherche dans les notes"></dialog>
   <dialog id="dialog"><div id="dialog-content"></div></dialog>
   <input id="import-file" type="file" accept=".json,application/json" hidden>
   <template id="license-text">                    GNU AFFERO GENERAL PUBLIC LICENSE
@@ -3710,7 +3713,7 @@ const Storage = {
   let graph, view = { type: 'page', id: null }, activeId = null;
   let revision = 0, savedRevision = 0, saving = false, storageAvailable = false, importing = false;
   let undo = [], redo = [], editCheckpoint = null, renderTimer, saveTimer, dirtySince = 0;
-  const dialog = $('#dialog');
+  const dialog = $('#dialog'), searchDialog = $('#search-dialog');
   let queryIndex = null, queryRevision = -1, taskFilter = { state: 'task:open', deadline: '', priority: '' };
   let projectFilter = 'active';
   let explorerQuery = '', searchMode = 'auto';
@@ -3903,10 +3906,11 @@ const Storage = {
     host.innerHTML=pageHTML+(plan.advanced?'':'<h2 class="section-title">Notes et tâches</h2>')+queryResults(plan.expression);
   }
   function renderExplorer() {
-    MiniTables.destroy();$('#crumb').textContent='Recherche';
     $('#global-search').value=explorerQuery;
-    $('#main').innerHTML=`<h1>Recherche</h1><div class="search-controls"><label>Interpréter comme <select id="search-mode">${optionHTML([['auto','Automatique'],['text','Texte simple'],['query','Requête']],searchMode)}</select></label><span id="search-kind"></span><button data-action="query-help">Syntaxe & exemples</button><button data-action="save-query">Garder dans une page</button></div><div class="query-examples"><button data-query-example="task:open">Tâches ouvertes</button><button data-query-example="task:open deadline:overdue">En retard</button><button data-query-example="#idée">#idée</button><button data-query-example="pages type:project status:active">Projets actifs</button></div><div id="explorer-results" aria-live="polite"></div>`;
-    $('#search-mode').onchange=e=>{searchMode=e.target.value;refreshSearch();};refreshQueries();
+    searchDialog.innerHTML=`<div class="dialog-header"><h2>Recherche</h2><button data-action="close-search" aria-label="Fermer la recherche">✕</button></div><input id="search-input" type="search" aria-label="Texte ou requête" placeholder="Texte, #tag, @personne, task:open…" value="${esc(explorerQuery)}" autocomplete="off" spellcheck="false"><div class="search-controls"><label>Interpréter comme <select id="search-mode">${optionHTML([['auto','Automatique'],['text','Texte simple'],['query','Requête']],searchMode)}</select></label><span id="search-kind"></span><button data-action="query-help">Syntaxe & exemples</button><button data-action="save-query">Garder dans une page</button></div><div class="query-examples"><button data-query-example="task:open">Tâches ouvertes</button><button data-query-example="task:open deadline:overdue">En retard</button><button data-query-example="#idée">#idée</button><button data-query-example="pages type:project status:active">Projets actifs</button></div><div id="explorer-results" aria-live="polite"></div>`;
+    $('#search-mode').onchange=e=>{searchMode=e.target.value;refreshSearch();};
+    $('#search-input').oninput=e=>{explorerQuery=e.target.value;$('#global-search').value=explorerQuery;refreshSearch();};
+    refreshQueries();
   }
   const projectStates = [['active', 'En cours'], ['waiting', 'En attente'], ['done', 'Terminé'], ['canceled', 'Annulé']];
   function isProject(id) { return key(index().pageProperties.get(id)?.type || '') === 'project'; }
@@ -4257,7 +4261,8 @@ const Storage = {
       if (graph.block(parts[1])) { openBlock(parts[1]); return true; }
       if (graph.page(parts[1])) { openPage(parts[1]); return true; }
     }
-    if (['pages', 'tasks', 'tags', 'queries', 'projects', 'people'].includes(parts[0])) { view = { type: parts[0] }; render(); return true; }
+    if(parts[0]==='queries'){openJournal();search();return true;}
+    if (['pages', 'tasks', 'tags', 'projects', 'people'].includes(parts[0])) { view = { type: parts[0] }; render(); return true; }
     if (parts[0] === 'person' && parts[1]) { try { view = { type: 'person', person: key(decodeURIComponent(parts[1])) }; render(); return true; } catch {} }
     if (parts[0] === 'tag' && parts[1]) { try { view = { type: 'tag', tag: decodeURIComponent(parts[1]) }; render(); return true; } catch {} }
     return false;
@@ -4268,7 +4273,7 @@ const Storage = {
     finishEdit(); view = { type: 'page', id: block.pageId, rootId: id }; render(); window.scrollTo(0, 0);
   }
   function render() {
-    finishEdit(); closeBlockMenu();
+    closeSearch(); finishEdit(); closeBlockMenu();
     if (view.rootId && !graph.block(view.rootId)) delete view.rootId;
     syncRoute(); zoomRootCollapsed = false;
     historyPages = []; historyCount = 0; referenceFolds = new Map(); pinFolds = new Map();
@@ -4496,28 +4501,35 @@ const Storage = {
     $('#dialog-content').innerHTML = `<div class="dialog-header"><h2>${esc(title)}</h2><button data-action="close" aria-label="Fermer">✕</button></div>${html}`;
     if (!dialog.open) dialog.showModal();
   }
-  function search() {
+  function search(select = true) {
     if(!graph || importing)return;
-    dialog.close();finishEdit();view={type:'queries'};render();
-    $('#global-search').focus();$('#global-search').select();
+    if(searchDialog.open){$('#search-input').focus();if(select)$('#search-input').select();return;}
+    dialog.close();finishEdit();closeBlockMenu();renderExplorer();searchDialog.showModal();
+    $('#search-input').focus();if(select)$('#search-input').select();else $('#search-input').setSelectionRange(explorerQuery.length,explorerQuery.length);
   }
-  $('#global-search').addEventListener('input',e=>{
-    if(!graph || importing)return;
-    explorerQuery=e.target.value;
-    if(view.type!=='queries'){finishEdit();view={type:'queries'};render();}else refreshSearch();
-  });
+  function closeSearch() { closeBlockMenu();if(searchDialog.open)searchDialog.close(); }
+  $('#global-search').addEventListener('click',()=>search());
+  $('#global-search').addEventListener('input',e=>{explorerQuery=e.target.value;search(false);});
   $('#global-search').addEventListener('keydown',e=>{
-    if(e.key==='ArrowDown'||e.key==='Enter'){
-      e.preventDefault();if(view.type!=='queries')search();
-      const first=$('#explorer-results .result');if(e.key==='Enter')first?.click();else first?.focus();
-    }else if(e.key==='Escape'){e.preventDefault();e.target.blur();}
+    if(['ArrowDown','Enter'].includes(e.key)){e.preventDefault();search();}
   });
-  $('#main').addEventListener('keydown',e=>{
-    if(!e.target.matches('#explorer-results .result')||!['ArrowDown','ArrowUp','Escape'].includes(e.key))return;
-    e.preventDefault();const items=[...document.querySelectorAll('#explorer-results .result')],i=items.indexOf(e.target);
-    if(e.key==='Escape'||(e.key==='ArrowUp'&&i===0))$('#global-search').focus();
-    else items[i+(e.key==='ArrowDown'?1:-1)]?.focus();
+  searchDialog.addEventListener('keydown',e=>{
+    if(e.isComposing)return;
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeSearch();return;}
+    const items=[...searchDialog.querySelectorAll('#explorer-results .result')];
+    if(e.target.id==='search-input' && ['ArrowDown','Enter'].includes(e.key)){
+      e.preventDefault();if(e.key==='Enter')items[0]?.click();else items[0]?.focus();
+    }else if(e.target.matches('#explorer-results .result') && ['ArrowDown','ArrowUp'].includes(e.key)){
+      e.preventDefault();const i=items.indexOf(e.target);
+      if(e.key==='ArrowUp'&&i===0)$('#search-input').focus();else items[i+(e.key==='ArrowDown'?1:-1)]?.focus();
+    }
   });
+  let searchBackdropDown=false;
+  const outsideSearch=e=>{const r=searchDialog.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom;};
+  searchDialog.addEventListener('pointerdown',e=>{searchBackdropDown=e.target===searchDialog&&outsideSearch(e);});
+  searchDialog.addEventListener('click',e=>{if(searchBackdropDown&&e.target===searchDialog&&outsideSearch(e))closeSearch();searchBackdropDown=false;});
+  searchDialog.addEventListener('cancel',()=>closeBlockMenu());
+  searchDialog.addEventListener('close',()=>{if(!searchDialog.open)searchDialog.replaceChildren();});
   function dateCell(cell) { const value=cell.getValue();return value?new Date(value).toLocaleString('fr-CH'):'—'; }
   function pageProperties() {
     const page=graph.page(view.id);if(!page)return;
@@ -4694,7 +4706,7 @@ const Storage = {
     tags: () => { view = { type: 'tags' }; render(); },
     queries: search,
     capture: () => { dialog.close(); openJournal(); appendBlock(); },
-    'query-help': queryHelp, 'save-query': () => saveQuery(searchPlan().expression), 'save-task-query': () => saveQuery(taskExpression()), 'export-markdown': exportMarkdown,
+    'close-search': closeSearch, 'query-help': queryHelp, 'save-query': () => saveQuery(searchPlan().expression), 'save-task-query': () => saveQuery(taskExpression()), 'export-markdown': exportMarkdown,
     search, 'new-page': newPage, help, backup,
     about: () => {
       showDialog('À propos de MiniSeq', '<p>MiniSeq inclut une adaptation JavaScript de la logique d’insertion de Logseq 0.10.9, par les contributeurs de Logseq. Adaptation MiniSeq : 8 septembre 2026.</p><p>Ce logiciel est distribué sous GNU AGPL version 3, sans garantie. Vous pouvez le modifier et le redistribuer sous les conditions de cette licence. Les sources lisibles sont présentes dans ce HTML ; les fichiers de développement accompagnent le projet.</p><p>Source d’origine : github.com/logseq/logseq, version 0.10.9, src/main/frontend/handler/editor.cljs.</p><details><summary>Lire la licence GNU AGPL v3</summary><pre class="license-copy"></pre></details>');
@@ -4716,9 +4728,9 @@ const Storage = {
     closeBlockMenu(); finishEdit();
     const menu = document.createElement('div'); menu.className = 'block-menu'; menu.setAttribute('role', 'dialog'); menu.setAttribute('aria-label', title);
     const heading = document.createElement('div'); heading.className = 'block-menu-title'; heading.textContent = title; menu.append(heading);
-    document.body.append(menu); blockMenu = menu;
+    (searchDialog.open ? searchDialog : document.body).append(menu); blockMenu = menu;
     menu.style.left = Math.min(rect.left, innerWidth - 280) + 'px'; menu.style.top = Math.min(rect.bottom + 4, innerHeight - 340) + 'px';
-    menu.addEventListener('keydown', e => { if (e.key === 'Escape') { closeBlockMenu(); return; } if (['ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); const buttons = [...menu.querySelectorAll('button')]; buttons[(buttons.indexOf(document.activeElement) + (e.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length]?.focus(); } });
+    menu.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault();e.stopPropagation();closeBlockMenu(); return; } if (['ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); const buttons = [...menu.querySelectorAll('button')]; buttons[(buttons.indexOf(document.activeElement) + (e.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length]?.focus(); } });
     return menu;
   }
   function menuButton(menu, label, action, className = '') {
@@ -4828,7 +4840,7 @@ const Storage = {
     else if (d.restorePage) restoreDeletedPage(d.restorePage);
     else if (d.zoom) { if (performance.now() >= suppressBulletClickUntil) openBlock(d.zoom); }
     else if (d.taskDetails) taskDetails(d.taskDetails);
-    else if (d.queryExample) { explorerQuery = d.queryExample; searchMode='auto'; renderExplorer(); }
+    else if (d.queryExample) { explorerQuery = d.queryExample; searchMode='auto'; $('#global-search').value=explorerQuery;$('#search-input').value=explorerQuery;$('#search-mode').value=searchMode;refreshSearch(); }
     else if (d.task) showStatusMenu(d.task, el.getBoundingClientRect());
     else if (d.fold) { toggleFold(d.fold, el); renderBlocks(); }
     else if (d.edit) {
@@ -4857,7 +4869,7 @@ const Storage = {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); search(); }
     else if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'n') { e.preventDefault(); actions.capture(); }
     else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); flush(); }
-    else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'z' || e.key.toLowerCase() === 'y') && !dialog.open && e.target.id !== 'global-search') { e.preventDefault(); history(e.shiftKey || e.key.toLowerCase() === 'y'); }
+    else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'z' || e.key.toLowerCase() === 'y') && !dialog.open && !searchDialog.open && e.target.id !== 'global-search') { e.preventDefault(); history(e.shiftKey || e.key.toLowerCase() === 'y'); }
     else if (e.key === 'Enter' && e.target.matches('.rendered')) { e.preventDefault(); edit(e.target.dataset.edit, null, e.target.closest('.block-body')); }
     else if (dialog.open && e.target.matches('.search-results button') && ['ArrowDown', 'ArrowUp'].includes(e.key)) {
       e.preventDefault(); (e.key === 'ArrowDown' ? e.target.nextElementSibling : e.target.previousElementSibling)?.focus();

@@ -1,0 +1,711 @@
+﻿FINNOVA TESTS - BASE POWERSHELL
+================================
+
+Structure proposee :
+
+FinnovaTests\
+|
+|-- lib\
+|   |-- common.ps1
+|   `-- finnova.ps1
+|
+|-- injection\
+|   |-- inject.ps1
+|   `-- inject-tests.csv
+|
+`-- verification\
+    |-- verify.ps1
+    `-- verify-tests.csv
+
+
+============================================================
+FICHIER : lib\common.ps1
+============================================================
+
+Add-Type -AssemblyName System.Windows.Forms
+
+function Send-Key {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Key,
+
+        [int]$Delay = 100
+    )
+
+    [System.Windows.Forms.SendKeys]::SendWait($Key)
+
+    if ($Delay -gt 0) {
+        Start-Sleep -Milliseconds $Delay
+    }
+}
+
+
+function Send-Text {
+    param(
+        [AllowEmptyString()]
+        [string]$Text,
+
+        [int]$Delay = 100
+    )
+
+    if ($Text -ne "") {
+        [System.Windows.Forms.SendKeys]::SendWait($Text)
+    }
+
+    if ($Delay -gt 0) {
+        Start-Sleep -Milliseconds $Delay
+    }
+}
+
+
+function Next-Field {
+    param(
+        [ValidateSet("Fast","Normal","Load")]
+        [string]$Wait = "Fast"
+    )
+
+    Send-Key "{TAB}" 0
+
+    switch ($Wait) {
+
+        "Fast" {
+            Start-Sleep -Milliseconds 150
+        }
+
+        "Normal" {
+            Start-Sleep -Milliseconds 500
+        }
+
+        "Load" {
+            # Temporaire :
+            # plus tard, remplacer par une attente intelligente
+            # (curseur Finnova occupe, changement de fenetre, etc.)
+            Start-Sleep -Milliseconds 1500
+        }
+    }
+}
+
+
+function Write-TestLog {
+    param(
+        [string]$TestId,
+        [string]$Message,
+        [ValidateSet("INFO","OK","KO")]
+        [string]$Status = "INFO"
+    )
+
+    $time = Get-Date -Format "HH:mm:ss"
+
+    Write-Host "[$time] [$TestId] [$Status] $Message"
+}
+
+
+============================================================
+FICHIER : lib\finnova.ps1
+============================================================
+
+# NOTE :
+# Remplacer progressivement ces fonctions par ta librairie existante
+# qui gere deja :
+# - verification du focus
+# - verification du titre
+# - activation de la fenetre
+# - attente de la bonne fenetre
+# - etc.
+
+
+function Assert-FinnovaWindow {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Title
+    )
+
+    $p = Get-Process |
+        Where-Object {
+            $_.MainWindowTitle -like "*$Title*"
+        } |
+        Select-Object -First 1
+
+    if (-not $p) {
+        throw "Fenetre Finnova introuvable : $Title"
+    }
+
+    return $p
+}
+
+
+function Wait-FinnovaWindow {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Title,
+
+        [int]$Timeout = 15
+    )
+
+    $end = (Get-Date).AddSeconds($Timeout)
+
+    while ((Get-Date) -lt $end) {
+
+        $p = Get-Process |
+            Where-Object {
+                $_.MainWindowTitle -like "*$Title*"
+            } |
+            Select-Object -First 1
+
+        if ($p) {
+            return $p
+        }
+
+        Start-Sleep -Milliseconds 200
+    }
+
+    throw "Timeout : fenetre '$Title' non trouvee"
+}
+
+
+============================================================
+FICHIER : injection\inject-tests.csv
+============================================================
+
+TestId;Type;Compte;IBAN;Montant;Devise;Date;Motif
+T001;CH;123456;CH9300762011623852957;125.50;CHF;25.09.2026;AUTO-T001
+T002;EUR;123456;DE89370400440532013000;250.00;EUR;25.09.2026;AUTO-T002
+T003;INTERNE;123456;;500.00;CHF;25.09.2026;AUTO-T003
+
+
+============================================================
+FICHIER : injection\inject.ps1
+============================================================
+
+. "$PSScriptRoot\..\lib\common.ps1"
+. "$PSScriptRoot\..\lib\finnova.ps1"
+
+
+function Fill-OrderCH {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Saisie ordre CH"
+
+    Send-Text $Test.Compte
+    Next-Field Load
+
+    Send-Text $Test.IBAN
+    Next-Field Load
+
+    Send-Text $Test.Montant
+    Next-Field Fast
+
+    Send-Text $Test.Devise
+    Next-Field Normal
+
+    Send-Text $Test.Date
+    Next-Field Fast
+
+    Send-Text $Test.Motif
+}
+
+
+function Validate-OrderCH {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Validation ordre CH"
+
+    Send-Key "{ENTER}"
+
+    # Exemple :
+    # adapter le titre de la popup Finnova
+    Wait-FinnovaWindow "Confirmation" | Out-Null
+
+    Send-Key "{ENTER}"
+
+    Write-TestLog $Test.TestId "Ordre CH valide" "OK"
+}
+
+
+function Fill-OrderEUR {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Saisie ordre EUR"
+
+    Send-Text $Test.Compte
+    Next-Field Load
+
+    # Exemple : ordre des champs different du CH
+
+    Send-Text $Test.Devise
+    Next-Field Normal
+
+    Send-Text $Test.IBAN
+    Next-Field Load
+
+    Send-Text $Test.Montant
+    Next-Field Fast
+
+    Send-Text $Test.Date
+    Next-Field Fast
+
+    Send-Text $Test.Motif
+}
+
+
+function Validate-OrderEUR {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Validation ordre EUR"
+
+    Send-Key "{ENTER}"
+
+    # Exemple :
+    # l'ordre EUR peut avoir une popup supplementaire.
+
+    Wait-FinnovaWindow "Controle devise" | Out-Null
+    Send-Key "{ENTER}"
+
+    Wait-FinnovaWindow "Confirmation" | Out-Null
+    Send-Key "{ENTER}"
+
+    Write-TestLog $Test.TestId "Ordre EUR valide" "OK"
+}
+
+
+function Fill-OrderInterne {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Saisie ordre interne"
+
+    Send-Text $Test.Compte
+    Next-Field Load
+
+    Send-Text $Test.Montant
+    Next-Field Fast
+
+    Send-Text $Test.Motif
+}
+
+
+function Validate-OrderInterne {
+    param($Test)
+
+    Send-Key "{ENTER}"
+
+    Wait-FinnovaWindow "Confirmation" | Out-Null
+    Send-Key "{ENTER}"
+
+    Write-TestLog $Test.TestId "Ordre interne valide" "OK"
+}
+
+
+function Invoke-Injection {
+    param($Test)
+
+    switch ($Test.Type.ToUpper()) {
+
+        "CH" {
+            Assert-FinnovaWindow "Ordre" | Out-Null
+
+            Fill-OrderCH $Test
+            Validate-OrderCH $Test
+        }
+
+        "EUR" {
+            Assert-FinnovaWindow "Ordre" | Out-Null
+
+            Fill-OrderEUR $Test
+            Validate-OrderEUR $Test
+        }
+
+        "INTERNE" {
+            Assert-FinnovaWindow "Ordre" | Out-Null
+
+            Fill-OrderInterne $Test
+            Validate-OrderInterne $Test
+        }
+
+        default {
+            throw "Type inconnu : $($Test.Type)"
+        }
+    }
+}
+
+
+$tests = Import-Csv "$PSScriptRoot\inject-tests.csv" -Delimiter ";"
+
+foreach ($test in $tests) {
+
+    Write-Host ""
+    Write-Host "====================================="
+    Write-Host "TEST $($test.TestId) / $($test.Type)"
+    Write-Host "====================================="
+
+    try {
+
+        Invoke-Injection $test
+
+        Write-TestLog `
+            $test.TestId `
+            "Injection terminee" `
+            "OK"
+    }
+    catch {
+
+        Write-TestLog `
+            $test.TestId `
+            $_.Exception.Message `
+            "KO"
+
+        Write-Host ""
+        Write-Host "ARRET DES TESTS"
+
+        # Important :
+        # si Finnova est dans un etat inattendu,
+        # on ne lance pas automatiquement le test suivant.
+        break
+    }
+}
+
+
+============================================================
+FICHIER : verification\verify-tests.csv
+============================================================
+
+TestId;Type;Reference;MontantAttendu;DeviseAttendue;StatutAttendu
+T001;CH;AUTO-T001;125.50;CHF;VALIDE
+T002;EUR;AUTO-T002;250.00;EUR;VALIDE
+T003;INTERNE;AUTO-T003;500.00;CHF;VALIDE
+
+
+============================================================
+FICHIER : verification\verify.ps1
+============================================================
+
+. "$PSScriptRoot\..\lib\common.ps1"
+. "$PSScriptRoot\..\lib\finnova.ps1"
+
+
+function Open-Control {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Ouverture controle"
+
+    #
+    # Mettre ici la sequence Finnova
+    # pour ouvrir la fenetre de controle.
+    #
+    # Exemple :
+    #
+    # Send-Key "{F8}"
+    #
+
+    Wait-FinnovaWindow "Controle" | Out-Null
+}
+
+
+function Search-Order {
+    param($Test)
+
+    Write-TestLog `
+        $Test.TestId `
+        "Recherche $($Test.Reference)"
+
+    #
+    # Le curseur doit partir
+    # d'une position connue.
+    #
+
+    Send-Text $Test.Reference
+    Send-Key "{ENTER}"
+
+    Start-Sleep -Milliseconds 500
+}
+
+
+function Verify-OrderCH {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Verification ordre CH"
+
+    #
+    # Navigation vers les champs de controle.
+    #
+    # Puis lecture et comparaison.
+    #
+    # Exemple futur :
+    #
+    # $montant = Get-CurrentFieldValue
+    #
+    # if ($montant -ne $Test.MontantAttendu) {
+    #     throw "Montant attendu $($Test.MontantAttendu), trouve $montant"
+    # }
+
+    Write-TestLog $Test.TestId "Controle CH OK" "OK"
+}
+
+
+function Verify-OrderEUR {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Verification ordre EUR"
+
+    #
+    # Navigation differente possible
+    #
+
+    Write-TestLog $Test.TestId "Controle EUR OK" "OK"
+}
+
+
+function Verify-OrderInterne {
+    param($Test)
+
+    Write-TestLog $Test.TestId "Verification ordre interne"
+
+    Write-TestLog $Test.TestId "Controle interne OK" "OK"
+}
+
+
+function Invoke-Verification {
+    param($Test)
+
+    Open-Control $Test
+
+    Search-Order $Test
+
+    switch ($Test.Type.ToUpper()) {
+
+        "CH" {
+            Verify-OrderCH $Test
+        }
+
+        "EUR" {
+            Verify-OrderEUR $Test
+        }
+
+        "INTERNE" {
+            Verify-OrderInterne $Test
+        }
+
+        default {
+            throw "Type inconnu : $($Test.Type)"
+        }
+    }
+}
+
+
+$tests = Import-Csv "$PSScriptRoot\verify-tests.csv" -Delimiter ";"
+
+foreach ($test in $tests) {
+
+    Write-Host ""
+    Write-Host "====================================="
+    Write-Host "CONTROLE $($test.TestId)"
+    Write-Host "====================================="
+
+    try {
+
+        Invoke-Verification $test
+
+        Write-TestLog `
+            $test.TestId `
+            "Verification terminee" `
+            "OK"
+    }
+    catch {
+
+        Write-TestLog `
+            $test.TestId `
+            $_.Exception.Message `
+            "KO"
+
+        break
+    }
+}
+
+
+============================================================
+EVOLUTIONS A FAIRE ENSUITE
+============================================================
+
+1. NEXT-FIELD / ATTENTE INTELLIGENTE
+------------------------------------
+
+Pour l'instant :
+
+    Next-Field Load
+
+attend 1500 ms.
+
+L'objectif sera de remplacer cela par une vraie attente Finnova :
+
+    TAB
+      |
+      v
+    Finnova charge
+      |
+      v
+    curseur "occupe"
+      |
+      v
+    attendre
+      |
+      v
+    curseur normal
+      |
+      v
+    continuer
+
+On pourra garder un timeout maximum pour eviter de rester bloque.
+
+
+2. LECTURE DU CHAMP COURANT
+---------------------------
+
+Ajouter une fonction du genre :
+
+    Get-CurrentFieldValue
+
+Elle pourra essayer :
+
+    Ctrl+A
+    Ctrl+C
+    lecture du presse-papiers
+
+Cela permettra de faire de vraies verifications :
+
+    $montant = Get-CurrentFieldValue
+
+    if ($montant -ne $Test.MontantAttendu) {
+        throw "Montant incorrect"
+    }
+
+
+3. SEPARATION INJECTION / VERIFICATION
+--------------------------------------
+
+Les deux outils doivent rester independants.
+
+Cas possibles :
+
+A)
+    injection automatique
+    verification automatique
+
+B)
+    injection manuelle par un collegue
+    verification automatique
+
+C)
+    injection automatique
+    verification manuelle
+
+
+4. IDENTIFIANT DE TEST
+----------------------
+
+Quand c'est possible, inserer une reference claire dans Finnova :
+
+    AUTO-T001
+    AUTO-T002
+    AUTO-T003
+
+Cela simplifie fortement la recherche dans la fenetre de controle.
+
+
+5. REGLE DE SECURITE
+--------------------
+
+Si :
+- mauvaise fenetre
+- mauvais titre
+- mauvais focus
+- popup inattendue
+- timeout
+- verification incorrecte
+
+ALORS :
+
+    STOP
+
+Ne jamais continuer automatiquement avec le test suivant si Finnova
+n'est plus dans un etat connu.
+
+
+6. TYPES D'ORDRE
+----------------
+
+Ne pas chercher tout de suite a faire un moteur trop abstrait.
+
+Garder des fonctions explicites :
+
+    Fill-OrderCH
+    Validate-OrderCH
+
+    Fill-OrderEUR
+    Validate-OrderEUR
+
+    Fill-OrderInterne
+    Validate-OrderInterne
+
+Cela sera plus facile a lire et a debugger.
+
+Si plusieurs types deviennent tres similaires, on pourra factoriser ensuite.
+
+
+7. LIBRAIRIE EXISTANTE
+----------------------
+
+Tu as deja une librairie qui controle notamment :
+- le focus
+- le nom de la fenetre
+- la bonne fenetre
+- etc.
+
+Il faudra reutiliser cette librairie et remplacer progressivement
+les fonctions d'exemple :
+
+    Assert-FinnovaWindow
+    Wait-FinnovaWindow
+
+par tes fonctions existantes.
+
+
+============================================================
+ARCHITECTURE FINALE
+============================================================
+
+                 +----------------------+
+                 |   inject-tests.csv   |
+                 +----------+-----------+
+                            |
+                            v
+                    +---------------+
+                    |  inject.ps1   |
+                    +-------+-------+
+                            |
+                            v
+                         FINNOVA
+
+
+                         FINNOVA
+                            |
+                            v
+                    +---------------+
+                    |  verify.ps1   |
+                    +-------+-------+
+                            |
+                            v
+                 +----------------------+
+                 |  verify-tests.csv    |
+                 +----------------------+
+
+
+Bibliotheques communes :
+
+    common.ps1
+    finnova.ps1
+
+Le CSV contient les donnees metier.
+Les scripts contiennent la navigation Finnova.
+La librairie contient les fonctions techniques communes.
+
+
+FIN DU FICHIER
