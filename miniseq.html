@@ -20,7 +20,7 @@
 .add-block span{display:block;font-size:12px}
 .add-block small{display:block;font-size:11px;color:#9aa693;margin-top:7px}
 .add-block:hover{background:#f1f5ed;color:var(--accent)}
-.editor{background:transparent;box-shadow:inset 2px 0 #c4d3bd;border-radius:0}
+.editor{background:transparent;box-shadow:none;border-radius:0}
 .editor::placeholder{color:#a3ad9b}
 .editor[data-heading="1"]{font-size:26px;font-weight:650;line-height:1.4;letter-spacing:-.3px}
 .editor[data-heading="2"]{font-size:22px;font-weight:650;line-height:1.4;letter-spacing:-.3px}
@@ -107,7 +107,7 @@
 /* Drag from the bullet; text clicks retain their editing behavior. */
 .bullet{font-size:25px;cursor:grab;color:#a7b3a4}.bullet:hover{color:var(--accent);background:var(--tint)}.bullet:active{cursor:grabbing}.dragging-block{cursor:grabbing}.drag-source{opacity:.4}.dragging-block .block-tools{display:none}.drop-before::after,.drop-after::after{content:'';position:absolute;left:calc(var(--drop-depth, var(--depth))*30px + 27px);right:0;border-top:2px solid var(--accent);pointer-events:none;z-index:5}.drop-before::after{top:0}.drop-after::after{bottom:0}.drop-inside>.block-body{outline:2px solid var(--accent);outline-offset:-2px;background:var(--tint)}
 
-.block-menu{position:fixed;z-index:110;width:265px;max-height:330px;overflow:auto;padding:7px;background:var(--bg);border:1px solid var(--line);border-radius:8px;box-shadow:0 5px 22px #0002}.block-menu-title{font-size:12px;color:var(--muted);padding:6px 8px}.block-menu>button{display:block;width:100%;text-align:left;font-size:14px}.status-option[aria-pressed=true]{background:var(--tint)}.status-BACKLOG{color:#9aa0a4}.status-TODO{color:#4f595e}.status-DOING{color:#c19d00}.status-REVIEW{color:#269fe3}.status-DONE{color:#54ad85}.status-CANCELED{color:#dc7a82}.task-toggle{font-size:21px;vertical-align:middle}.format-options{display:flex;gap:3px;flex-wrap:wrap;padding:5px 0}.format-options button{padding:5px}.color-choice{font-size:24px;line-height:22px}.color-choice[data-color=yellow]{color:#e8c65e}.color-choice[data-color=red]{color:#efa1a1}.color-choice[data-color=pink]{color:#dfa0cf}.color-choice[data-color=green]{color:#8ccbb0}.color-choice[data-color=blue]{color:#8bc7f4}.color-choice[data-color=purple]{color:#c3a6e8}.color-choice[data-color=gray]{color:#8c929e}.block-row[data-color=yellow]>.block-body{background:#fff3c7}.block-row[data-color=red]>.block-body{background:#ffe2df}.block-row[data-color=pink]>.block-body{background:#f8e0f0}.block-row[data-color=green]>.block-body{background:#d7f0e2}.block-row[data-color=blue]>.block-body{background:#dceeff}.block-row[data-color=purple]>.block-body{background:#eee0fb}.block-row[data-color=gray]>.block-body{background:#e8e9ec}.block-icon{line-height:28px;padding-right:5px;flex-shrink:0}
+.block-menu{position:fixed;z-index:110;width:265px;max-height:330px;overflow:auto;padding:7px;background:var(--bg);border:1px solid var(--line);border-radius:8px;box-shadow:0 5px 22px #0002}.block-menu-title{font-size:12px;color:var(--muted);padding:6px 8px}.block-menu>button{display:block;width:100%;text-align:left;font-size:14px}.status-option[aria-pressed=true]{background:var(--tint)}.status-BACKLOG{color:#9aa0a4}.status-TODO{color:#4f595e}.status-DOING{color:#c19d00}.status-REVIEW{color:#269fe3}.status-DONE{color:#54ad85}.status-CANCELED{color:#dc7a82}.task-toggle{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex:0 0 24px;padding:0;margin-right:3px;font-size:21px;line-height:1;vertical-align:-1px}.query-result>.task-toggle{padding:0;margin-right:0}.format-options{display:flex;gap:3px;flex-wrap:wrap;padding:5px 0}.format-options button{padding:5px}.color-choice{font-size:24px;line-height:22px}.color-choice[data-color=yellow]{color:#e8c65e}.color-choice[data-color=red]{color:#efa1a1}.color-choice[data-color=pink]{color:#dfa0cf}.color-choice[data-color=green]{color:#8ccbb0}.color-choice[data-color=blue]{color:#8bc7f4}.color-choice[data-color=purple]{color:#c3a6e8}.color-choice[data-color=gray]{color:#8c929e}.block-row[data-color=yellow]>.block-body{background:#fff3c7}.block-row[data-color=red]>.block-body{background:#ffe2df}.block-row[data-color=pink]>.block-body{background:#f8e0f0}.block-row[data-color=green]>.block-body{background:#d7f0e2}.block-row[data-color=blue]>.block-body{background:#dceeff}.block-row[data-color=purple]>.block-body{background:#eee0fb}.block-row[data-color=gray]>.block-body{background:#e8e9ec}.block-icon{line-height:28px;padding-right:5px;flex-shrink:0}
 
 .task-metadata-below{display:block;margin:2px 0 3px 25px;line-height:22px}.task-metadata-below .task-badges{margin-left:0}.scheduled-pill{border:1px solid #d7dcd6;border-radius:14px;background:#f4f5f2;padding:1px 9px;font-size:12px;gap:7px;color:var(--ink)}.scheduled-pill .deadline{color:#2878ae}.scheduled-pill .deadline.overdue{color:#aa6945}.scheduled-pill .task-adjust{font-size:14px;color:#879189}
 
@@ -126,6 +126,15 @@
 .topbar{gap:18px}.topbar>div:first-child{min-width:0}.global-search{display:flex;align-items:center;gap:8px;flex:1;max-width:650px;min-width:220px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--muted)}.global-search:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px #397e6a18}.global-search input{width:100%;min-width:0;border:0;background:transparent;outline:0;font:inherit;font-size:13px;color:var(--ink)}.global-search kbd{white-space:nowrap;font-size:10px}.top-actions{flex-shrink:0}.search-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;margin:20px 0}.search-controls label{display:flex;align-items:center;gap:8px}.search-controls select{font:inherit;border:1px solid var(--line);border-radius:5px;padding:7px;color:var(--ink);background:var(--bg)}#search-kind{color:var(--muted);flex:1}.search-controls button:disabled{opacity:.45;cursor:default}.search-pages{margin-bottom:24px}#explorer-results .result:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}@media(max-width:1200px){.topbar .breadcrumb{display:none}.global-search kbd{display:none}}
 
 #search-dialog{width:min(1040px,90vw);max-height:85vh;padding:24px;overscroll-behavior:contain}#search-dialog .dialog-header{margin-bottom:14px}#search-dialog .search-controls{gap:12px;margin:14px 0}#search-dialog #explorer-results{max-height:51vh;overflow:auto;overscroll-behavior:contain}#search-dialog .query-examples{margin-bottom:16px}#search-dialog .block-menu{position:fixed}#search-dialog::backdrop{background:#26362b44;backdrop-filter:blur(1px)}
+
+.history-fold-actions{display:inline-flex;gap:4px;flex-shrink:0}.history-fold-actions button{font-size:11px;font-weight:400;padding:4px 6px;color:var(--muted)}
+
+#recent-pages .recent-link{display:flex;align-items:center;gap:9px}#recent-pages .recent-link::before{content:none}.recent-page-icon{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:#bd641f;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.recent-page-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Keep inline task controls inside the 24px text line box. */
+.rendered .task-toggle{height:20px;vertical-align:-4px;position:relative;top:-3px}
+
+.rendered .task-metadata:not(.task-metadata-below) .task-badges{line-height:16px}
 </style>
 </head>
 <body>
@@ -154,7 +163,7 @@
     <header class="topbar">
       <div><button data-action="menu" title="Afficher ou masquer le menu" aria-label="Afficher ou masquer le menu">☰</button><span class="breadcrumb"><button data-action="today" class="home-crumb">Journal</button> <span>/</span> <span id="crumb">Journal</span></span></div>
       <label class="global-search"><span aria-hidden="true">⌕</span><input id="global-search" type="search" aria-label="Rechercher dans les notes ou saisir une requête" placeholder="Rechercher… texte, #tag, @personne, task:open" autocomplete="off" spellcheck="false"><kbd>Ctrl K</kbd></label>
-      <div class="top-actions"><button id="reminder-indicator" data-action="reminders" aria-label="Rappels à traiter">Rappels <span id="reminder-count">0</span></button><span id="save-status" role="status">Ouverture…</span><button data-action="new-page">Nouvelle page</button><button id="project-settings" data-action="page-properties" hidden>Propriétés</button><button id="favorite-toggle" data-action="toggle-favorite" aria-pressed="false" title="Ajouter aux favoris">☆ Favori</button></div>
+      <div class="top-actions"><button id="reminder-indicator" data-action="reminders" aria-label="Rappels à traiter">Rappels <span id="reminder-count">0</span></button><span id="save-status" role="status" title="Les modifications sont sauvegardées automatiquement dans ce navigateur.">Ouverture…</span><button data-action="new-page">Nouvelle page</button><button id="project-settings" data-action="page-properties" hidden>Propriétés</button><button id="favorite-toggle" data-action="toggle-favorite" aria-pressed="false" title="Ajouter aux favoris">☆ Favori</button></div>
     </header>
     <div id="notice" role="alert" hidden></div>
     <main id="main" tabindex="-1"><p class="loading">Ouverture de votre espace…</p></main>
@@ -3598,7 +3607,7 @@ if(__exports != exports)module.exports = exports;return module.exports}));
         }
         if (field === 'priority') { if (!['a', 'b', 'c', 'none'].includes(normalized)) throw new Error('Priorité attendue : A, B, C ou none.'); return c => (c.meta.priority || 'NONE') === normalized.toUpperCase(); }
         if (field === 'deadline') {
-          if (!['today', 'overdue', 'soon', 'none'].includes(normalized) && !validDate(value)) throw new Error('Échéance attendue : today, overdue, soon, none ou YYYY-MM-DD.');
+          if (!['today', 'overdue', 'soon', 'none'].includes(normalized) && !validDate(value)) throw new Error('Relance attendue : today, overdue, soon, none ou YYYY-MM-DD.');
           return c => normalized === 'none' ? !c.meta.deadline : !c.meta.deadline ? false : normalized === 'today' ? c.meta.deadline === c.today : normalized === 'overdue' ? c.meta.deadline < c.today && !['DONE', 'CANCELED'].includes(c.meta.status) : normalized === 'soon' ? c.meta.deadline >= c.today && c.meta.deadline <= c.soon && !['DONE', 'CANCELED'].includes(c.meta.status) : c.meta.deadline === value;
         }
         if (field === 'page') return c => key(c.page.title) === normalized;
@@ -3732,10 +3741,15 @@ const Storage = {
     return queryIndex;
   }
 
+  function showSavedStatus() {
+    const status = $('#save-status');
+    status.dataset.state = 'saved';
+    if (status.textContent !== 'Sauvegarde auto') status.textContent = 'Sauvegarde auto';
+  }
   function notice(message) { $('#notice').textContent = message; $('#notice').hidden = !message; }
   function changed() {
     if (revision === savedRevision) dirtySince = performance.now();
-    revision++; $('#save-status').textContent = 'Enregistrement…';
+    revision++; $('#save-status').dataset.state = 'pending';
     clearTimeout(saveTimer);
     saveTimer = setTimeout(flush, Math.max(0, Math.min(300, 1500 - (performance.now() - dirtySince))));
     clearTimeout(renderTimer);
@@ -3751,9 +3765,9 @@ const Storage = {
         const savingRevision = revision;
         await Storage.save(graph.snapshot()); savedRevision = savingRevision;
       }
-      if (savedRevision === revision) $('#save-status').textContent = '✓ Enregistré sur cet appareil';
+      if (savedRevision === revision) showSavedStatus();
     } catch (error) {
-      $('#save-status').textContent = 'Échec de sauvegarde';
+      $('#save-status').dataset.state = 'error'; $('#save-status').textContent = 'Échec de sauvegarde';
       notice('La sauvegarde locale a échoué. Exportez vos notes depuis Sauvegardes. ' + error.message);
     } finally { saving = false; }
   }
@@ -3796,7 +3810,7 @@ const Storage = {
     const meta = MiniQuery.metadata(block.text);
     const overdue = meta.deadline && meta.deadline < dateKey() && !['DONE', 'CANCELED'].includes(meta.status);
     const date = meta.deadline ? new Date(meta.deadline + 'T12:00:00').toLocaleDateString('fr-CH', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-    return `<span class="task-metadata ${below && meta.deadline ? 'task-metadata-below' : ''}"><button class="task-badges ${meta.deadline ? 'scheduled-pill' : ''}" data-task-details="${block.id}" title="${overdue ? 'Échéance dépassée · ' : ''}Modifier la priorité et l’échéance">${meta.priority ? `<span class="priority priority-${meta.priority}">${meta.priority}</span>` : ''}${meta.deadline ? `<span>Planifié : <span class="deadline ${overdue ? 'overdue' : ''}">${esc(date)}</span></span>` : ''}${meta.properties.closed ? `<span class="closed-date">Terminé le ${esc(meta.properties.closed)}</span>` : ''}<span class="task-adjust" aria-hidden="true">${meta.deadline ? '✎' : '⚙'}</span></button></span>`;
+    return `<span class="task-metadata ${below && meta.deadline ? 'task-metadata-below' : ''}"><button class="task-badges ${meta.deadline ? 'scheduled-pill' : ''}" data-task-details="${block.id}" title="${overdue ? 'Relance dépassée · ' : ''}Modifier la priorité et la relance">${meta.priority ? `<span class="priority priority-${meta.priority}">${meta.priority}</span>` : ''}${meta.deadline ? `<span>Relance : <span class="deadline ${overdue ? 'overdue' : ''}">${esc(date)}</span></span>` : ''}${meta.properties.closed ? `<span class="closed-date">Terminé le ${esc(meta.properties.closed)}</span>` : ''}<span class="task-adjust" aria-hidden="true">${meta.deadline ? '✎' : '⚙'}</span></button></span>`;
   }
   function queryResults(expression, owner = null) {
     const { results, error } = index().run(expression, owner);
@@ -3812,7 +3826,7 @@ const Storage = {
     const due = index().run('task:open (deadline:today OR deadline:overdue)').results.length;
     $('#reminder-count').textContent = due;
     $('#reminder-indicator').classList.toggle('has-reminders', due > 0);
-    $('#reminder-indicator').setAttribute('aria-label', `${due} rappel${due > 1 ? 's' : ''} à traiter : échéances du jour et en retard`);
+    $('#reminder-indicator').setAttribute('aria-label', `${due} rappel${due > 1 ? 's' : ''} à traiter : relances du jour et en retard`);
   }
   function refreshQueries() {
     refreshReminders();
@@ -3842,8 +3856,8 @@ const Storage = {
       { title: 'Page', field: 'page', minWidth: 150, formatter: cell => MiniTables.action(cell.getValue(), 'data-page', cell.getRow().getData().pageId) },
       { title: 'État', field: 'status', width: 110, formatter: cell => { const status = cell.getValue(); return MiniTables.action(status ? `${taskIcon(status)} ${taskLabel(status)}` : '—', status ? 'data-task' : 'data-task-details', cell.getRow().getData().id, status ? 'Changer l’état du bloc d’origine' : 'Transformer en tâche'); } },
       { title: 'Priorité', field: 'priority', width: 105, sorter: 'string', sorterParams: { alignEmptyValues: 'bottom' }, formatter: cell => MiniTables.action(cell.getValue() || '—', 'data-task-details', cell.getRow().getData().id, 'Modifier la priorité') },
-      { title: 'Échéance', field: 'deadline', minWidth: 145, sorter: 'string', sorterParams: { alignEmptyValues: 'bottom' }, formatter: cell => {
-        const date = cell.getValue(), row = cell.getRow().getData(), button = MiniTables.action(date || '—', 'data-task-details', row.id, 'Modifier l’échéance');
+      { title: 'Relance', field: 'deadline', minWidth: 145, sorter: 'string', sorterParams: { alignEmptyValues: 'bottom' }, formatter: cell => {
+        const date = cell.getValue(), row = cell.getRow().getData(), button = MiniTables.action(date || '—', 'data-task-details', row.id, 'Modifier la relance');
         if (date && date < dateKey() && row.status !== 'DONE') button.classList.add('overdue'); return button;
       } },
       { title: 'Tags', field: 'tags', minWidth: 140 },
@@ -3887,7 +3901,7 @@ const Storage = {
   }
   function renderTasks() {
     $('#crumb').textContent = 'Tâches';
-    $('#main').innerHTML = `<div class="eyebrow">Retrouver & avancer</div><h1>Mes tâches</h1><p class="page-subtitle">Toutes vos tâches, à leur place dans vos notes. Les changements ici modifient le bloc d’origine.</p><div class="filter-bar"><label>État<select id="task-state">${optionHTML([['task:open', 'Non terminées'], ...taskStates.map(([id, label]) => [id, label]), ['task:any', 'Tous les états']], taskFilter.state)}</select></label><label>Échéance<select id="task-deadline">${optionHTML([['', 'Toutes les échéances'], ['(deadline:today OR deadline:overdue)', 'À traiter : aujourd’hui et en retard'], ['deadline:today', 'Aujourd’hui'], ['deadline:overdue', 'En retard'], ['deadline:soon', 'Les 7 prochains jours'], ['deadline:none', 'Sans échéance']], taskFilter.deadline)}</select></label><label>Priorité<select id="task-priority">${optionHTML([['', 'Toutes les priorités'], ['priority:A', 'A · Haute'], ['priority:B', 'B · Moyenne'], ['priority:C', 'C · Basse'], ['priority:none', 'Sans priorité']], taskFilter.priority)}</select></label></div><div class="query-caption"><code id="task-expression">${esc(taskExpression())}</code><button data-action="save-task-query">Garder cette vue dans une page ↗</button></div><div id="task-results"></div>`;
+    $('#main').innerHTML = `<div class="eyebrow">Retrouver & avancer</div><h1>Mes tâches</h1><p class="page-subtitle">Toutes vos tâches, à leur place dans vos notes. Les changements ici modifient le bloc d’origine.</p><div class="filter-bar"><label>État<select id="task-state">${optionHTML([['task:open', 'Non terminées'], ...taskStates.map(([id, label]) => [id, label]), ['task:any', 'Tous les états']], taskFilter.state)}</select></label><label>Relance<select id="task-deadline">${optionHTML([['', 'Toutes les relances'], ['(deadline:today OR deadline:overdue)', 'À traiter : aujourd’hui et en retard'], ['deadline:today', 'Aujourd’hui'], ['deadline:overdue', 'En retard'], ['deadline:soon', 'Les 7 prochains jours'], ['deadline:none', 'Sans relance']], taskFilter.deadline)}</select></label><label>Priorité<select id="task-priority">${optionHTML([['', 'Toutes les priorités'], ['priority:A', 'A · Haute'], ['priority:B', 'B · Moyenne'], ['priority:C', 'C · Basse'], ['priority:none', 'Sans priorité']], taskFilter.priority)}</select></label></div><div class="query-caption"><code id="task-expression">${esc(taskExpression())}</code><button data-action="save-task-query">Garder cette vue dans une page ↗</button></div><div id="task-results"></div>`;
     blockTable = MiniTables.mount('#task-results', 'tasks', blockColumns(), blockRows(index().run(taskExpression()).results), [{ column: 'deadline', dir: 'asc' }, { column: 'priority', dir: 'asc' }]);
   }
   function searchPlan() {
@@ -3923,20 +3937,20 @@ const Storage = {
     const next = open[0], deadline = next ? idx.meta.get(next.id).deadline || '' : '';
     const activity = related.filter(b => b.text.trim()).map(b => b.updatedAt?.slice(0,10) || graph.page(b.pageId)?.journalDate || '').filter(Boolean).sort().at(-1) || '';
     const overdue = open.some(b => { const d = idx.meta.get(b.id).deadline; return d && d < dateKey(); });
-    return { id: page.id, title: page.title, status: properties.status || 'active', next: next?.text.split('\n')[0].replace(/^(BACKLOG|TODO|DOING|REVIEW)\s+(?:\[#[ABC]\]\s*)?/, '') || '', nextId: next?.id, deadline, activity, open, alert: overdue ? 'Relance dépassée' : !next ? 'Sans prochaine action' : !deadline ? 'Sans échéance' : '' };
+    return { id: page.id, title: page.title, status: properties.status || 'active', next: next?.text.split('\n')[0].replace(/^(BACKLOG|TODO|DOING|REVIEW)\s+(?:\[#[ABC]\]\s*)?/, '') || '', nextId: next?.id, deadline, activity, open, alert: overdue ? 'Relance dépassée' : !next ? 'Sans prochaine action' : !deadline ? 'Sans relance' : '' };
   }
   function projectRows() {
     return graph.pages.filter(p => isProject(p.id)).map(projectInfo).filter(p => projectFilter === 'all' || !['done', 'canceled'].includes(p.status));
   }
   function renderProjects() {
     $('#crumb').textContent = 'Projets';
-    $('#main').innerHTML = `<div class="pages-heading"><h1>Projets en cours</h1><select id="project-filter" aria-label="Afficher les projets">${optionHTML([['active','En cours et en attente'],['all','Tous, y compris terminés']],projectFilter)}</select></div><p class="page-subtitle">Ouvrez une page puis cliquez sur « Projet » en haut pour la suivre ici. La prochaine action est la tâche ouverte avec l’échéance la plus proche.</p><div id="projects-table"></div><p class="table-hint">La dernière activité utilise la date de modification lorsqu’elle est connue, sinon la date du journal lié.</p>`;
+    $('#main').innerHTML = `<div class="pages-heading"><h1>Projets en cours</h1><select id="project-filter" aria-label="Afficher les projets">${optionHTML([['active','En cours et en attente'],['all','Tous, y compris terminés']],projectFilter)}</select></div><p class="page-subtitle">Ouvrez une page puis cliquez sur « Projet » en haut pour la suivre ici. La prochaine action est la tâche ouverte avec la relance la plus proche.</p><div id="projects-table"></div><p class="table-hint">La dernière activité utilise la date de modification lorsqu’elle est connue, sinon la date du journal lié.</p>`;
     $('#project-filter').onchange = e => { projectFilter=e.target.value; blockTable?.replace(projectRows()); };
     blockTable = MiniTables.mount('#projects-table','projects',[
       {title:'Projet',field:'title',widthGrow:2,minWidth:170,formatter:cell=>MiniTables.action(cell.getValue(),'data-page',cell.getRow().getData().id)},
       {title:'État',field:'status',formatter:cell=>projectStates.find(s=>s[0]===cell.getValue())?.[1] || cell.getValue()},
       {title:'Prochaine action',field:'next',widthGrow:3,minWidth:210,formatter:cell=>cell.getValue()?MiniTables.action(cell.getValue(),'data-jump',cell.getRow().getData().nextId):'—'},
-      {title:'Échéance',field:'deadline',formatter:cell=>cell.getValue()||'—'},
+      {title:'Relance',field:'deadline',formatter:cell=>cell.getValue()||'—'},
       {title:'Dernière activité',field:'activity',minWidth:140,formatter:cell=>cell.getValue()||'Non renseignée'},
       {title:'À surveiller',field:'alert',minWidth:160,formatter:cell=>{const el=document.createElement('span');el.className=cell.getValue()?'project-alert':'';el.textContent=cell.getValue()||'—';return el;}},
       {title:'',field:'actions',headerFilter:false,headerSort:false,width:110,formatter:cell=>MiniTables.action('Supprimer','data-delete-page',cell.getRow().getData().id)}
@@ -4037,7 +4051,7 @@ const Storage = {
     refreshReminders();
     $('#project-settings').hidden = view.type !== 'page' || !!graph.page(view.id)?.journalDate;
     $('#page-count').textContent = listedPages().length;
-    $('#recent-pages').innerHTML = graph.pages.slice(-7).reverse().map(p => `<button class="recent-link" data-page="${p.id}" title="${esc(p.title)}">${esc(p.title)}</button>`).join('');
+    $('#recent-pages').innerHTML = graph.pages.slice(-7).reverse().map(p => `<button class="recent-link" data-page="${p.id}" title="${esc(p.title)}"><svg class="recent-page-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">${p.journalDate ? '<rect x="3" y="4" width="14" height="13" rx="2"/><path d="M6 2v4m8-4v4M3 8h14M6 11h2m4 0h2m-8 3h2"/>' : '<path d="M5 2h7l4 4v12H5zM12 2v5h4M8 10h5m-5 3h5"/>'}</svg><span class="recent-page-title">${esc(p.title)}</span></button>`).join('');
     const favorites = graph.settings.favorites || [];
     $('#favorite-pages').innerHTML = favorites.map(id => graph.page(id)).filter(Boolean).map(p => `<button class="recent-link favorite-link" data-page="${p.id}" title="${esc(p.title)}">${esc(p.title)}</button>`).join('') || '<span class="favorites-empty">Aucune page favorite</span>';
     const collapsed = !!graph.settings.recentsCollapsed;
@@ -4118,6 +4132,19 @@ const Storage = {
     const stack = pinIds(view.id).map(id=>graph.block(id)), visited = new Set();
     while(stack.length) { const b=stack.pop();if(visited.has(b.id))continue;visited.add(b.id);pinFolds.set(b.id,collapsed);stack.push(...graph.children(b.pageId,b.id)); }
     renderPins();
+  }
+  function foldAllReferences(collapsed) {
+    finishEdit();
+    renderBacklinks();
+    const stack = [...backlinkRoots].map(id => graph.block(id)).filter(Boolean), visited = new Set();
+    while (stack.length) {
+      const block = stack.pop();
+      if (visited.has(block.id)) continue;
+      visited.add(block.id); referenceFolds.set(block.id, collapsed);
+      stack.push(...graph.children(block.pageId, block.id));
+    }
+    if (!collapsed && $('.project-history')) $('.project-history').open = true;
+    renderBacklinks();
   }
   function choosePin(id) {
     closeBlockMenu();finishEdit(); const b=graph.block(id);if(!b)return;
@@ -4214,7 +4241,7 @@ const Storage = {
       if (!row) {
         row = document.createElement('div'); row.className = 'block-row'; row.dataset.block = b.id;
         row.innerHTML = `<span class="indent-guides" aria-hidden="true"></span><span class="fold-slot"></span><button class="bullet" draggable="true" data-zoom="${b.id}" title="Cliquer pour ouvrir · Glisser pour déplacer" aria-label="Ouvrir ce bloc et ses descendants">•</button>
-          <div class="block-body"></div><div class="block-tools"><button data-task-details="${b.id}" title="Tâche, priorité et échéance">☑</button><button data-move="${b.id}" title="Déplacer vers une page">↗</button></div>`;
+          <div class="block-body"></div><div class="block-tools"><button data-task-details="${b.id}" title="Tâche, priorité et relance">☑</button><button data-move="${b.id}" title="Déplacer vers une page">↗</button></div>`;
       }
       row.dataset.color = b.color || '';
       row.querySelector('.block-icon')?.remove();
@@ -4312,8 +4339,8 @@ const Storage = {
         const retained=document.createElement('section');retained.className='retained-notes';
         retained.innerHTML='<div class="retained-heading"><h2 class="section-title">📌 À retenir</h2><div><button data-action="expand-pins">Tout déplier</button><button data-action="collapse-pins">Tout replier</button></div></div><div id="pinned-blocks"></div>';main.querySelector('.note-heading').after(retained);
         const backlinks=$('.backlinks'), details=document.createElement('details');details.className='project-history';details.open=true;
-        details.innerHTML='<summary>Historique et notes liées</summary><label class="project-search-label"><input type="search" id="project-note-search" aria-label="Rechercher dans ce projet" placeholder="Rechercher dans ce projet…"></label><div id="project-search-results" hidden></div>';
-        backlinks.before(details);details.append(backlinks);details.querySelector('summary').append(details.querySelector('.project-search-label'));$('#project-note-search').onclick=e=>e.stopPropagation();$('#project-note-search').oninput=renderProjectSearch;
+        details.innerHTML='<summary>Historique et notes liées<span class="history-fold-actions"><button type="button" data-action="collapse-references" title="Replier tous les blocs liés">Tout replier</button><button type="button" data-action="expand-references" title="Déplier tous les blocs liés">Tout déplier</button></span></summary><label class="project-search-label"><input type="search" id="project-note-search" aria-label="Rechercher dans ce projet" placeholder="Rechercher dans ce projet…"></label><div id="project-search-results" hidden></div>';
+        backlinks.before(details);details.append(backlinks);details.querySelector('summary').append(details.querySelector('.project-search-label'));$('#project-note-search').onclick=e=>e.stopPropagation();$('#project-note-search').oninput=renderProjectSearch;details.querySelectorAll('.history-fold-actions button').forEach(button=>button.onclick=e=>e.preventDefault());
       }
       renderBlocks(); renderBacklinks(); renderPins();
       if (view.home) initJournalHistory(page);
@@ -4402,6 +4429,22 @@ const Storage = {
   function editorKey(e, id) {
     if (e.isComposing || e.keyCode === 229) return;
     const input = e.target, b = graph.block(id), start = input.selectionStart, end = input.selectionEnd;
+    const plainKey = !e.metaKey && ((!e.ctrlKey && !e.altKey) || e.getModifierState('AltGraph'));
+    if (plainKey && e.key === '[') {
+      e.preventDefault();
+      const selected = input.value.slice(start, end);
+      input.setRangeText('[' + selected + ']', start, end, 'end');
+      input.setSelectionRange(start + 1, start + 1 + selected.length);
+      input.dispatchEvent(new Event('input', { bubbles: true })); return;
+    }
+    if (plainKey && e.key === ']' && start === end && input.value[start] === ']') {
+      e.preventDefault(); input.setSelectionRange(start + 1, start + 1);
+      showCompletions(input, id); return;
+    }
+    if (plainKey && e.key === 'Backspace' && start === end && input.value[start - 1] === '[' && input.value[start] === ']') {
+      e.preventDefault(); input.setRangeText('', start - 1, start + 1, 'end');
+      input.dispatchEvent(new Event('input', { bubbles: true })); return;
+    }
     if (completion?.id === id && completion.items.length) {
       if (['ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); completion.selected = (completion.selected + (e.key === 'ArrowDown' ? 1 : -1) + completion.items.length) % completion.items.length; paintCompletions(input); return; }
       if (['Enter', 'Tab'].includes(e.key)) { e.preventDefault(); applyCompletion(input, completion.selected); return; }
@@ -4445,7 +4488,7 @@ const Storage = {
         { name: 'todo', label: 'TODO · Nouvelle tâche', text: 'TODO ' },
         { name: 'doing', label: 'DOING · En cours', text: 'DOING ' },
         { name: 'query', label: 'Requête dynamique', text: '{{query task:open}}' },
-        { name: 'deadline', label: 'Échéance', text: 'deadline:: ' + dateKey() },
+        { name: 'deadline', label: 'Relance', text: 'deadline:: ' + dateKey() },
         { name: 'priority', label: 'Priorité haute', text: 'priority:: A' },
         { name: 'code', label: 'Bloc de code', text: '```\n\n```', cursor: 4 }
       ].filter(item => item.name.startsWith(command[1].toLowerCase()));
@@ -4614,7 +4657,7 @@ const Storage = {
   }
   function taskDetails(id) {
     const b = graph.block(id), meta = MiniQuery.metadata(b.text);
-    showDialog('Tâche, priorité & échéance', `<form id="task-form"><p class="empty">${esc(b.text.split('\n')[0] || 'Nouveau bloc')}</p><div class="task-form-grid"><label>État<select id="detail-state">${optionHTML([['', 'Note simple'], ...taskStates.map(([id, label]) => [id, label])], meta.status || 'TODO')}</select></label><label>Priorité<select id="detail-priority">${optionHTML([['', 'Aucune'], ['A', 'A · Haute'], ['B', 'B · Moyenne'], ['C', 'C · Basse']], meta.priority || '')}</select></label><label>Échéance<input type="date" id="detail-deadline" value="${meta.deadline || ''}"></label></div><p class="empty">Ces informations restent dans le texte du bloc et sont accessibles aux requêtes.</p><div class="dialog-actions"><button type="button" data-action="close">Annuler</button><button type="submit" class="primary">Appliquer</button></div></form>`);
+    showDialog('Tâche, priorité & relance', `<form id="task-form"><p class="empty">${esc(b.text.split('\n')[0] || 'Nouveau bloc')}</p><div class="task-form-grid"><label>État<select id="detail-state">${optionHTML([['', 'Note simple'], ...taskStates.map(([id, label]) => [id, label])], meta.status || 'TODO')}</select></label><label>Priorité<select id="detail-priority">${optionHTML([['', 'Aucune'], ['A', 'A · Haute'], ['B', 'B · Moyenne'], ['C', 'C · Basse']], meta.priority || '')}</select></label><label>Relance<input type="date" id="detail-deadline" value="${meta.deadline || ''}"></label></div><p class="empty">Ces informations restent dans le texte du bloc et sont accessibles aux requêtes.</p><div class="dialog-actions"><button type="button" data-action="close">Annuler</button><button type="submit" class="primary">Appliquer</button></div></form>`);
     $('#task-form').onsubmit = e => {
       e.preventDefault();
       const text = MiniQuery.updateTask(b.text, { status: $('#detail-state').value, priority: $('#detail-priority').value, deadline: $('#detail-deadline').value });
@@ -4623,7 +4666,7 @@ const Storage = {
     };
   }
   function queryHelp() {
-    showDialog('Requêtes dans vos notes', `<p>Écrivez une requête dans un bloc : <code>{{query TODO #atm}}</code>. Ses résultats sont des vues des blocs d’origine. Cliquez sur le cercle pour changer l’état, ou sur le texte pour retrouver le contexte.</p><table class="help-table"><tr><td><code>TODO #atm</code></td><td>Tâches TODO portant ce tag</td></tr><tr><td><code>(TODO OR DOING) priority:A</code></td><td>Tâches ouvertes prioritaires</td></tr><tr><td><code>task:open [[Projet ATM]]</code></td><td>Tâches liées au projet</td></tr><tr><td><code>deadline overdue</code></td><td>Échéances dépassées, hors DONE</td></tr><tr><td><code>task:open deadline:today</code></td><td>À traiter aujourd’hui</td></tr><tr><td><code>#idée NOT #archivé</code></td><td>Idées à conserver</td></tr><tr><td><code>pages type:project status:active</code></td><td>Pages projets actifs</td></tr><tr><td><code>page:"Projet ATM" "écarts"</code></td><td>Texte dans une page précise</td></tr></table><p>Les espaces signifient AND. Opérateurs : <code>NOT</code>, <code>AND</code>, <code>OR</code>, parenthèses. Les tags et liens des blocs parents s’appliquent aussi à leurs enfants. Les propriétés de page sont les lignes <code>clé:: valeur</code> dans les blocs racines.</p><p>Les états, priorités et échéances appartiennent au bloc lui-même. Les résultats sont triés par échéance puis priorité. Langage MiniSeq : ce n’est pas le Datalog de Logseq.</p>`);
+    showDialog('Requêtes dans vos notes', `<p>Écrivez une requête dans un bloc : <code>{{query TODO #atm}}</code>. Ses résultats sont des vues des blocs d’origine. Cliquez sur le cercle pour changer l’état, ou sur le texte pour retrouver le contexte.</p><table class="help-table"><tr><td><code>TODO #atm</code></td><td>Tâches TODO portant ce tag</td></tr><tr><td><code>(TODO OR DOING) priority:A</code></td><td>Tâches ouvertes prioritaires</td></tr><tr><td><code>task:open [[Projet ATM]]</code></td><td>Tâches liées au projet</td></tr><tr><td><code>deadline overdue</code></td><td>Relances dépassées, hors DONE</td></tr><tr><td><code>task:open deadline:today</code></td><td>À traiter aujourd’hui</td></tr><tr><td><code>#idée NOT #archivé</code></td><td>Idées à conserver</td></tr><tr><td><code>pages type:project status:active</code></td><td>Pages projets actifs</td></tr><tr><td><code>page:"Projet ATM" "écarts"</code></td><td>Texte dans une page précise</td></tr></table><p>Les espaces signifient AND. Opérateurs : <code>NOT</code>, <code>AND</code>, <code>OR</code>, parenthèses. Les tags et liens des blocs parents s’appliquent aussi à leurs enfants. Les propriétés de page sont les lignes <code>clé:: valeur</code> dans les blocs racines.</p><p>Les états, priorités et relances appartiennent au bloc lui-même. Les résultats sont triés par relance puis priorité. Langage MiniSeq : ce n’est pas le Datalog de Logseq.</p>`);
   }
   function saveQuery(expression) {
     const check = index().run(expression);
@@ -4674,7 +4717,7 @@ const Storage = {
           const replacement = new Graph(structuredClone(data));
           await Storage.save(replacement.snapshot());
           graph = replacement; revision++; savedRevision = revision; undo = []; redo = [];
-          $('#save-status').textContent = '✓ Restauration enregistrée'; notice(''); dialog.close();
+          showSavedStatus(); notice(''); dialog.close();
           pendingDeletions.forEach(p => { clearTimeout(p.timer); p.toast.remove(); }); pendingDeletions.clear();
           openJournal();
         } catch (error) { notice('Restauration non effectuée. ' + error.message); button.disabled = false; button.textContent = 'Réessayer'; }
@@ -4685,12 +4728,14 @@ const Storage = {
   function help() {
     showDialog('Écrire avec MiniSeq', `<p>Cliquez dans le texte pour placer le curseur à cet endroit. Pour continuer, cliquez dans la zone sous la dernière ligne. Appuyez sur Entrée pour ajouter un bloc. Glissez une puce pour déplacer le bloc et ses enfants ; vers la droite pour imbriquer, vers la gauche pour désindenter. Cliquez sur une puce pour ouvrir le bloc et ses descendants ; le fil d’Ariane permet de remonter aux parents.</p><p>Chaque ligne est un bloc indépendant. Cliquez ailleurs ou appuyez sur Échap pour voir le rendu.</p>
       <table class="help-table"><tr><td>Entrée</td><td>Diviser / créer un bloc</td></tr><tr><td>Maj + Entrée</td><td>Retour à la ligne dans le bloc</td></tr><tr><td>Tab / Maj + Tab</td><td>Indenter / désindenter</td></tr><tr><td>Retour arrière, bloc vide</td><td>Supprimer le bloc vide en conservant ses enfants</td></tr><tr><td>Alt + ↑ / ↓</td><td>Déplacer avec les enfants</td></tr><tr><td>Ctrl + .</td><td>Plier / déplier</td></tr><tr><td>↑ au début / ↓ à la fin</td><td>Bloc précédent / suivant</td></tr><tr><td>Ctrl + Z / Ctrl + Maj + Z</td><td>Annuler / rétablir (60 étapes)</td></tr><tr><td>Ctrl + K</td><td>Recherche globale</td></tr></table>
-      <p><code>[[Nom de page]]</code> propose les pages existantes ; <code>#tag</code> classe vos notes. Tapez <code>/</code> en début de bloc pour les commandes. Titres, gras, italique, barré, citations, listes, tableaux, liens Markdown et blocs de code sont reconnus. Dans un bloc de code délimité par trois accents graves, Entrée conserve les lignes dans le même bloc.</p><p>Commencez par <code>TODO [#A]</code>, puis ajoutez <code>deadline:: 2026-09-15</code> sur une seconde ligne avec Maj+Entrée. Le bouton ☑ au survol permet aussi de régler l’état, la priorité et l’échéance à la souris.</p><p><code>{{query task:open #atm}}</code> affiche des résultats dynamiques. La vue Recherche contient les exemples et permet de garder une recherche dans une page. <kbd>Ctrl Maj N</kbd> revient au journal pour noter une idée. Le bouton ↗ au survol déplace un bloc et ses enfants vers une autre page.</p><button data-action="query-help" class="primary">Découvrir les requêtes</button>`);
+      <p><code>[[Nom de page]]</code> propose les pages existantes ; <code>#tag</code> classe vos notes. Tapez <code>/</code> en début de bloc pour les commandes. Titres, gras, italique, barré, citations, listes, tableaux, liens Markdown et blocs de code sont reconnus. Dans un bloc de code délimité par trois accents graves, Entrée conserve les lignes dans le même bloc.</p><p>Commencez par <code>TODO [#A]</code>, puis ajoutez <code>deadline:: 2026-09-15</code> sur une seconde ligne avec Maj+Entrée. Le bouton ☑ au survol permet aussi de régler l’état, la priorité et la relance à la souris.</p><p><code>{{query task:open #atm}}</code> affiche des résultats dynamiques. La vue Recherche contient les exemples et permet de garder une recherche dans une page. <kbd>Ctrl Maj N</kbd> revient au journal pour noter une idée. Le bouton ↗ au survol déplace un bloc et ses enfants vers une autre page.</p><button data-action="query-help" class="primary">Découvrir les requêtes</button>`);
   }
   const actions = {
     people: () => { view={type:'people'};render(); },
     'page-properties': pageProperties,
     calendar: () => openCalendar(),
+    'collapse-references': () => foldAllReferences(true),
+    'expand-references': () => foldAllReferences(false),
     'expand-pins': () => foldAllPins(false),
     'collapse-pins': () => foldAllPins(true),
     projects: () => { view = { type: 'projects' }; render(); },
@@ -4884,7 +4929,7 @@ const Storage = {
     try {
       const data = await Storage.open();
       graph = new Graph(validate({ format: 'miniseq', version: 1, ...data })); storageAvailable = true;
-      if (savedRevision === revision) $('#save-status').textContent = '✓ Enregistré sur cet appareil';
+      if (savedRevision === revision) showSavedStatus();
     } catch (error) {
       graph = new Graph();
       notice('Le stockage local est indisponible. Cette session reste temporaire : exportez vos notes avant de fermer. ' + error.message);
